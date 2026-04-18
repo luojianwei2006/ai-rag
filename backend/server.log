@@ -1,0 +1,1731 @@
+INFO:     Started server process [83057]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:52109 - "WebSocket /ws/chat/GtUkJi7ZO_s1EbwM39fvR3rRYMkCG_guoaBGfrweMqA" [accepted]
+INFO:     connection open
+✅ 管理员账户已存在: admin
+INFO:     127.0.0.1:52119 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52131 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52134 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52136 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52139 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52148 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52150 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:52155 - "GET /api/public/chat/GtUkJi7ZO_s1EbwM39fvR3rRYMkCG_guoaBGfrweMqA/info HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52157 - "WebSocket /ws/chat/GtUkJi7ZO_s1EbwM39fvR3rRYMkCG_guoaBGfrweMqA" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:52159 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52161 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52163 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52167 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52172 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52178 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52181 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52188 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52192 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52196 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52199 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52202 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52205 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52208 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52211 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52214 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52218 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52221 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52225 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52234 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52236 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52238 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52242 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52246 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52249 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52253 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52256 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52261 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52265 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52268 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52271 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52275 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52280 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52283 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52286 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52291 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52294 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52297 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52302 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52305 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52308 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52311 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52316 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52320 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52323 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52327 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52331 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52334 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52337 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52341 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52344 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52377 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52408 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52432 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52454 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52464 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52476 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52495 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52513 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52534 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52545 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52561 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52590 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52608 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52616 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52629 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52640 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52667 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52696 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52704 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52715 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52738 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52753 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52760 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52779 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52789 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52809 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52822 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52832 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52841 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52851 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52871 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52895 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52917 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52924 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52940 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52960 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52969 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52976 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53000 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53024 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53038 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53052 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53061 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53068 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53085 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53098 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53120 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53126 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53134 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53156 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53170 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53179 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53188 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53202 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53231 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53245 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53255 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53264 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53286 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53308 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53325 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53332 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53356 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53367 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53383 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53398 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53412 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53423 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53437 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53468 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53498 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53512 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53525 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53532 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53551 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53562 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53575 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53585 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53606 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53629 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53645 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53656 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53663 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53673 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53689 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53699 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53719 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53726 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53736 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53754 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53771 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53778 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53788 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53797 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53825 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53840 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53849 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53858 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53868 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53892 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53905 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53916 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53933 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53940 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53957 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53966 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53976 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53984 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53994 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54014 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54035 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54045 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54054 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54064 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54078 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54088 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54098 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54105 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54127 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54149 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54163 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54175 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54189 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54200 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54220 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54234 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54262 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54276 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54306 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54321 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54331 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54342 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54351 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54380 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54395 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54408 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54420 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54455 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54470 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54484 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54508 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54519 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54537 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54549 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54564 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54573 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54584 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54606 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54630 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54644 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54657 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54664 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54682 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54696 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54703 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54711 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54736 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54762 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54774 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54785 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54796 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54804 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54821 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54834 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54861 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54868 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54879 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54902 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54918 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54925 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54934 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54942 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54968 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54977 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54988 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54995 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55009 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55030 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55047 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55059 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55081 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55092 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55110 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55122 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55132 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55141 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55153 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55182 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55206 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55219 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55230 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55241 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55260 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55272 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55283 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55291 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55310 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55329 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55343 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55350 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55359 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55370 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55386 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55397 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55420 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55429 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55441 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55461 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55472 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55482 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55493 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55511 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55539 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55553 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55563 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55570 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55580 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55606 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55634 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55653 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55660 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55677 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55688 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55701 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55712 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55720 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55738 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55759 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55769 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55776 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55786 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55804 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55813 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55826 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55834 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55859 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55881 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55897 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55906 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55918 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55946 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55959 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55978 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55989 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56003 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56039 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56061 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56073 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56082 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56096 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+[Feishu Webhook] Received: {"schema":"2.0","header":{"event_id":"549fb7bc4941df621c23a6812bcd270c","token":"fmm3nWMjq7k0ArJKqEaYrbXFu0aSbA0l","create_time":"1775990553217","event_type":"im.message.receive_v1","tenant_key":"159d351c6e17d75f","app_id":"cli_a951db0b23799cd1"},"event":{"message":{"chat_id":"oc_3d8cf2f6deca8535bb40013318346200","chat_type":"p2p","content":"{\"text\":\"肚哥是谁？\"}","create_time":"1775990552884","message_id":"om_x100b52833f41c8a8c35f7377a45e971","message_type":"text","update_time":"1775990552884","
+[Feishu Service] Schema: 2.0, Event type: im.message.receive_v1
+[Feishu Service] Event data keys: dict_keys(['schema', 'header', 'event'])
+[Feishu Service] Event content: {'message': {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁？"}', 'create_time': '1775990552884', 'message_id': 'om_x100b52833f41c8a8c35f7377a45e971', 'message_type': 'text', 'update_time': '1775990552884', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}, 'sender': {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}}
+[Feishu Service] Message: {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁？"}', 'create_time': '1775990552884', 'message_id': 'om_x100b52833f41c8a8c35f7377a45e971', 'message_type': 'text', 'update_time': '1775990552884', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}
+[Feishu Service] Sender: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Service] User message: 肚哥是谁？
+NVIDIA Z-AI response: {'id': 'chatcmpl-e702db53-b332-498f-8adb-c4ccb6bfc48f', 'choices': [{'index': 0, 'message': {'content': '肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。', 'role': 'assistant', 'reasoning_content': '1. **分析用户请求：**\n*   用户提问：“肚哥是谁？”（肚哥是谁？）\n*   限制条件：\n    *   简洁直接，只回答核心内容。\n    *   不展开无关信息，不做额外解释或补充。\n    *   依据提供的知识库作答。\n    *   如果知识库中没有相关信息，直接告知无法找到，不要编造。\n\n2. **分析知识库：**\n*   来源：“三国演义（含穿越者肚哥）知识文件”。\n*   第二部分（“肚哥穿越背景与核心设定”）中的相关内容：\n    *   “肚哥，原名李肚”（肚哥，原名李肚）。\n    *   “是21世纪一名三国历史发烧友”（是21世纪一名三国历史发烧友）。\n    *   “因一次意外的古籍触碰，于公元184年...穿越至东汉末年”（因一次意外的古籍触碰，于公元184年穿越至东汉末年）。\n    *   “降生于洛阳城郊一户普通农户家”（降生于洛阳城郊一户普通农户家）。\n    *   “以旁观者身份观察三国兴衰全过程，不干预历史进程，仅记录所见所闻”（以旁观者身份观察三国兴衰全过程，不干预历史进程，仅记录所见所闻）。\n    *   “直至司马懿之孙司马炎称帝、建立西晋后，顺利返回未来”（直至司马懿之孙司马炎称帝、建立西晋后，顺利返回未来）。\n\n3. **综合答案：**\n*   身份：原名李肚，21世纪三国历史发烧友。\n*   行动：穿越至东汉末年（公元184年）。\n*   角色：旁观者/观察者，记录事件，不干预历史。\n*   结局：在司马炎称帝后返回未来。\n\n4. **起草回复（内心独白/尝试）：**\n*   *草稿 1：* 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越到东汉末年，不干预历史，只记录所见所闻，最后在司马炎称帝后返回未来。\n*   *针对“简洁直接”进行优化：* 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。\n\n5. **对照限制条件进行最终检查：**\n*   简洁吗？是。\n*   仅限核心内容吗？是。\n*   无额外信息吗？是。\n*   基于知识库吗？是。\n\n6. **生成最终输出：**\n肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。'}, 'finish_reason': 'stop', 'stop_reason': 151336}], 'created': 1776016081, 'model': 'z-ai/glm4.7', 'object': 'chat.completion', 'usage': {'prompt_tokens': 1121, 'completion_tokens': 676, 'total_tokens': 1797, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 64}}, 'nvext': {'worker_id': {'prefill_worker_id': 7587894102417986341, 'prefill_dp_rank': 0, 'decode_worker_id': 7587894102417986341, 'decode_dp_rank': 0}, 'timing': {'request_received_ms': 1776016081624, 'prefill_wait_time_ms': 2.764587, 'prefill_time_ms': 944.440576, 'ttft_ms': 947.205163, 'total_time_ms': 3595.694874, 'kv_hit_rate': 0.0, 'router_queue_depth': 0}}}
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] === 准备发送回复消息 ===
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] Sender object: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Webhook] Sender ID object: {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}
+[Feishu Webhook] User open_id: ou_14559171291ef94117b648bcf9b3a33f
+[Feishu Webhook] Tenant ID: 2
+[Feishu Webhook] Tenant feishu_app_id: cli_a951db0b23799cd1
+[Feishu Webhook] Tenant feishu_app_secret: 7gFN****Ufje
+[Feishu Webhook] 创建 FeishuService 实例...
+[Feishu Webhook] 调用 send_text_message...
+[FeishuService] 请求 access_token
+[FeishuService] URL: https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal
+[FeishuService] App ID: cli_a951db0b23799cd1
+[FeishuService] App Secret: 7gFN****Ufje
+[FeishuService] Payload: {'app_id': 'cli_a951db0b23799cd1', 'app_secret': '7gFNe9NwpTIIqpV4shyTpb5kyLk7Ufje'}
+[FeishuService] Response status: 200
+[FeishuService] Response headers: {'server': 'Tengine', 'content-type': 'application/json', 'content-length': '102', 'connection': 'keep-alive', 'date': 'Sun, 12 Apr 2026 17:48:05 GMT', 'x-tt-logid': '20260413014805C61C76EA7547718D8579', 'x-lgw-dst-svc': 'KyJqME3B74i8rEvdxKzac1-c8qRAnJfFNQYp6zAQGPu0lyPl2qwbwW5CqkHmVpl4mQs_mH4Y-zyIbiKeOL9v_p269mMwMhFC_P9JGulBNOVVuTkUokVmPJ6FWOt1tagDRz5nNHxdegrOCP5gTpZH3_kxA5HRWi6FKQH1wHkPhbaYpClilmRQxRimvZCc47WGLqtL1d2l1QasIb-W3CIXy1gi0AfX4yKI585zasxawFO7lPHVvi-KDP-SozztBnyGx9D1QCdnNvbnM4F-UHfoglEVd6YdITWgozTRlmo9UfGmMoR8Crc-HcFLt1Z84cpsS_wfeBZJmelC8_GeMWEhj7l8pK4RaUaMqbTGJWbtYyuUig9x_z0=', 'tt_stable': '1', 'x-request-id': '5733b56d-c026-4992-8aff-376137820b26', 'request-id': '5733b56d-c026-4992-8aff-376137820b26', 'server-timing': 'inner; dur=80, cdn-cache;desc=MISS,edge;dur=0,origin;dur=127', 'x-tt-trace-host': '014ef139a8785ab5a8dbae08657b1b1d809b2ad02a6db7e297d4abec362b7907f2137957d9a6674c849d84f4c3c6d78c4cb3c3f847f68e6756bc1199bafbca473dc93e35f85a991e1624ce62b6216cc7cd9f933743a371525aa49c56b876381be3', 'x-tt-trace-tag': 'id=03;cdn-cache=miss;type=dyn', 'x-tt-trace-id': '00-260413014805C61C76EA7547718D8579-6A74F84A65F0BB89-00', 'x-timestamp': '1776016085.486', 'via': 'ens-cache32.cn8890[127,0]', 'timing-allow-origin': '*', 'eagleid': '78f09e9017760160853833877e'}
+[FeishuService] Response body: {'code': 0, 'expire': 7200, 'msg': 'ok', 'tenant_access_token': 't-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] 获取 access_token 成功，有效期: 7200 秒
+[FeishuService] 发送文本消息
+[FeishuService] URL: https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id
+[FeishuService] Headers: {'Authorization': 'Bearer t-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] Payload: {'receive_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'msg_type': 'text', 'content': '{"text": "\\u809a\\u54e5\\u539f\\u540d\\u674e\\u809a\\uff0c\\u662f21\\u4e16\\u7eaa\\u7684\\u4e09\\u56fd\\u5386\\u53f2\\u53d1\\u70e7\\u53cb\\u3002\\u4ed6\\u7a7f\\u8d8a\\u81f3\\u4e1c\\u6c49\\u672b\\u5e74\\uff0c\\u4ee5\\u65c1\\u89c2\\u8005\\u8eab\\u4efd\\u89c2\\u5bdf\\u5e76\\u8bb0\\u5f55\\u4e09\\u56fd\\u5174\\u8870\\u5168\\u8fc7\\u7a0b\\uff0c\\u4e0d\\u5e72\\u9884\\u5386\\u53f2\\uff0c\\u5f85\\u53f8\\u9a6c\\u708e\\u79f0\\u5e1d\\u540e\\u8fd4\\u56de\\u672a\\u6765\\u3002"}'}
+[FeishuService] Receive ID: ou_14559171291ef94117b648bcf9b3a33f
+[FeishuService] Receive ID Type: open_id
+[FeishuService] Response status: 200
+[FeishuService] Response body: {'code': 0, 'data': {'body': {'content': '{"text":"肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。"}'}, 'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'create_time': '1776016085916', 'deleted': False, 'message_id': 'om_x100b5289e391e0a4c4f16d4a448df08', 'msg_type': 'text', 'sender': {'id': 'cli_a951db0b23799cd1', 'id_type': 'app_id', 'sender_type': 'app', 'tenant_key': '159d351c6e17d75f'}, 'update_time': '1776016085916', 'updated': False}, 'msg': 'success'}
+[FeishuService] 发送飞书消息成功
+[Feishu Webhook] Send message result: True
+INFO:     123.58.10.239:0 - "POST /api/feishu/webhook/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56128 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56142 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56153 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56164 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56175 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56195 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56208 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+[Feishu Webhook] Received: {"schema":"2.0","header":{"event_id":"e9e10c7229ea6dea4678c7129fe8f77d","token":"fmm3nWMjq7k0ArJKqEaYrbXFu0aSbA0l","create_time":"1775991276548","event_type":"im.message.receive_v1","tenant_key":"159d351c6e17d75f","app_id":"cli_a951db0b23799cd1"},"event":{"message":{"chat_id":"oc_3d8cf2f6deca8535bb40013318346200","chat_type":"p2p","content":"{\"text\":\"肚哥是谁？\"}","create_time":"1775991276243","message_id":"om_x100b5283d00c00a0c4f0deadee20e5c","message_type":"text","update_time":"1775991276243","
+[Feishu Service] Schema: 2.0, Event type: im.message.receive_v1
+[Feishu Service] Event data keys: dict_keys(['schema', 'header', 'event'])
+[Feishu Service] Event content: {'message': {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁？"}', 'create_time': '1775991276243', 'message_id': 'om_x100b5283d00c00a0c4f0deadee20e5c', 'message_type': 'text', 'update_time': '1775991276243', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}, 'sender': {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}}
+[Feishu Service] Message: {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁？"}', 'create_time': '1775991276243', 'message_id': 'om_x100b5283d00c00a0c4f0deadee20e5c', 'message_type': 'text', 'update_time': '1775991276243', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}
+[Feishu Service] Sender: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Service] User message: 肚哥是谁？
+NVIDIA Z-AI response: {'id': 'chatcmpl-1152605d-3c9f-481f-bfd2-2a65cf71ccc6', 'choices': [{'index': 0, 'message': {'content': '肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。', 'role': 'assistant', 'reasoning_content': '1. **分析用户请求：** 用户在问“肚哥是谁？”。\n\n2. **分析约束条件：**\n    *   角色：专业的客服助手。\n    *   要求 1：简洁直接，只回答核心内容。\n    *   要求 2：不展开无关信息，不做额外解释或补充。\n    *   要求 3：如果知识库中有相关内容，依据知识库作答。\n    *   要求 4：如果知识库中没有相关信息，直接告知无法找到，不要编造。\n\n3. **分析知识库：**\n    *   来源：“三国演义（含穿越者肚哥）知识文件”。\n    *   第二部分（肚哥穿越背景与核心设定）：“肚哥，原名李肚，是21世纪一名三国历史发烧友，因一次意外的古籍触碰，于公元184年（黄巾起义爆发之年）穿越至东汉末年...”\n    *   第二部分（续）：“...他深知三国历史走向，为避免改变历史轨迹，始终以“隐士”身份游走于各方势力之间，随身携带一本简易笔记本...记录三国时期的重大事件...”\n    *   第二部分（续）：“...核心目标是完整观察三国兴衰，待司马氏完成统一称帝后，等待穿越契机返回未来。”\n    *   第四部分（核心补充说明）：“肚哥角色定位：纯粹的历史观察者，不干预任何历史事件...”\n\n4. **综合答案：**\n    *   姓名：李肚。\n    *   身份：21世纪的三国历史发烧友。\n    *   动作：穿越至东汉末年。\n    *   角色：旁观者/观察者，记录历史，不干预。\n    *   目标：观察三国兴衰，待司马炎称帝后返回未来。\n\n5. **起草回复（内部草稿 1）：**\n    肚哥原名李肚，是21世纪的三国历史发烧友。他穿越到东汉末年，作为旁观者观察和记录三国兴衰，不干预历史，直到司马炎称帝后返回未来。\n\n6. **根据约束条件优化（简洁性）：**\n    肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。\n\n7. **最终检查：** 是否符合“简洁直接”的要求？是。是否严格依据知识库？是。是否避免了额外信息？是。\n\n8. **最终输出生成。**'}, 'finish_reason': 'stop', 'stop_reason': 151336}], 'created': 1776016502, 'model': 'z-ai/glm4.7', 'object': 'chat.completion', 'usage': {'prompt_tokens': 1170, 'completion_tokens': 592, 'total_tokens': 1762, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 64}}, 'nvext': {'worker_id': {'prefill_worker_id': 7587894088895319833, 'prefill_dp_rank': 0, 'decode_worker_id': 7587894088895319833, 'decode_dp_rank': 0}, 'timing': {'request_received_ms': 1776016502941, 'prefill_wait_time_ms': 4.937016, 'prefill_time_ms': 413.517246, 'ttft_ms': 418.454262, 'total_time_ms': 3048.6940109999996, 'kv_hit_rate': 0.0, 'router_queue_depth': 0}}}
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] === 准备发送回复消息 ===
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] Sender object: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Webhook] Sender ID object: {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}
+[Feishu Webhook] User open_id: ou_14559171291ef94117b648bcf9b3a33f
+[Feishu Webhook] Tenant ID: 2
+[Feishu Webhook] Tenant feishu_app_id: cli_a951db0b23799cd1
+[Feishu Webhook] Tenant feishu_app_secret: 7gFN****Ufje
+[Feishu Webhook] 创建 FeishuService 实例...
+[Feishu Webhook] 调用 send_text_message...
+[FeishuService] 请求 access_token
+[FeishuService] URL: https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal
+[FeishuService] App ID: cli_a951db0b23799cd1
+[FeishuService] App Secret: 7gFN****Ufje
+[FeishuService] Payload: {'app_id': 'cli_a951db0b23799cd1', 'app_secret': '7gFNe9NwpTIIqpV4shyTpb5kyLk7Ufje'}
+[FeishuService] Response status: 200
+[FeishuService] Response headers: {'server': 'Tengine', 'content-type': 'application/json', 'content-length': '102', 'connection': 'keep-alive', 'date': 'Sun, 12 Apr 2026 17:55:06 GMT', 'x-tt-logid': '20260413015506A5742823F3538F730FBE', 'x-lgw-dst-svc': 'tlTxqKQK_S-Z3kvuDJSkKmrduaastwAPlbpWgdjry5KNXD6AqkHn54V8_vBpS9Coyxp6L5295ubuYjHcDC-QkHJdMfNfyr0DU56p38WCY-uZQ_tZ-NqQeEoJfxV5YymmSA-XO7ZXR5CCNYR_XkPW19efp7qbV9nwxecLV9-MJ5T19V1zM7If8eBv5wf4iKE-_efW7M3PV62gRvmxI3oINzBYHvqhdOIbX5Y-r-KyZ8Tpr0PbhIQRo7wTv3_sq9YUVOOUY6x1P78NPM4mwEeLJHc-GkiDCjvhFJwdrO-3AjMj1wC3LL1iWMlGheszQznXLBj6btxIKN4vJvDkMJakN-3mCaBciHPdXCs50qAXA3jaVlOW8ew=', 'tt_stable': '1', 'x-request-id': 'c18e3287-d8ae-404b-91a6-6ab3c4da50de', 'request-id': 'c18e3287-d8ae-404b-91a6-6ab3c4da50de', 'server-timing': 'inner; dur=49, cdn-cache;desc=MISS,edge;dur=0,origin;dur=99', 'x-tt-trace-host': '01e7ef777dc9ddd7461eb76041411d57a1ac1414e002d7ae31f686f3983744f633f8d85af7028fa0e31f699875e602a4cc2a93e496432b9ff9e0b47734b00baee5f2cf2545de7272960b2c9bf1111121e7d76cc2eb007ca27361e6a4513f4fddff', 'x-tt-trace-tag': 'id=03;cdn-cache=miss;type=dyn', 'x-tt-trace-id': '00-260413015506A5742823F3538F730FBE-5DEE18C00B45093A-00', 'x-timestamp': '1776016506.246', 'via': 'cache26.cn8950[99,0]', 'timing-allow-origin': '*', 'eagleid': '6f2d4f1f17760165061656808e'}
+[FeishuService] Response body: {'code': 0, 'expire': 6779, 'msg': 'ok', 'tenant_access_token': 't-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] 获取 access_token 成功，有效期: 6779 秒
+[FeishuService] 发送文本消息
+[FeishuService] URL: https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id
+[FeishuService] Headers: {'Authorization': 'Bearer t-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] Payload: {'receive_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'msg_type': 'text', 'content': '{"text": "\\u809a\\u54e5\\u539f\\u540d\\u674e\\u809a\\uff0c\\u662f21\\u4e16\\u7eaa\\u7684\\u4e09\\u56fd\\u5386\\u53f2\\u53d1\\u70e7\\u53cb\\u3002\\u4ed6\\u7a7f\\u8d8a\\u81f3\\u4e1c\\u6c49\\u672b\\u5e74\\uff0c\\u4ee5\\u65c1\\u89c2\\u8005\\u8eab\\u4efd\\u89c2\\u5bdf\\u5e76\\u8bb0\\u5f55\\u4e09\\u56fd\\u5174\\u8870\\u5168\\u8fc7\\u7a0b\\uff0c\\u4e0d\\u5e72\\u9884\\u5386\\u53f2\\uff0c\\u5f85\\u53f8\\u9a6c\\u708e\\u79f0\\u5e1d\\u540e\\u8fd4\\u56de\\u672a\\u6765\\u3002"}'}
+[FeishuService] Receive ID: ou_14559171291ef94117b648bcf9b3a33f
+[FeishuService] Receive ID Type: open_id
+[FeishuService] Response status: 200
+[FeishuService] Response body: {'code': 0, 'data': {'body': {'content': '{"text":"肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。"}'}, 'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'create_time': '1776016506774', 'deleted': False, 'message_id': 'om_x100b52898967f0a4c4eb48553131c8c', 'msg_type': 'text', 'sender': {'id': 'cli_a951db0b23799cd1', 'id_type': 'app_id', 'sender_type': 'app', 'tenant_key': '159d351c6e17d75f'}, 'update_time': '1776016506774', 'updated': False}, 'msg': 'success'}
+[FeishuService] 发送飞书消息成功
+[Feishu Webhook] Send message result: True
+INFO:     101.126.59.8:0 - "POST /api/feishu/webhook/2 HTTP/1.1" 200 OK
+[Feishu Webhook] Received: {"schema":"2.0","header":{"event_id":"e378810cb794e568af51d79babcd0892","token":"fmm3nWMjq7k0ArJKqEaYrbXFu0aSbA0l","create_time":"1775990982271","event_type":"im.message.receive_v1","tenant_key":"159d351c6e17d75f","app_id":"cli_a951db0b23799cd1"},"event":{"message":{"chat_id":"oc_3d8cf2f6deca8535bb40013318346200","chat_type":"p2p","content":"{\"text\":\"肚哥是谁\"}","create_time":"1775990981993","message_id":"om_x100b5283c29044a4c10642d16585f8d","message_type":"text","update_time":"1775990981993","u
+[Feishu Service] Schema: 2.0, Event type: im.message.receive_v1
+[Feishu Service] Event data keys: dict_keys(['schema', 'header', 'event'])
+[Feishu Service] Event content: {'message': {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁"}', 'create_time': '1775990981993', 'message_id': 'om_x100b5283c29044a4c10642d16585f8d', 'message_type': 'text', 'update_time': '1775990981993', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}, 'sender': {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}}
+[Feishu Service] Message: {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁"}', 'create_time': '1775990981993', 'message_id': 'om_x100b5283c29044a4c10642d16585f8d', 'message_type': 'text', 'update_time': '1775990981993', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}
+[Feishu Service] Sender: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Service] User message: 肚哥是谁
+NVIDIA Z-AI response: {'id': 'chatcmpl-89e488ca-b31a-40cf-89f2-d22f0f4b09b3', 'choices': [{'index': 0, 'message': {'content': '肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。', 'role': 'assistant', 'reasoning_content': '1. **分析用户请求：**\n    *   用户提问：“肚哥是谁”（肚哥是谁？）。\n    *   限制条件：\n        *   简洁直接，只回答核心内容。\n        *   不展开无关信息，不做额外解释或补充。\n        *   依据提供的知识库作答。\n        *   如果知识库中没有相关信息，直接告知无法找到，不要编造。\n\n2. **分析知识库：**\n    *   来源：“三国演义（含穿越者肚哥）知识文件”。\n    *   第二部分（“肚哥穿越背景与核心设定”）中的相关内容：\n        *   “肚哥，原名李肚”（肚哥，原名李肚）。\n        *   “是21世纪一名三国历史发烧友”（是21世纪的一名三国历史发烧友）。\n        *   “因一次意外的古籍触碰，于公元184年...穿越至东汉末年”（因一次意外的古籍触碰，于公元184年穿越至东汉末年）。\n        *   “降生于洛阳城郊一户普通农户家”（降生于洛阳城郊一户普通农户家）。\n        *   “他深知三国历史走向，为避免改变历史轨迹，始终以“隐士”身份游走于各方势力之间”（深知历史走向，为避免改变历史，以“隐士”身份游走于各方势力之间）。\n        *   “随身携带一本简易笔记本...记录三国时期的重大事件...”（携带笔记本，记录重大事件...）。\n        *   “肚哥无过人武力与权谋能力，擅长观察与总结”（无过人武力或权谋能力，擅长观察与总结）。\n        *   “见证了从黄巾起义到西晋建立的全过程”（见证了从黄巾起义到西晋建立的全过程）。\n        *   “核心目标是完整观察三国兴衰，待司马氏完成统一称帝后，等待穿越契机返回未来”（核心目标是观察兴衰，待司马氏统一称帝后，等待契机返回未来）。\n\n3. **综合答案：**\n    *   身份：原名李肚，21世纪三国历史发烧友。\n    *   行动：穿越至东汉末年（公元184年）。\n    *   角色：旁观者/隐士，记录事件，不干预历史。\n    *   目标：观察三国兴衰直至西晋建立，然后返回未来。\n\n4. **起草回复（根据限制条件进行迭代优化）：**\n\n    *   *草稿 1（太详细）：* 肚哥原名李肚，是21世纪的三国历史发烧友。他因意外触碰古籍穿越到公元184年的东汉末年，降生在洛阳郊区的农户家。他为了不改变历史，以隐士身份游走各方势力，用笔记本记录所见所闻。他见证了从黄巾起义到西晋建立的全过程，目标是等司马炎称帝后返回未来。\n\n    *   *草稿 2（更简洁）：* 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。\n\n    *   *草稿 3（严格遵循“简洁直接”）：* 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。\n\n5. **最终润色：** 草稿 2/3 看起来不错。它涵盖了“是谁”（李肚，发烧友）、“做了什么”（穿越，观察，记录）以及“目标”（返回未来）。\n\n    *   让我们再次检查知识库中的具体措辞。\n    *   “肚哥，原名李肚，是21世纪一名三国历史发烧友... 始终以“隐士”身份... 记录... 见证了... 待司马氏完成统一称帝后... 返回未来。”\n\n    *   选定的回复：肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。\n\n6. **最终输出生成。**'}, 'finish_reason': 'stop', 'stop_reason': 151336}], 'created': 1776016510, 'model': 'z-ai/glm4.7', 'object': 'chat.completion', 'usage': {'prompt_tokens': 1359, 'completion_tokens': 976, 'total_tokens': 2335, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 64}}, 'nvext': {'worker_id': {'prefill_worker_id': 7587894088895319835, 'prefill_dp_rank': 0, 'decode_worker_id': 7587894088895319835, 'decode_dp_rank': 0}, 'timing': {'request_received_ms': 1776016510698, 'prefill_wait_time_ms': 2.9403699999999997, 'prefill_time_ms': 322.656898, 'ttft_ms': 325.597268, 'total_time_ms': 14040.056397, 'kv_hit_rate': 0.0, 'router_queue_depth': 0}}}
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] === 准备发送回复消息 ===
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] Sender object: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Webhook] Sender ID object: {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}
+[Feishu Webhook] User open_id: ou_14559171291ef94117b648bcf9b3a33f
+[Feishu Webhook] Tenant ID: 2
+[Feishu Webhook] Tenant feishu_app_id: cli_a951db0b23799cd1
+[Feishu Webhook] Tenant feishu_app_secret: 7gFN****Ufje
+[Feishu Webhook] 创建 FeishuService 实例...
+[Feishu Webhook] 调用 send_text_message...
+[FeishuService] 请求 access_token
+[FeishuService] URL: https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal
+[FeishuService] App ID: cli_a951db0b23799cd1
+[FeishuService] App Secret: 7gFN****Ufje
+[FeishuService] Payload: {'app_id': 'cli_a951db0b23799cd1', 'app_secret': '7gFNe9NwpTIIqpV4shyTpb5kyLk7Ufje'}
+[FeishuService] Response status: 200
+[FeishuService] Response headers: {'server': 'Tengine', 'content-type': 'application/json', 'content-length': '102', 'connection': 'keep-alive', 'date': 'Sun, 12 Apr 2026 17:55:24 GMT', 'x-tt-logid': '20260413015524B6922B21CA9AFB728935', 'x-lgw-dst-svc': 'Hwl8por5TYRyRx8SMm00xETKsQXKDYPKpFSV3gmbhF2OqlOpX_LtPUfhIDF263I8gQ5KRAKJ-nOxkoC2TZ61EhTUe7UraFtzPF2OWjhiOCpTCwLhFygJvE2QL96goZIz2mYgTRQnk3JNJLwkoUQRW522YRTpbwRUCZ2nQluDiDd4vqrjcjC_Jk0QeYrFC2vTMlYi6DEahHi8ccMiFWjjcts-46Dh_bATTHs2dxuVgvw78YJmbvzzU2rXXZGFUcUp_MQygfT0X6fEi52P4Yp9fwbSplRCp69OufR9G68QvJ5faW1aFd3qToKX7FBjcB0QhH6NkWCtvCYbf7xv36AA1IA8XcBfw6Z1sribxcPlz9ypTmtl8M0=', 'tt_stable': '1', 'x-request-id': '75097475-317e-4d2c-8516-13d028eb6397', 'request-id': '75097475-317e-4d2c-8516-13d028eb6397', 'server-timing': 'inner; dur=50, cdn-cache;desc=MISS,edge;dur=0,origin;dur=98', 'x-tt-trace-host': '014ef139a8785ab5a8dbae08657b1b1d80a8058e1dafac1ba7422d9094a932beee19c1b620357ce40138108f7620591b3c4393e94604b5b377e7ba31dbf74b73d200f7a89e60739dafb2f458312edc28d8da739d571733e1bafc8fb15677bd75e5', 'x-tt-trace-tag': 'id=03;cdn-cache=miss;type=dyn', 'x-tt-trace-id': '00-260413015524B6922B21CA9AFB728935-6BA6882241283A42-00', 'x-timestamp': '1776016524.965', 'via': 'cache4.cn7715[98,0]', 'timing-allow-origin': '*', 'eagleid': '78e9cf1817760165248937444e'}
+[FeishuService] Response body: {'code': 0, 'expire': 6761, 'msg': 'ok', 'tenant_access_token': 't-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] 获取 access_token 成功，有效期: 6761 秒
+[FeishuService] 发送文本消息
+[FeishuService] URL: https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id
+[FeishuService] Headers: {'Authorization': 'Bearer t-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] Payload: {'receive_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'msg_type': 'text', 'content': '{"text": "\\u809a\\u54e5\\u539f\\u540d\\u674e\\u809a\\uff0c\\u662f21\\u4e16\\u7eaa\\u7684\\u4e09\\u56fd\\u5386\\u53f2\\u53d1\\u70e7\\u53cb\\u3002\\u4ed6\\u7a7f\\u8d8a\\u81f3\\u4e1c\\u6c49\\u672b\\u5e74\\uff0c\\u4ee5\\u65c1\\u89c2\\u8005\\u8eab\\u4efd\\u89c2\\u5bdf\\u5e76\\u8bb0\\u5f55\\u4e09\\u56fd\\u5174\\u8870\\u5168\\u8fc7\\u7a0b\\uff0c\\u4e0d\\u5e72\\u9884\\u5386\\u53f2\\uff0c\\u5f85\\u53f8\\u9a6c\\u708e\\u79f0\\u5e1d\\u540e\\u8fd4\\u56de\\u672a\\u6765\\u3002"}'}
+[FeishuService] Receive ID: ou_14559171291ef94117b648bcf9b3a33f
+[FeishuService] Receive ID Type: open_id
+[FeishuService] Response status: 200
+[FeishuService] Response body: {'code': 0, 'data': {'body': {'content': '{"text":"肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。"}'}, 'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'create_time': '1776016525371', 'deleted': False, 'message_id': 'om_x100b5289861998a4c3478cfa96372ba', 'msg_type': 'text', 'sender': {'id': 'cli_a951db0b23799cd1', 'id_type': 'app_id', 'sender_type': 'app', 'tenant_key': '159d351c6e17d75f'}, 'update_time': '1776016525371', 'updated': False}, 'msg': 'success'}
+[FeishuService] 发送飞书消息成功
+[Feishu Webhook] Send message result: True
+INFO:     123.58.10.238:0 - "POST /api/feishu/webhook/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56240 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56254 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56264 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56282 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56294 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56301 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56312 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+[Feishu Webhook] Received: {"schema":"2.0","header":{"event_id":"c5127574d451a9437903728157c21067","token":"fmm3nWMjq7k0ArJKqEaYrbXFu0aSbA0l","create_time":"1775991402870","event_type":"im.message.receive_v1","tenant_key":"159d351c6e17d75f","app_id":"cli_a951db0b23799cd1"},"event":{"message":{"chat_id":"oc_3d8cf2f6deca8535bb40013318346200","chat_type":"p2p","content":"{\"text\":\"肚哥是谁？\"}","create_time":"1775991402568","message_id":"om_x100b5283e86abca4c2c8ba04d07897f","message_type":"text","update_time":"1775991402568","
+[Feishu Service] Schema: 2.0, Event type: im.message.receive_v1
+[Feishu Service] Event data keys: dict_keys(['schema', 'header', 'event'])
+[Feishu Service] Event content: {'message': {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁？"}', 'create_time': '1775991402568', 'message_id': 'om_x100b5283e86abca4c2c8ba04d07897f', 'message_type': 'text', 'update_time': '1775991402568', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}, 'sender': {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}}
+[Feishu Service] Message: {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁？"}', 'create_time': '1775991402568', 'message_id': 'om_x100b5283e86abca4c2c8ba04d07897f', 'message_type': 'text', 'update_time': '1775991402568', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}
+[Feishu Service] Sender: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Service] User message: 肚哥是谁？
+NVIDIA Z-AI response: {'id': 'chatcmpl-2c3cac0f-f48e-4bb5-b754-ce8ae177ede7', 'choices': [{'index': 0, 'message': {'content': '肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。', 'role': 'assistant', 'reasoning_content': '1. **分析用户请求：**\n    *   用户提问：“肚哥是谁？”（肚哥是谁？）\n    *   限制条件：\n        *   简洁直接，只回答核心内容。\n        *   不展开无关信息，不做额外解释或补充。\n        *   依据提供的知识库作答。\n        *   如果知识库中没有相关信息，直接告知无法找到，不要编造。\n\n2. **分析知识库：**\n    *   来源：“三国演义（含穿越者肚哥）知识文件”。\n    *   第二部分（“肚哥穿越背景与核心设定”）：\n        *   “肚哥，原名李肚”（肚哥，原名李肚）。\n        *   “是21世纪一名三国历史发烧友”（是21世纪一名三国历史发烧友）。\n        *   “因一次意外的古籍触碰，于公元184年...穿越至东汉末年”（因一次意外的古籍触碰，于公元184年穿越至东汉末年）。\n        *   “降生于洛阳城郊一户普通农户家”（降生于洛阳城郊一户普通农户家）。\n        *   “他深知三国历史走向，为避免改变历史轨迹，始终以“隐士”身份游走于各方势力之间”（他深知三国历史走向，为避免改变历史轨迹，始终以“隐士”身份游走于各方势力之间）。\n        *   “随身携带一本简易笔记本...记录三国时期的重大事件...”（随身携带一本简易笔记本...记录三国时期的重大事件...）。\n        *   “核心目标是完整观察三国兴衰，待司马氏完成统一称帝后，等待穿越契机返回未来”（核心目标是完整观察三国兴衰，待司马氏完成统一称帝后，等待穿越契机返回未来）。\n    *   第四部分（“核心补充说明”）：\n        *   “肚哥角色定位：纯粹的历史观察者，不干预任何历史事件...”（肚哥角色定位：纯粹的历史观察者，不干预任何历史事件...）。\n\n3. **综合答案：**\n    *   身份：李肚（原名），21世纪三国历史发烧友。\n    *   行动：穿越至东汉末年（公元184年）。\n    *   角色：旁观者/观察者（隐士），记录事件，不干预历史。\n    *   目标：观察三国兴衰直至司马炎称帝，然后返回未来。\n\n4. **起草回复（迭代优化）：**\n    *   *草稿 1：* 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越到东汉末年，作为旁观者记录三国兴衰，不干预历史，直到司马炎称帝后返回未来。\n    *   *草稿 2（更简洁）：* 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。\n\n5. **对照限制条件进行最终检查：**\n    *   简洁吗？是。\n    *   核心内容？是（姓名、身份、行动、角色、目标）。\n    *   无额外信息？是。\n    *   基于知识库？是。\n\n6. **最终输出生成：**（与之前的正确回复一致）。\n    肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。'}, 'finish_reason': 'stop', 'stop_reason': 151336}], 'created': 1776016932, 'model': 'z-ai/glm4.7', 'object': 'chat.completion', 'usage': {'prompt_tokens': 1174, 'completion_tokens': 816, 'total_tokens': 1990, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 64}}, 'nvext': {'worker_id': {'prefill_worker_id': 7587894087912745755, 'prefill_dp_rank': 0, 'decode_worker_id': 7587894087912745755, 'decode_dp_rank': 0}, 'timing': {'request_received_ms': 1776016932532, 'prefill_wait_time_ms': 3.44499, 'prefill_time_ms': 364.73654500000004, 'ttft_ms': 368.181535, 'total_time_ms': 6392.638594, 'kv_hit_rate': 0.0, 'router_queue_depth': 0}}}
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] === 准备发送回复消息 ===
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] Sender object: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Webhook] Sender ID object: {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}
+[Feishu Webhook] User open_id: ou_14559171291ef94117b648bcf9b3a33f
+[Feishu Webhook] Tenant ID: 2
+[Feishu Webhook] Tenant feishu_app_id: cli_a951db0b23799cd1
+[Feishu Webhook] Tenant feishu_app_secret: 7gFN****Ufje
+[Feishu Webhook] 创建 FeishuService 实例...
+[Feishu Webhook] 调用 send_text_message...
+[FeishuService] 请求 access_token
+[FeishuService] URL: https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal
+[FeishuService] App ID: cli_a951db0b23799cd1
+[FeishuService] App Secret: 7gFN****Ufje
+[FeishuService] Payload: {'app_id': 'cli_a951db0b23799cd1', 'app_secret': '7gFNe9NwpTIIqpV4shyTpb5kyLk7Ufje'}
+[FeishuService] Response status: 200
+[FeishuService] Response headers: {'server': 'Tengine', 'content-type': 'application/json', 'content-length': '102', 'connection': 'keep-alive', 'date': 'Sun, 12 Apr 2026 18:02:19 GMT', 'x-tt-logid': '2026041302021986AAA79A208CE17A9703', 'x-lgw-dst-svc': 'hVbWS5lJIzmoFdGCtZmlPG-_uda-N4vmlO2Qbl-BqwcTbeL5FEykqc_IfUT8fMANXj6hfJFosIb8hDpLGCv_xbRAfkYu4eu3159g1OMcY599oLBQLJjl2zjL0-8CYX1FA7wv27yjxyJxtknC1btogSQn-m5fOvxEK_6XQO2C9qPCBsWJoSWEIWjm3ZuUqSJTDFOLw6bqzEoIXkp_ekAZI3zwvbfoJMY20OHAdwaJjZGUctCDIEZqtAQa5yZDlJENsLCITq_O4HJZa3IcZ0pYTWnpD79ugdRmt6wCTGvXTUggmKIimhcFNhKiEtP7ZyhBwpQbnTPpj43X6zUpobGep1TLvuiEyhMyRhsFfghxd4IodSI9mQE=', 'tt_stable': '1', 'x-request-id': '7cce6578-8fb3-4c1f-bd03-6fc2cfebb6bc', 'request-id': '7cce6578-8fb3-4c1f-bd03-6fc2cfebb6bc', 'server-timing': 'inner; dur=55, cdn-cache;desc=MISS,edge;dur=0,origin;dur=101', 'x-tt-trace-host': '01e7ef777dc9ddd7461eb76041411d57a1d638d3a0bcdc061b193ecd2933917f6a0d82199ff935e351f17414b6bcc99710d8f20de50acaa033a2ce662e32f6686a03f224c52703b29a86a9807da913ab4f8ddc912a2a09766b1a36dc5bd57e58c2', 'x-tt-trace-tag': 'id=03;cdn-cache=miss;type=dyn', 'x-tt-trace-id': '00-26041302021986AAA79A208CE17A9703-4E9EBB7868CC7035-00', 'x-timestamp': '1776016939.222', 'via': 'ens-cache28.cn8890[101,0]', 'timing-allow-origin': '*', 'eagleid': '78f09e8c17760169391456597e'}
+[FeishuService] Response body: {'code': 0, 'expire': 6346, 'msg': 'ok', 'tenant_access_token': 't-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] 获取 access_token 成功，有效期: 6346 秒
+[FeishuService] 发送文本消息
+[FeishuService] URL: https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id
+[FeishuService] Headers: {'Authorization': 'Bearer t-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] Payload: {'receive_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'msg_type': 'text', 'content': '{"text": "\\u809a\\u54e5\\u539f\\u540d\\u674e\\u809a\\uff0c\\u662f21\\u4e16\\u7eaa\\u7684\\u4e09\\u56fd\\u5386\\u53f2\\u53d1\\u70e7\\u53cb\\u3002\\u4ed6\\u7a7f\\u8d8a\\u81f3\\u4e1c\\u6c49\\u672b\\u5e74\\uff0c\\u4ee5\\u65c1\\u89c2\\u8005\\u8eab\\u4efd\\u89c2\\u5bdf\\u5e76\\u8bb0\\u5f55\\u4e09\\u56fd\\u5174\\u8870\\u5168\\u8fc7\\u7a0b\\uff0c\\u4e0d\\u5e72\\u9884\\u5386\\u53f2\\uff0c\\u5f85\\u53f8\\u9a6c\\u708e\\u79f0\\u5e1d\\u540e\\u8fd4\\u56de\\u672a\\u6765\\u3002"}'}
+[FeishuService] Receive ID: ou_14559171291ef94117b648bcf9b3a33f
+[FeishuService] Receive ID Type: open_id
+[FeishuService] Response status: 200
+[FeishuService] Response body: {'code': 0, 'data': {'body': {'content': '{"text":"肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。"}'}, 'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'create_time': '1776016939638', 'deleted': False, 'message_id': 'om_x100b5289ac75b8a0c3f9d1391212227', 'msg_type': 'text', 'sender': {'id': 'cli_a951db0b23799cd1', 'id_type': 'app_id', 'sender_type': 'app', 'tenant_key': '159d351c6e17d75f'}, 'update_time': '1776016939638', 'updated': False}, 'msg': 'success'}
+[FeishuService] 发送飞书消息成功
+[Feishu Webhook] Send message result: True
+INFO:     123.58.10.239:0 - "POST /api/feishu/webhook/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56329 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56349 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56369 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56379 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+[Feishu Webhook] Received: {"schema":"2.0","header":{"event_id":"8da931bdc57c4df3326704ef2e089b15","token":"fmm3nWMjq7k0ArJKqEaYrbXFu0aSbA0l","create_time":"1775991650432","event_type":"im.message.receive_v1","tenant_key":"159d351c6e17d75f","app_id":"cli_a951db0b23799cd1"},"event":{"message":{"chat_id":"oc_3d8cf2f6deca8535bb40013318346200","chat_type":"p2p","content":"{\"text\":\"肚哥是谁\"}","create_time":"1775991650104","message_id":"om_x100b5283f8d2eca0c4df7da3740b9ae","message_type":"text","update_time":"1775991650104","u
+[Feishu Service] Schema: 2.0, Event type: im.message.receive_v1
+[Feishu Service] Event data keys: dict_keys(['schema', 'header', 'event'])
+[Feishu Service] Event content: {'message': {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁"}', 'create_time': '1775991650104', 'message_id': 'om_x100b5283f8d2eca0c4df7da3740b9ae', 'message_type': 'text', 'update_time': '1775991650104', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}, 'sender': {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}}
+[Feishu Service] Message: {'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'chat_type': 'p2p', 'content': '{"text":"肚哥是谁"}', 'create_time': '1775991650104', 'message_id': 'om_x100b5283f8d2eca0c4df7da3740b9ae', 'message_type': 'text', 'update_time': '1775991650104', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.268 Safari/537.36 Lark/7.65.8 LarkLocale/zh_CN ttnet SDK-Version/7.65.14'}
+[Feishu Service] Sender: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Service] User message: 肚哥是谁
+NVIDIA Z-AI response: {'id': 'chatcmpl-e09b0cbd-41fd-47e6-b280-4f36c799d770', 'choices': [{'index': 0, 'message': {'content': '肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。', 'role': 'assistant', 'reasoning_content': '1. **分析用户请求：**\n    *   用户提问：“肚哥是谁”（肚哥是谁？）。\n    *   限制条件：\n        *   简洁直接，只回答核心内容。\n        *   不展开无关信息，不做额外解释或补充。\n        *   依据提供的知识库作答。\n        *   如果知识库中没有相关信息，直接告知无法找到，不要编造。\n\n2. **分析知识库：**\n    *   来源：“三国演义（含穿越者肚哥）知识文件”。\n    *   第二部分（“肚哥穿越背景与核心设定”）：\n        *   “肚哥，原名李肚”（肚哥，原名李肚）。\n        *   “是21世纪一名三国历史发烧友”（是21世纪一名三国历史发烧友）。\n        *   “因一次意外的古籍触碰，于公元184年...穿越至东汉末年”（因一次意外的古籍触碰，于公元184年穿越至东汉末年）。\n        *   “降生于洛阳城郊一户普通农户家”（降生于洛阳城郊一户普通农户家）。\n        *   “他深知三国历史走向，为避免改变历史轨迹，始终以“隐士”身份游走于各方势力之间”（他深知三国历史走向，为避免改变历史轨迹，始终以“隐士”身份游走于各方势力之间）。\n        *   “随身携带一本简易笔记本...记录三国时期的重大事件...”（随身携带一本简易笔记本...记录三国时期的重大事件...）。\n        *   “肚哥无过人武力与权谋能力，擅长观察与总结”（肚哥无过人武力与权谋能力，擅长观察与总结）。\n        *   “见证了从黄巾起义到西晋建立的全过程”（见证了从黄巾起义到西晋建立的全过程）。\n        *   “核心目标是完整观察三国兴衰，待司马氏完成统一称帝后，等待穿越契机返回未来”（核心目标是完整观察三国兴衰，待司马氏完成统一称帝后，等待穿越契机返回未来）。\n\n3. **综合答案：**\n    *   身份：原名李肚，21世纪三国历史发烧友。\n    *   行为：穿越至东汉末年，以旁观者/隐士身份观察并记录历史，不干预。\n    *   目标/结局：见证从黄巾起义到西晋建立的全过程，待司马炎称帝后返回未来。\n\n4. **起草回复（迭代优化）：**\n    *   *草稿 1：* 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越到东汉末年，以隐士身份观察记录历史，不干预历史进程，直到司马炎称帝后返回未来。\n    *   *草稿 2（更简洁）：* 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。\n\n5. **对照限制条件进行最终检查：**\n    *   简洁吗？是。\n    *   只回答核心内容吗？是。\n    *   依据知识库吗？是。\n    *   没有编造吗？是。\n\n6. **最终输出生成：**（与之前的轮次一致，因为问题完全相同）。\n    肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。'}, 'finish_reason': 'stop', 'stop_reason': 151336}], 'created': 1776017182, 'model': 'z-ai/glm4.7', 'object': 'chat.completion', 'usage': {'prompt_tokens': 1398, 'completion_tokens': 827, 'total_tokens': 2225, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 64}}, 'nvext': {'worker_id': {'prefill_worker_id': 7587894102417986330, 'prefill_dp_rank': 0, 'decode_worker_id': 7587894102417986330, 'decode_dp_rank': 0}, 'timing': {'request_received_ms': 1776017182678, 'prefill_wait_time_ms': 3.327182, 'prefill_time_ms': 419.131723, 'ttft_ms': 422.458905, 'total_time_ms': 5405.238854, 'kv_hit_rate': 0.0, 'router_queue_depth': 0}}}
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] === 准备发送回复消息 ===
+[Feishu Webhook] Reply content: 肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。
+[Feishu Webhook] Sender object: {'sender_id': {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}, 'sender_type': 'user', 'tenant_key': '159d351c6e17d75f'}
+[Feishu Webhook] Sender ID object: {'open_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'union_id': 'on_bfa7e6f7e4586f3193bb5eafd336eb07', 'user_id': None}
+[Feishu Webhook] User open_id: ou_14559171291ef94117b648bcf9b3a33f
+[Feishu Webhook] Tenant ID: 2
+[Feishu Webhook] Tenant feishu_app_id: cli_a951db0b23799cd1
+[Feishu Webhook] Tenant feishu_app_secret: 7gFN****Ufje
+[Feishu Webhook] 创建 FeishuService 实例...
+[Feishu Webhook] 调用 send_text_message...
+[FeishuService] 请求 access_token
+[FeishuService] URL: https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal
+[FeishuService] App ID: cli_a951db0b23799cd1
+[FeishuService] App Secret: 7gFN****Ufje
+[FeishuService] Payload: {'app_id': 'cli_a951db0b23799cd1', 'app_secret': '7gFNe9NwpTIIqpV4shyTpb5kyLk7Ufje'}
+[FeishuService] Response status: 200
+[FeishuService] Response headers: {'server': 'Tengine', 'content-type': 'application/json', 'content-length': '102', 'connection': 'keep-alive', 'date': 'Sun, 12 Apr 2026 18:06:28 GMT', 'x-tt-logid': '20260413020628850D265CD13412551D85', 'x-lgw-dst-svc': 'ChJD_Kn89F3wUxy5QlVcvRJmoRPnz3DehqdtBqfhhzhw9HsX5j30ncE0eZBRsOsJGaz1i_fqPZZmo8lhx5YPhUOwgRYb5JyGw6HdHhOVWjPpK8_ndEIHaXkz40T6nyWlUM6QXwRP0tBn6kBNnwI5oUK5GOSgW2jJip0oGjNWYoavnDNNFOp3DmBIPKrR3Ys1pRh2OhS74Yt-UMUVwWO8GbjSAypqG5DYSaxmgQHMF6zu7SGudK8BpIR13HY-pT4YwToB-O-Lbbs1gatHOwiMRJXacmYoZ_p_i61GoWwcf1swyrEXhGuPUPqg62HNlUOSlXXf5dBdLsYrs_5gS_1i5eWS4aHqwJaj31j-tpmpl4x1TkiziVM=', 'tt_stable': '1', 'x-request-id': '8e435b6d-4fb2-43f9-abb1-76557d4ed016', 'request-id': '8e435b6d-4fb2-43f9-abb1-76557d4ed016', 'server-timing': 'inner; dur=51, cdn-cache;desc=MISS,edge;dur=0,origin;dur=183', 'x-tt-trace-host': '014ef139a8785ab5a8dbae08657b1b1d80b08b2417bce0df485bdf37a35c999bfa84a469c92c9923b61274661037857a53fc7e0368dffa7b7443b0bdd476eb91d9ac723985aac4d249f4ead6f8742f5289b1935117bf5e698d23272df281d3cf96', 'x-tt-trace-tag': 'id=03;cdn-cache=miss;type=dyn', 'x-tt-trace-id': '00-260413020628850D265CD13412551D85-737109220FC3E467-00', 'x-timestamp': '1776017188.465', 'via': 'ens-cache1.cn8890[183,0]', 'timing-allow-origin': '*', 'eagleid': '78f09e1517760171883047692e'}
+[FeishuService] Response body: {'code': 0, 'expire': 6097, 'msg': 'ok', 'tenant_access_token': 't-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] 获取 access_token 成功，有效期: 6097 秒
+[FeishuService] 发送文本消息
+[FeishuService] URL: https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id
+[FeishuService] Headers: {'Authorization': 'Bearer t-g1044d1MBGW3UJ6JRB4FUSVTL7VLX6ASRZEHGJ4P'}
+[FeishuService] Payload: {'receive_id': 'ou_14559171291ef94117b648bcf9b3a33f', 'msg_type': 'text', 'content': '{"text": "\\u809a\\u54e5\\u539f\\u540d\\u674e\\u809a\\uff0c\\u662f21\\u4e16\\u7eaa\\u7684\\u4e09\\u56fd\\u5386\\u53f2\\u53d1\\u70e7\\u53cb\\u3002\\u4ed6\\u7a7f\\u8d8a\\u81f3\\u4e1c\\u6c49\\u672b\\u5e74\\uff0c\\u4ee5\\u65c1\\u89c2\\u8005\\u8eab\\u4efd\\u89c2\\u5bdf\\u5e76\\u8bb0\\u5f55\\u4e09\\u56fd\\u5174\\u8870\\u5168\\u8fc7\\u7a0b\\uff0c\\u4e0d\\u5e72\\u9884\\u5386\\u53f2\\uff0c\\u5f85\\u53f8\\u9a6c\\u708e\\u79f0\\u5e1d\\u540e\\u8fd4\\u56de\\u672a\\u6765\\u3002"}'}
+[FeishuService] Receive ID: ou_14559171291ef94117b648bcf9b3a33f
+[FeishuService] Receive ID Type: open_id
+[FeishuService] Response status: 200
+[FeishuService] Response body: {'code': 0, 'data': {'body': {'content': '{"text":"肚哥原名李肚，是21世纪的三国历史发烧友。他穿越至东汉末年，以旁观者身份观察并记录三国兴衰全过程，不干预历史，待司马炎称帝后返回未来。"}'}, 'chat_id': 'oc_3d8cf2f6deca8535bb40013318346200', 'create_time': '1776017188861', 'deleted': False, 'message_id': 'om_x100b5289bc8654a0c1013a718bf6e77', 'msg_type': 'text', 'sender': {'id': 'cli_a951db0b23799cd1', 'id_type': 'app_id', 'sender_type': 'app', 'tenant_key': '159d351c6e17d75f'}, 'update_time': '1776017188861', 'updated': False}, 'msg': 'success'}
+[FeishuService] 发送飞书消息成功
+[Feishu Webhook] Send message result: True
+INFO:     123.58.10.238:0 - "POST /api/feishu/webhook/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56395 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56404 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56421 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56438 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56447 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56457 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56474 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56502 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56511 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56522 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56531 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56541 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56558 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56569 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56587 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56594 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56604 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56625 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56634 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56650 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56660 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56669 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56693 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56707 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56716 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56723 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56736 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56760 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56773 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56786 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56807 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56820 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56837 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56850 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56865 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56877 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56887 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56916 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56941 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56952 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56962 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56975 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56991 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57006 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57021 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57028 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57046 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57067 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57079 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57088 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57097 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57107 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57123 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57133 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57150 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57159 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57168 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57190 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57201 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57215 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57224 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57236 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57259 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57271 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57280 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57288 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57296 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57328 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57338 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57348 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57369 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57380 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57395 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57408 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57418 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57428 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57440 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57460 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57478 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57489 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57497 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57506 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57521 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57536 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57549 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57560 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57583 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57611 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57622 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57638 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57651 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57664 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57682 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57696 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57715 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57723 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57735 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57768 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57785 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57798 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57813 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57829 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57850 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57861 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57870 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57879 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57888 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57910 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57918 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57932 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57950 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57956 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57976 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57988 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57999 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58010 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58020 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58042 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58061 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58069 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58077 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58089 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58105 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58121 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58130 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58140 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58154 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58181 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58193 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58204 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58211 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58222 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58237 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58249 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58269 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58277 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58288 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58309 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58321 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58335 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58343 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58353 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58378 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58389 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58400 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58411 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58424 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58448 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58462 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58477 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58496 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58512 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58532 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58546 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58559 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58573 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58584 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58617 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58643 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58654 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58665 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58681 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58702 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58719 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58737 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58746 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58765 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58787 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58798 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58810 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58818 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58830 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58846 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58858 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58877 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58888 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58897 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58916 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58931 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58943 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58954 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58965 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58988 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59003 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59011 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59018 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59026 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59057 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59065 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59077 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59096 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59105 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59122 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59133 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59145 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59157 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59169 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59189 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59205 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59216 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59224 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59234 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59252 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59264 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59273 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59283 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59305 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59330 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59341 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59358 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59368 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59381 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59399 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59411 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59430 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59440 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59450 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59480 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59495 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59508 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59521 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59531 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59558 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59571 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59580 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59588 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59598 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59621 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59632 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59645 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59663 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59671 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59690 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59704 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59715 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59728 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59737 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59762 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59782 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59790 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59798 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59807 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59822 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59837 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59846 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59856 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59870 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59903 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59915 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59926 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59935 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59947 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59962 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59973 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59991 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59999 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60012 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60034 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60042 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60055 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60063 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60073 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60097 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60109 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60118 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60130 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60142 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60172 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60184 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60196 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60217 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60227 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60245 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60258 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60267 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60284 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60295 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60327 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60351 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60364 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60375 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60383 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60399 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60410 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60420 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60429 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60468 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60478 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60491 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60503 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60515 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60529 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60543 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60560 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60568 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60577 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60595 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60606 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60618 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60626 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60635 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60658 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60672 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60683 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60693 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60701 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60731 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60739 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60751 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60768 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60777 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60794 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60805 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60813 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60823 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60832 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60854 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60872 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60887 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60893 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60904 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60920 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60932 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60943 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60952 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60972 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60994 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61007 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61018 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61030 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61045 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61064 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61097 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61109 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61117 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61151 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61167 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61180 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61187 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61200 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61226 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61237 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61250 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61259 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61272 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61297 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61309 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61320 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61336 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61344 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61359 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61372 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61381 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61390 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61404 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61438 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61464 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61477 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61497 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61569 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61626 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61646 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61659 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61674 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61692 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61716 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61727 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61740 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61749 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61759 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61778 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61795 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61813 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61827 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61838 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61858 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61869 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61882 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61892 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61900 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61925 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61934 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61943 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61953 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61967 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61991 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62010 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62021 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62041 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62057 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62076 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62086 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62097 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62113 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62123 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62156 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62181 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62196 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62207 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62221 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62244 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62257 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62270 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62276 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62292 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62316 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62326 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62337 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62345 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62355 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62375 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62386 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62407 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62418 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62431 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62453 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62462 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62478 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62486 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62495 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62523 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62535 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62544 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62552 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62560 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62592 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62606 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62615 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62634 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62644 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62659 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62671 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62679 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62688 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62698 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62717 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62735 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62750 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62758 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62769 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62789 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62823 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62850 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62872 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62902 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62926 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62940 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62952 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62962 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62976 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62993 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63012 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63033 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63043 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63053 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63087 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63105 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63119 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63132 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63142 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63167 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63181 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63201 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63207 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63219 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63246 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63260 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63273 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63295 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63310 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63328 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63341 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63350 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63359 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63368 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63388 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63409 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63419 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63429 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63440 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63460 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63474 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63483 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63492 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63509 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63534 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63544 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63555 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63564 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63574 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63591 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63601 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63622 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63629 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63638 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63658 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63669 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63682 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63688 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63696 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63720 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63735 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63746 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63752 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63764 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63785 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63800 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63813 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63832 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63845 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63864 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63876 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63885 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63900 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63910 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63941 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63963 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63976 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63987 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63997 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64016 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64033 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64046 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64053 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64074 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64099 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64112 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64126 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64190 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64194 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64197 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64200 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64208 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64211 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64217 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64220 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64228 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64237 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64242 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64245 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64249 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64253 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64256 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64259 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64262 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64267 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64270 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64273 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64276 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64279 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64282 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64285 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64295 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64299 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64305 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64313 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64324 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64337 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64348 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64361 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:64369 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64403 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64434 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64566 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64588 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64601 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64627 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64654 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64671 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64709 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64720 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64745 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64758 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64768 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64778 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64786 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64814 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64825 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64836 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64853 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64861 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64876 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64890 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64902 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64918 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64933 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64957 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64976 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64987 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64997 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65005 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65021 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65034 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65043 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65052 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65079 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65104 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65118 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65130 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65140 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65221 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65238 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65259 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65288 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65299 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65309 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65381 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65443 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65481 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65499 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65517 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49165 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49179 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49194 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49202 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49215 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49240 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49255 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49267 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49288 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49296 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49311 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49321 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49335 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49352 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49363 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49381 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49403 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49413 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49420 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49429 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49444 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49459 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49468 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49478 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49494 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49519 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49533 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49546 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49557 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49566 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49584 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49600 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49617 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49626 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49640 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49665 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49674 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49688 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49701 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49709 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49735 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49747 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49762 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49771 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49785 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49815 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49828 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49839 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49858 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49873 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49892 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49900 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49911 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49924 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49936 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49971 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50001 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50016 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50026 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50037 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50057 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50075 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50089 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50101 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50124 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50149 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50160 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50175 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50188 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50200 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50214 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50227 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50246 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50257 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50269 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50292 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50303 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50314 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50325 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50338 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50363 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50376 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50385 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50394 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50403 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50430 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50440 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50453 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50470 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50482 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50499 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50514 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50522 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50534 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50547 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50568 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50586 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50597 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50604 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50612 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50629 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50641 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50652 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50661 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50683 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50705 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50718 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50734 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50744 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50759 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50776 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50790 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50807 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50819 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50829 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50861 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50877 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50890 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50901 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50911 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50939 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50954 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50966 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50976 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50995 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51017 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51027 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51040 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51058 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51066 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51082 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51092 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51101 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51114 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51164 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51261 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51294 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51329 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51348 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51363 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51395 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51420 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51432 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51458 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51483 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51524 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51546 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51567 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51587 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51602 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51626 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51640 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51658 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51666 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51678 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51699 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51713 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51729 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51742 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51750 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51773 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51786 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51798 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51810 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51828 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51857 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51873 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51885 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51909 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51922 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51937 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51955 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51968 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51980 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51990 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52026 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52049 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52067 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52081 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52101 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52120 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52131 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52147 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52155 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52172 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52192 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52202 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52226 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52237 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52255 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52273 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52288 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52306 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52325 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52333 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52359 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52374 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52389 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52400 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52417 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52439 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52452 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52463 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52473 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52487 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52515 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52527 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52546 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52562 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52569 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52585 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52595 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52615 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52623 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52640 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52657 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52677 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52692 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52701 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52710 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52732 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52746 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52756 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52770 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52790 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52811 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52825 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52841 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52850 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52868 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52891 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52911 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52923 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52936 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52949 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52987 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53002 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53021 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53031 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53052 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53071 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53083 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53095 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53103 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53112 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53142 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53153 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53178 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53191 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53204 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53221 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53239 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53247 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53267 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53272 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53304 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53320 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53331 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53345 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53359 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53380 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53393 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53409 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53424 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53436 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53468 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53475 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53487 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53501 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53512 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53528 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53544 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53557 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53574 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53591 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53617 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53635 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53649 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53661 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53670 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53691 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53703 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53713 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53723 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53737 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53765 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53779 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53794 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53814 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53824 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53853 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53866 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53912 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53923 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53938 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53988 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54011 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54027 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54044 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54054 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54071 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54097 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54130 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54137 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54149 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54180 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54198 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54286 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54308 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54342 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54374 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54399 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54428 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54451 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54470 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54495 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54522 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54545 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54559 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54574 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54590 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54616 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54632 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54644 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54661 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54694 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54703 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54728 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54750 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54764 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54786 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54807 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54827 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54839 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54856 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54878 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54900 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54918 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54926 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54939 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54952 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54971 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54986 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54997 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55014 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55037 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55056 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55075 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55088 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55104 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55130 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55147 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55170 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55191 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55204 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55246 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55266 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55294 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55310 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55325 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55346 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55360 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55378 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55391 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55401 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55441 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55452 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55470 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55485 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55503 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55517 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55539 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55557 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55574 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55585 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55608 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55620 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55642 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55652 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55673 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55690 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55712 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55728 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55740 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55752 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55781 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55795 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55817 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55829 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55844 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55854 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55865 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55886 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55902 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55913 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55945 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55982 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55993 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56004 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56016 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56030 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56043 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56057 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56092 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56127 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56146 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56177 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56190 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56207 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56227 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56263 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56282 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56304 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56319 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56365 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56389 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56413 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56422 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56443 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56466 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56485 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56511 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56519 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56538 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56561 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56592 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56611 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56633 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56651 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56667 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56679 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56698 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56708 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56728 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56751 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56777 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56799 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56816 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56830 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56851 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56865 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56887 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56901 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56915 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56946 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56962 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56980 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56996 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57012 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57033 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57050 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57081 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57094 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57109 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57133 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57147 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57163 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57173 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57189 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57206 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57230 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57246 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57269 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57284 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57312 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57325 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57357 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57374 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57392 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57417 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57437 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57459 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57470 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57486 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57519 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57548 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57569 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57590 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57608 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57633 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57646 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57676 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57713 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57739 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57759 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57775 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57788 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57805 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57818 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57832 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57851 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57871 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57888 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57911 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57925 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57950 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57959 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57976 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57993 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58012 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58027 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58042 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58052 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58083 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58095 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58122 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58138 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58155 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58171 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58193 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58212 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58228 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58239 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58265 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58283 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58308 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58318 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58335 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58346 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58362 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58382 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58400 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58423 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58458 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58478 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58503 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58515 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58537 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58550 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58572 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58596 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58613 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58626 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58659 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58679 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58702 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58715 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58739 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58759 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58780 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58798 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58818 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58840 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58870 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58883 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58911 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58928 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58949 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58964 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58983 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59005 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59024 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59039 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59063 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59082 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59107 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59125 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59135 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59150 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59171 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59186 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59197 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59216 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59245 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59261 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59279 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59293 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59317 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59327 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59346 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59376 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59387 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59398 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59425 - "GET /api/knowledge/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59436 - "GET /api/knowledge/list HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:62824 - "GET /health HTTP/1.1" 200 OK
