@@ -32,38 +32,8 @@ COPY --from=frontend-builder /app/frontend/dist /app/static
 # 创建必要目录
 RUN mkdir -p /app/uploads /app/chroma_db /app/data /run/nginx
 
-# Nginx 配置
-RUN cat > /etc/nginx/sites-available/default << 'EOF'
-server {
-    listen 80;
-    server_name _;
-
-    root /app/static;
-    index index.html;
-
-    client_max_body_size 100m;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    location /api {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-
-    location /ws {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_read_timeout 3600s;
-    }
-}
-EOF
+# Nginx 配置（直接 COPY 文件，兼容旧版 Docker builder）
+COPY nginx.conf /etc/nginx/sites-available/default
 
 # 环境变量
 ENV PYTHONUNBUFFERED=1 \
