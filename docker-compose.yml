@@ -1,0 +1,27 @@
+# 客服管理平台 Docker 部署配置
+# 宝塔一键部署：上传项目 → docker-compose up -d
+
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: customer-service
+    restart: always
+    ports:
+      - "8001:80"
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-please-change-this-secret-key}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - FRONTEND_URL=${FRONTEND_URL:-}
+    volumes:
+      # 数据持久化（数据库、上传文件、向量库）
+      - app-data:/app/data
+      - app-uploads:/app/uploads
+      - app-chroma:/app/chroma_db
+
+volumes:
+  app-data:
+  app-uploads:
+  app-chroma:

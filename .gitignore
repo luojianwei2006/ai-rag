@@ -17,8 +17,12 @@ frontend/dist/
 *.db
 *.sqlite3
 
-# Uploads
+# Uploads & Vector DB
 uploads/
+chroma_db/
+backend/uploads/
+backend/chroma_db/
+data/
 
 # IDE
 .vscode/
@@ -30,6 +34,5 @@ Thumbs.db
 
 # Logs
 *.log
-
-# Chroma
-chroma_data/
+backend/server.log
+frontend/frontend.log

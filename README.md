@@ -51,7 +51,12 @@ customer-service-platform/
 │       ├── admin/           # 管理员页面
 │       ├── tenant/          # 商户页面
 │       └── chat/            # 客户聊天页面
-└── start.sh                 # 一键启动
+├── Dockerfile               # Docker 镜像构建
+├── docker-compose.yml       # Docker Compose 配置
+├── docker-entrypoint.sh     # 容器启动脚本
+├── deploy-bt.sh             # 宝塔一键部署脚本
+├── start.sh                 # 一键启动
+└── startup.sh               # 后台启动
 ```
 
 ## 访问地址
@@ -92,3 +97,336 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD=your-password
 FRONTEND_URL=http://localhost:5173
 ```
+
+---
+
+## 打包与部署
+
+### 一、本地开发
+
+```bash
+cd customer-service-platform
+
+# 一键启动（前后端开发模式）
+./startup.sh
+
+# 关闭所有服务
+./shutdown.sh
+```
+
+### 二、前端打包
+
+```bash
+cd frontend
+npm run build
+# 打包产物输出到 frontend/dist/
+```
+
+### 三、生产部署（Nginx + Uvicorn）
+
+#### 1. 打包前端
+
+```bash
+cd customer-service-platform/frontend
+npm install
+npm run build
+```
+
+#### 2. 部署前端静态文件
+
+```bash
+# 拷贝打包产物到 Nginx 目录
+cp -r dist /var/www/customer-service
+```
+
+#### 3. 启动后端
+
+```bash
+cd customer-service-platform/backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 生产启动
+nohup uvicorn main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
+```
+
+#### 4. Nginx 配置
+
+在 `/etc/nginx/conf.d/customer-service.conf` 中添加：
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    root /var/www/customer-service;
+    index index.html;
+
+    # 前端路由（SPA）
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 后端 API 反向代理
+    location /api {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # WebSocket 代理（客服聊天）
+    location /ws {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_read_timeout 3600s;
+    }
+}
+```
+
+#### 5. 重载 Nginx
+
+```bash
+nginx -t          # 检查配置
+nginx -s reload   # 重载配置
+```
+
+### 四、部署验证
+
+| 检查项 | 命令 / 地址 |
+|--------|------------|
+| 后端服务 | `curl http://localhost:8000/docs` |
+| 前端页面 | 浏览器访问 `http://your-domain.com` |
+| API 文档 | `http://your-domain.com/api/docs` |
+| WebSocket | 客户聊天页面连接测试 |
+
+### 五、常用运维命令
+
+```bash
+# 查看后端日志
+tail -f backend/server.log
+
+# 重启后端
+kill $(pgrep -f "uvicorn.*main:app") && cd backend && nohup uvicorn main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
+
+# 更新部署（拉取最新代码后）
+cd frontend && npm run build && cp -r dist/* /var/www/customer-service/
+```
+
+---
+
+## Docker 部署（宝塔一键部署）
+
+### 方式一：宝塔面板从零部署（推荐，最详细）
+
+> 适合零基础用户，从一台空服务器到上线只需 6 步。
+
+#### 第 1 步：安装宝塔面板
+
+```bash
+# CentOS / RHEL
+yum install -y wget && wget -O install.sh https://download.bt.cn/install/install_6.0.sh && sh install.sh ed8484bec
+
+# Ubuntu / Debian
+wget -O install.sh https://download.bt.cn/install/install-ubuntu_6.0.sh && bash install.sh ed8484bec
+```
+
+安装完成后，记录宝塔面板的访问地址、账号、密码。
+
+#### 第 2 步：宝塔面板安装 Docker
+
+1. 浏览器打开宝塔面板地址
+2. 登录后进入 **软件商店**
+3. 搜索 **Docker** → 安装 **Docker管理器**
+4. 等待安装完成（约 1-3 分钟）
+
+#### 第 3 步：上传项目文件
+
+**方式 A：宝塔面板上传**
+1. 宝塔面板 → **文件** → 进入 `/www/wwwroot/`
+2. 点击 **上传** → 选择 `customer-service-platform.zip`（先在本地把项目打包为 zip）
+3. 上传完成后右键 → **解压**
+
+**方式 B：命令行上传（推荐）**
+```bash
+# 本地终端执行（把项目上传到服务器）
+scp -r customer-service-platform/ root@你的服务器IP:/www/wwwroot/
+```
+
+**方式 C：从 GitHub 拉取（如果代码已推送到 GitHub）**
+```bash
+cd /www/wwwroot
+git clone https://github.com/luojianwei2006/ai-rag.git customer-service-platform
+```
+
+#### 第 4 步：一键部署
+
+```bash
+cd /www/wwwroot/customer-service-platform
+chmod +x deploy-bt.sh
+./deploy-bt.sh
+```
+
+脚本会自动完成：
+- 检查 Docker 环境
+- 停止旧容器（如果存在）
+- 构建镜像（首次约 5-15 分钟，需下载依赖 + 下载 AI 模型）
+- 启动容器
+- 验证服务
+
+看到 `部署完成！` 即表示成功。
+
+#### 第 5 步：验证访问
+
+浏览器打开 `http://你的服务器IP:8001`
+
+- 管理员后台：`http://你的服务器IP:8001/admin/login`
+- 默认账号：`admin` / `admin123`
+- **请登录后立即修改密码！**
+
+#### 第 6 步：配置域名（可选）
+
+如果需要用域名访问（如 `cs.yourdomain.com`）：
+
+1. **域名解析**：在域名服务商添加 A 记录指向服务器 IP
+2. **宝塔添加站点**：
+   - 宝塔 → **网站** → **添加站点**
+   - 域名填写：`cs.yourdomain.com`
+   - 其他保持默认 → 提交
+3. **配置反向代理**：
+   - 点击站点名 → **反向代理** → **添加反向代理**
+   - 代理名称：`customer-service`
+   - 目标 URL：`http://127.0.0.1:8001`
+   - 发送域名：`$host`
+   - 提交
+4. **申请 SSL（可选）**：
+   - 点击站点名 → **SSL** → **Let's Encrypt**
+   - 勾选域名 → 申请 → 开启强制 HTTPS
+
+配置完成后通过 `https://cs.yourdomain.com` 访问。
+
+---
+
+### 方式二：Docker Compose 部署
+
+适合有 Docker 经验的用户：
+
+```bash
+cd customer-service-platform
+
+# 构建并启动（首次约 5-15 分钟）
+docker compose up -d --build
+
+# 查看日志
+docker compose logs -f
+
+# 停止服务
+docker compose down
+
+# 更新部署（拉取新代码后）
+docker compose down
+docker compose up -d --build
+```
+
+自定义配置：编辑 `docker-compose.yml`，修改端口、环境变量等。
+
+---
+
+### 方式三：手动 Docker 部署
+
+```bash
+cd customer-service-platform
+
+# 1. 构建镜像（首次约 5-15 分钟）
+docker build -t customer-service-img .
+
+# 2. 启动容器
+docker run -d \
+    --name customer-service \
+    --restart always \
+    -p 8001:80 \
+    -v $(pwd)/data:/app/data \
+    -v $(pwd)/uploads:/app/uploads \
+    -v $(pwd)/chroma_db:/app/chroma_db \
+    -e SECRET_KEY="你的自定义密钥" \
+    -e ADMIN_USERNAME="admin" \
+    -e ADMIN_PASSWORD="admin123" \
+    customer-service-img
+
+# 3. 查看日志
+docker logs -f customer-service
+```
+
+---
+
+### Docker 部署常用命令
+
+| 操作 | 命令 |
+|------|------|
+| 查看日志 | `docker logs -f customer-service` |
+| 重启服务 | `docker restart customer-service` |
+| 停止服务 | `docker stop customer-service` |
+| 删除容器 | `docker rm -f customer-service` |
+| 更新部署 | `./deploy-bt.sh`（重新构建+启动） |
+| 进入容器 | `docker exec -it customer-service bash` |
+| 查看状态 | `docker ps \| grep customer-service` |
+
+---
+
+### Docker 环境变量
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `SECRET_KEY` | JWT 密钥（务必修改！） | 随机生成 |
+| `ADMIN_USERNAME` | 管理员账号 | admin |
+| `ADMIN_PASSWORD` | 管理员密码（务必修改！） | admin123 |
+| `FRONTEND_URL` | 前端地址（客服链接用） | 空 |
+
+---
+
+### 数据持久化
+
+Docker 部署会自动将以下目录挂载到宿主机，**重装/更新容器不会丢失数据**：
+
+| 容器路径 | 宿主机路径 | 说明 |
+|----------|-----------|------|
+| `/app/data` | `./data` | 数据库文件 |
+| `/app/uploads` | `./uploads` | 用户上传的知识库文件 |
+| `/app/chroma_db` | `./chroma_db` | 向量数据库 |
+
+---
+
+### 常见问题
+
+**Q: 首次构建很慢？**
+A: 需要下载 Python 依赖和 AI 模型（sentence-transformers），国内服务器建议配置 Docker 镜像加速：
+
+```bash
+# 配置 Docker 镜像加速
+mkdir -p /etc/docker
+cat > /etc/docker/daemon.json << 'EOF'
+{
+    "registry-mirrors": [
+        "https://mirror.ccs.tencentyun.com",
+        "https://docker.mirrors.ustc.edu.cn"
+    ]
+}
+EOF
+systemctl restart docker
+```
+
+**Q: 端口 8001 被占用？**
+A: 修改 `deploy-bt.sh` 中的 `PORT=8001` 为其他端口，或使用 `docker run -p 其他端口:80`。
+
+**Q: 如何备份数据？**
+A: 备份宿主机上的三个目录即可：
+```bash
+tar -czf backup-$(date +%Y%m%d).tar.gz data/ uploads/ chroma_db/
+```
+
+**Q: 如何迁移到另一台服务器？**
+A: 打包整个项目目录（含数据）传到新服务器，执行 `./deploy-bt.sh` 即可。

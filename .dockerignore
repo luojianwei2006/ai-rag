@@ -1,0 +1,13 @@
+.env
+.git
+.gitignore
+node_modules
+frontend/node_modules
+backend/.venv
+backend/__pycache__
+*.db
+*.sqlite3
+backend/uploads
+backend/chroma_db
+.DS_Store
+*.log
