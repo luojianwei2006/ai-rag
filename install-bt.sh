@@ -138,7 +138,7 @@ fi
 
 # ==================== 第 2 步：检测 Node.js ====================
 echo ""
-echo "[2/6] 检测 Node.js 环境..."
+echo "[2/7] 检测 Node.js 环境..."
 
 NODE_CMD=""
 NPM_CMD=""
@@ -173,7 +173,7 @@ fi
 
 # ==================== 第 3 步：安装 Python 依赖 ====================
 echo ""
-echo "[3/6] 安装 Python 依赖..."
+echo "[3/7] 安装 Python 依赖..."
 
 cd "$BACKEND_DIR"
 
@@ -252,7 +252,7 @@ deactivate
 
 # ==================== 第 4 步：构建前端 ====================
 echo ""
-echo "[4/6] 构建前端..."
+echo "[4/7] 构建前端..."
 
 cd "$FRONTEND_DIR"
 
@@ -268,7 +268,7 @@ success "前端打包完成 → $FRONTEND_DIR/dist"
 
 # ==================== 第 5 步：配置环境变量 ====================
 echo ""
-echo "[5/6] 配置环境变量..."
+echo "[5/7] 配置环境变量..."
 
 cd "$BACKEND_DIR"
 
@@ -288,7 +288,7 @@ success "环境变量已写入 backend/.env"
 
 # ==================== 第 6 步：安装系统服务 ====================
 echo ""
-echo "[6/6] 安装系统服务（systemd）..."
+echo "[6/7] 安装系统服务..."
 
 VENV_PYTHON="$BACKEND_DIR/.venv/bin/python"
 VENV_UVICORN="$BACKEND_DIR/.venv/bin/uvicorn"
@@ -390,48 +390,97 @@ EOF
 
 success "Nginx 配置已生成：$NGINX_CONF_PATH"
 
-# ==================== 尝试自动配置 Nginx ====================
-NGINX_AVAILABLE_DIR=""
-for d in /etc/nginx/conf.d /etc/nginx/sites-available /www/server/nginx/conf/vhost; do
-    if [ -d "$d" ]; then
-        NGINX_AVAILABLE_DIR="$d"
-        break
-    fi
-done
+# ==================== 配置 Nginx（宝塔面板可见）====================
+echo ""
+echo "[7/7] 配置 Nginx 站点..."
 
-if [ -n "$NGINX_AVAILABLE_DIR" ]; then
-    DEST_CONF="$NGINX_AVAILABLE_DIR/${APP_NAME}.conf"
+BT_VHOST_DIR="/www/server/nginx/conf/vhost"
+BT_NGINX_BIN="/www/server/nginx/sbin/nginx"
+
+# 判断是否是宝塔环境
+if [ -d "$BT_VHOST_DIR" ] && [ -f "$BT_NGINX_BIN" ]; then
+    info "检测到宝塔面板环境"
+
+    # 复制配置到宝塔 vhost 目录（宝塔面板可识别）
+    DEST_CONF="$BT_VHOST_DIR/${APP_NAME}.conf"
     cp "$NGINX_CONF_PATH" "$DEST_CONF"
-    success "Nginx 配置已复制到：$DEST_CONF"
+    success "Nginx 配置已写入：$DEST_CONF"
 
-    # 检测宝塔 nginx 还是系统 nginx
-    if command -v bt &>/dev/null && [ -f "/www/server/nginx/sbin/nginx" ]; then
-        /www/server/nginx/sbin/nginx -t 2>/dev/null && /www/server/nginx/sbin/nginx -s reload
+    # 创建宝塔站点目录结构（让宝塔能识别）
+    BT_SITE_ROOT="/www/wwwroot/${APP_NAME}"
+    BT_SITE_LOG="/www/wwwlogs"
+    mkdir -p "$BT_SITE_ROOT" "$BT_SITE_LOG"
+
+    # 测试并重载 Nginx
+    if $BT_NGINX_BIN -t 2>/dev/null; then
+        $BT_NGINX_BIN -s reload
         success "宝塔 Nginx 已重载"
-    elif command -v nginx &>/dev/null; then
-        nginx -t 2>/dev/null && nginx -s reload
-        success "Nginx 已重载"
-    fi
-else
-    warn "未找到 Nginx 配置目录，请手动配置 Nginx"
-    warn "Nginx 配置文件已保存在：$NGINX_CONF_PATH"
-fi
 
-# ==================== 完成 ====================
-echo ""
-echo "================================================"
-echo -e "${GREEN}  ✅ 安装完成！${NC}"
-echo "================================================"
-echo ""
-echo "  访问地址：http://服务器IP:$PORT_FRONTEND"
-echo "  管理员后台：http://服务器IP:$PORT_FRONTEND/admin/login"
-echo "  账号：$ADMIN_USER  密码：$ADMIN_PASS"
-echo ""
-echo "  常用命令："
-echo "    查看后端日志：tail -f $APP_DIR/backend/server.log"
-echo "    重启后端：   systemctl restart $APP_NAME"
-echo "    停止后端：   systemctl stop $APP_NAME"
-echo "    查看状态：   systemctl status $APP_NAME"
-echo ""
-echo "  ⚠️  请登录后台后立即修改管理员密码！"
-echo "================================================"
+        echo ""
+        echo "================================================"
+        echo -e "${GREEN}  ✅ 安装完成！${NC}"
+        echo "================================================"
+        echo ""
+        echo "  🌐 访问地址：http://服务器IP:$PORT_FRONTEND"
+        echo "  🔧 管理后台：http://服务器IP:$PORT_FRONTEND/admin/login"
+        echo "  👤 账号：$ADMIN_USER  密码：$ADMIN_PASS"
+        echo ""
+        echo "  📋 在宝塔面板中查看："
+        echo "     左侧菜单 → 网站 → 列表中可看到 ${APP_NAME}.conf"
+        echo "     点击可查看/编辑 Nginx 配置"
+        echo ""
+        echo "  ⚙️  后端服务管理："
+        echo "     查看日志：tail -f $APP_DIR/backend/server.log"
+        echo "     重启服务：systemctl restart $APP_NAME"
+        echo "     停止服务：systemctl stop $APP_NAME"
+        echo "     查看状态：systemctl status $APP_NAME"
+        echo ""
+        echo "  ⚠️  请登录后台后立即修改管理员密码！"
+        echo ""
+        echo "  💡 提示：如果要绑定域名，在宝塔面板中："
+        echo "     网站 → 点击站点名 → 设置 → 域名管理 → 添加域名"
+        echo "================================================"
+
+    else
+        warn "Nginx 配置测试失败，请手动检查"
+        echo ""
+        error "Nginx 配置有误，请查看：$DEST_CONF"
+    fi
+
+else
+    # 非宝塔环境，尝试标准 Nginx
+    NGINX_AVAILABLE_DIR=""
+    for d in /etc/nginx/conf.d /etc/nginx/sites-available; do
+        if [ -d "$d" ]; then
+            NGINX_AVAILABLE_DIR="$d"
+            break
+        fi
+    done
+
+    if [ -n "$NGINX_AVAILABLE_DIR" ]; then
+        cp "$NGINX_CONF_PATH" "$NGINX_AVAILABLE_DIR/${APP_NAME}.conf"
+        nginx -t 2>/dev/null && nginx -s reload
+        success "Nginx 配置已写入并重载"
+    else
+        warn "未找到 Nginx，请手动安装并配置 Nginx"
+        warn "Nginx 配置文件：$NGINX_CONF_PATH"
+    fi
+
+    echo ""
+    echo "================================================"
+    echo -e "${GREEN}  ✅ 安装完成！${NC}"
+    echo "================================================"
+    echo ""
+    echo "  🌐 访问地址：http://服务器IP:$PORT_FRONTEND"
+    echo "  🔧 管理后台：http://服务器IP:$PORT_FRONTEND/admin/login"
+    echo "  👤 账号：$ADMIN_USER  密码：$ADMIN_PASS"
+    echo ""
+    echo "  ⚙️  常用命令："
+    echo "     查看日志：tail -f $APP_DIR/backend/server.log"
+    echo "     重启服务：systemctl restart $APP_NAME"
+    echo "     停止服务：systemctl stop $APP_NAME"
+    echo "     查看状态：systemctl status $APP_NAME"
+    echo ""
+    echo "  ⚠️  请登录后台后立即修改管理员密码！"
+    echo "================================================"
+fi
