@@ -390,65 +390,114 @@ EOF
 
 success "Nginx 配置已生成：$NGINX_CONF_PATH"
 
-# ==================== 配置 Nginx（宝塔面板可见）====================
+# ==================== 配置 Nginx + 注册到宝塔面板 ====================
 echo ""
 echo "[7/7] 配置 Nginx 站点..."
 
 BT_VHOST_DIR="/www/server/nginx/conf/vhost"
 BT_NGINX_BIN="/www/server/nginx/sbin/nginx"
+BT_PANEL_DB="/www/server/panel/data/db/site.db"
+BT_SITE_ID=""
 
 # 判断是否是宝塔环境
 if [ -d "$BT_VHOST_DIR" ] && [ -f "$BT_NGINX_BIN" ]; then
     info "检测到宝塔面板环境"
 
-    # 复制配置到宝塔 vhost 目录（宝塔面板可识别）
+    # 复制配置到宝塔 vhost 目录
     DEST_CONF="$BT_VHOST_DIR/${APP_NAME}.conf"
     cp "$NGINX_CONF_PATH" "$DEST_CONF"
     success "Nginx 配置已写入：$DEST_CONF"
 
-    # 创建宝塔站点目录结构（让宝塔能识别）
-    BT_SITE_ROOT="/www/wwwroot/${APP_NAME}"
-    BT_SITE_LOG="/www/wwwlogs"
-    mkdir -p "$BT_SITE_ROOT" "$BT_SITE_LOG"
+    # 注册站点到宝塔面板数据库（让宝塔网站列表可见）
+    if [ -f "$BT_PANEL_DB" ] && command -v sqlite3 &>/dev/null; then
+        info "注册站点到宝塔面板..."
+
+        # 获取服务器 IP 作为默认域名
+        SERVER_IP=$(curl -s --connect-timeout 3 ifconfig.me 2>/dev/null || hostname -I 2>/dev/null | awk '{print $1}')
+        SITE_DOMAIN="${SERVER_IP}:${PORT_FRONTEND}"
+        SITE_PATH="$FRONTEND_DIR/dist"
+        CREATE_TIME=$(date +%Y-%m-%d" "%H:%M:%S)
+
+        # 检查是否已存在
+        EXIST_ID=$(sqlite3 "$BT_PANEL_DB" "SELECT id FROM sites WHERE name='${APP_NAME}';" 2>/dev/null)
+
+        if [ -n "$EXIST_ID" ]; then
+            # 更新现有记录
+            sqlite3 "$BT_PANEL_DB" "UPDATE sites SET path='${SITE_PATH}', ps='AI客服平台', edate=$(date +%s) WHERE id=${EXIST_ID};" 2>/dev/null
+            BT_SITE_ID="$EXIST_ID"
+            success "站点已更新（ID: $EXIST_ID）"
+        else
+            # 获取当前最大 ID
+            MAX_ID=$(sqlite3 "$BT_PANEL_DB" "SELECT MAX(id) FROM sites;" 2>/dev/null || echo "0")
+            NEW_ID=$((MAX_ID + 1))
+
+            # 获取当前时间戳
+            NOW_TS=$(date +%s)
+
+            # 插入新站点记录
+            sqlite3 "$BT_PANEL_DB" << EOSQL 2>/dev/null
+INSERT INTO sites (id, name, path, status, ps, addtime, edate) VALUES (${NEW_ID}, '${APP_NAME}', '${SITE_PATH}', 1, 'AI客服平台', ${NOW_TS}, ${NOW_TS});
+EOSQL
+
+            if [ $? -eq 0 ]; then
+                BT_SITE_ID="$NEW_ID"
+                success "站点已注册到宝塔面板（ID: $NEW_ID）"
+            else
+                warn "数据库写入失败，站点不会出现在宝塔列表中（但服务仍可正常访问）"
+            fi
+        fi
+
+        # 写入站点域名记录
+        if [ -n "$BT_SITE_ID" ]; then
+            sqlite3 "$BT_PANEL_DB" "DELETE FROM domain WHERE pid=${BT_SITE_ID};" 2>/dev/null
+            sqlite3 "$BT_PANEL_DB" "INSERT INTO domain (pid, name, port) VALUES (${BT_SITE_ID}, '${SERVER_IP}', '${PORT_FRONTEND}');" 2>/dev/null
+        fi
+
+    elif [ -f "$BT_PANEL_DB" ] && ! command -v sqlite3 &>/dev/null; then
+        warn "缺少 sqlite3 命令，无法注册到宝塔面板"
+        info "安装 sqlite3 后可手动执行注册："
+        info "  yum install sqlite / apt install sqlite3"
+    fi
 
     # 测试并重载 Nginx
     if $BT_NGINX_BIN -t 2>/dev/null; then
         $BT_NGINX_BIN -s reload
         success "宝塔 Nginx 已重载"
-
-        echo ""
-        echo "================================================"
-        echo -e "${GREEN}  ✅ 安装完成！${NC}"
-        echo "================================================"
-        echo ""
-        echo "  🌐 访问地址：http://服务器IP:$PORT_FRONTEND"
-        echo "  🔧 管理后台：http://服务器IP:$PORT_FRONTEND/admin/login"
-        echo "  👤 账号：$ADMIN_USER  密码：$ADMIN_PASS"
-        echo ""
-        echo "  📋 在宝塔面板中查看："
-        echo "     左侧菜单 → 网站 → 列表中可看到 ${APP_NAME}.conf"
-        echo "     点击可查看/编辑 Nginx 配置"
-        echo ""
-        echo "  ⚙️  后端服务管理："
-        echo "     查看日志：tail -f $APP_DIR/backend/server.log"
-        echo "     重启服务：systemctl restart $APP_NAME"
-        echo "     停止服务：systemctl stop $APP_NAME"
-        echo "     查看状态：systemctl status $APP_NAME"
-        echo ""
-        echo "  ⚠️  请登录后台后立即修改管理员密码！"
-        echo ""
-        echo "  💡 提示：如果要绑定域名，在宝塔面板中："
-        echo "     网站 → 点击站点名 → 设置 → 域名管理 → 添加域名"
-        echo "================================================"
-
     else
-        warn "Nginx 配置测试失败，请手动检查"
-        echo ""
-        error "Nginx 配置有误，请查看：$DEST_CONF"
+        warn "Nginx 配置测试失败，请手动检查：$DEST_CONF"
     fi
 
+    echo ""
+    echo "================================================"
+    echo -e "${GREEN}  ✅ 安装完成！${NC}"
+    echo "================================================"
+    echo ""
+    echo "  🌐 访问地址：http://${SERVER_IP:-服务器IP}:${PORT_FRONTEND}"
+    echo "  🔧 管理后台：http://${SERVER_IP:-服务器IP}:${PORT_FRONTEND}/admin/login"
+    echo "  👤 账号：$ADMIN_USER  密码：$ADMIN_PASS"
+    echo ""
+    if [ -n "$BT_SITE_ID" ]; then
+        echo "  📋 宝塔面板查看："
+        echo "     左侧菜单 → 网站 → 列表中可看到「${APP_NAME}」"
+    else
+        echo "  📋 宝塔面板："
+        echo "     站点未注册到面板列表，但服务正常运行"
+        echo "     Nginx 配置文件：$DEST_CONF"
+    fi
+    echo ""
+    echo "  ⚙️  后端服务管理："
+    echo "     查看日志：tail -f $APP_DIR/backend/server.log"
+    echo "     重启服务：systemctl restart $APP_NAME"
+    echo "     停止服务：systemctl stop $APP_NAME"
+    echo "     查看状态：systemctl status $APP_NAME"
+    echo ""
+    echo "  ⚠️  请登录后台后立即修改管理员密码！"
+    echo ""
+    echo "  💡 绑定域名：网站 → 点击站点名 → 域名管理 → 添加域名"
+    echo "================================================"
+
 else
-    # 非宝塔环境，尝试标准 Nginx
+    # 非宝塔环境
     NGINX_AVAILABLE_DIR=""
     for d in /etc/nginx/conf.d /etc/nginx/sites-available; do
         if [ -d "$d" ]; then
@@ -462,7 +511,7 @@ else
         nginx -t 2>/dev/null && nginx -s reload
         success "Nginx 配置已写入并重载"
     else
-        warn "未找到 Nginx，请手动安装并配置 Nginx"
+        warn "未找到 Nginx，请手动安装并配置"
         warn "Nginx 配置文件：$NGINX_CONF_PATH"
     fi
 
