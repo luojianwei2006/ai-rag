@@ -11,7 +11,7 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    allowedHosts: ['.cpolar.cn', '.cpolar.io', '.ngrok.io', '.ngrok-free.app', 'localhost'],
+    allowedHosts: ['.cpolar.cn','.cpolar.top', '.cpolar.io', '.ngrok.io', '.ngrok-free.app', 'localhost'],
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
