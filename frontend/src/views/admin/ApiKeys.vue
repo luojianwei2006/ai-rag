@@ -345,13 +345,16 @@ async function handleTest(item) {
     MessagePlugin.warning('请先启用该Key')
     return
   }
-  const keyToTest = item.api_key || ''
+  if (!item.api_key) {
+    MessagePlugin.warning('该Key未显示，请先点击编辑按钮重新输入API Key后再测试')
+    return
+  }
   item._testStatus = 'testing'
   try {
     await adminApi.testApiKey({
       provider: item.provider,
       model: item.model,
-      api_key: keyToTest
+      api_key: item.api_key
     })
     item._testStatus = 'ok'
     MessagePlugin.success('连接测试成功 ✅')

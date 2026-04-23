@@ -57,7 +57,7 @@ class UpdateApiKeyRequest(BaseModel):
 class TestApiKeyRequest(BaseModel):
     provider: str
     model: str
-    api_key: str
+    api_key: str = ""
 
 
 @router.post("/register")

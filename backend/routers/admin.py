@@ -53,7 +53,7 @@ class ApiKeyListRequest(BaseModel):
 class TestApiKeyRequest(BaseModel):
     provider: str
     model: str
-    api_key: str
+    api_key: str = ""
 
 
 class TestEmailRequest(BaseModel):
@@ -234,7 +234,7 @@ async def test_api_key(
                     break
 
     if not api_key:
-        raise HTTPException(status_code=400, detail="API Key不能为空")
+        raise HTTPException(status_code=400, detail="API Key不能为空，请先在输入框中填写Key后再测试")
 
     try:
         if provider == "glm":
