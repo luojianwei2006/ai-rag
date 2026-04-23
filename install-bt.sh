@@ -139,10 +139,28 @@ success "虚拟环境已激活"
 # 升级 pip
 pip install --upgrade pip -q
 
-# 安装依赖（使用国内镜像加速）
+# 安装依赖（多镜像源自动回退，优先国内加速）
 info "安装 Python 依赖包（首次约 5-10 分钟）..."
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --timeout 120
-success "Python 依赖安装完成"
+MIRRORS=(
+    "https://mirrors.aliyun.com/pypi/simple"
+    "https://pypi.tuna.tsinghua.edu.cn/simple"
+    "https://pypi.mirrors.ustc.edu.cn/simple"
+    "https://pypi.org/simple"
+)
+INSTALLED=false
+for MIRROR in "${MIRRORS[@]}"; do
+    info "尝试镜像：$MIRROR"
+    if pip install -r requirements.txt -i "$MIRROR" --timeout 120 --trusted-host "$(echo $MIRROR | awk -F/ '{print $3}')"; then
+        success "Python 依赖安装完成（$MIRROR）"
+        INSTALLED=true
+        break
+    else
+        warn "镜像 $MIRROR 安装失败，切换下一个..."
+    fi
+done
+if [ "$INSTALLED" = false ]; then
+    error "所有镜像源均安装失败，请检查网络或手动安装依赖"
+fi
 
 deactivate
 
@@ -153,7 +171,10 @@ echo "[4/6] 构建前端..."
 cd "$FRONTEND_DIR"
 
 info "安装前端依赖..."
-npm install --registry=https://registry.npmmirror.com
+# 多镜像源回退
+npm install --registry=https://registry.npmmirror.com 2>/dev/null || \
+npm install --registry=https://registry.npm.taobao.org 2>/dev/null || \
+npm install
 
 info "打包前端..."
 npm run build

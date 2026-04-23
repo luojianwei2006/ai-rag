@@ -34,13 +34,23 @@ else
     warn "未检测到 Git 仓库，跳过代码拉取，直接重新部署"
 fi
 
-# 更新 Python 依赖
+# 更新 Python 依赖（多镜像源自动回退）
 info "更新 Python 依赖..."
 cd "$BACKEND_DIR"
 source .venv/bin/activate
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple -q --timeout 120
+MIRRORS=(
+    "https://mirrors.aliyun.com/pypi/simple"
+    "https://pypi.tuna.tsinghua.edu.cn/simple"
+    "https://pypi.mirrors.ustc.edu.cn/simple"
+    "https://pypi.org/simple"
+)
+for MIRROR in "${MIRRORS[@]}"; do
+    if pip install -r requirements.txt -i "$MIRROR" --timeout 120 -q --trusted-host "$(echo $MIRROR | awk -F/ '{print $3}')"; then
+        success "Python 依赖已更新（$MIRROR）"
+        break
+    fi
+done
 deactivate
-success "Python 依赖已更新"
 
 # 重新构建前端
 info "重新构建前端..."
