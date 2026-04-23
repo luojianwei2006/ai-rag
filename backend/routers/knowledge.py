@@ -86,10 +86,29 @@ async def upload_knowledge(
     tenant: Tenant = Depends(get_current_tenant),
     db: Session = Depends(get_db)
 ):
+    import logging
+    logger = logging.getLogger("knowledge")
+
+    # 检查文件名
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="文件名为空，请选择有效文件")
+
     # 检查文件类型
     ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
     if ext not in ALLOWED_EXTENSIONS:
-        raise HTTPException(status_code=400, detail=f"不支持的文件类型，支持：{', '.join(ALLOWED_EXTENSIONS.keys())}")
+        raise HTTPException(status_code=400, detail=f"不支持的文件类型(.{ext})，仅支持：{', '.join(ALLOWED_EXTENSIONS.keys())}")
+
+    # 检查文件大小（使用已定义的 MAX_FILE_SIZE）
+    max_size = settings.MAX_FILE_SIZE
+    contents = await file.read()
+    if len(contents) > max_size:
+        raise HTTPException(
+            status_code=400,
+            detail=f"文件过大（{len(contents) / 1024 / 1024:.1f}MB），最大允许 {max_size / 1024 / 1024:.0f}MB"
+        )
+    # 将文件指针重置，后续写入时使用
+    import io
+    file.file = io.BytesIO(contents)
 
     # 扣费检查
     config = PointsService.get_config(db)
@@ -98,7 +117,7 @@ async def upload_knowledge(
     if tenant.points_balance < cost:
         raise HTTPException(
             status_code=400, 
-            detail=f"积分不足，添加知识库需要 {cost} 点，当前余额: {tenant.points_balance} 点"
+            detail=f"积分不足（需要 {cost} 点，当前余额 {tenant.points_balance} 点），请联系管理员充值"
         )
 
     # 保存文件

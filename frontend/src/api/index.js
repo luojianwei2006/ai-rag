@@ -78,7 +78,8 @@ export const tenantApi = {
 // 知识库接口
 export const knowledgeApi = {
   upload: (formData) => api.post('/knowledge/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 120000  // 上传文件超时 2 分钟
   }),
   list: () => api.get('/knowledge/list'),
   delete: (id) => api.delete(`/knowledge/${id}`),

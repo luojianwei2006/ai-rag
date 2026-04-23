@@ -217,6 +217,13 @@ function handleDrop(e) { selectedFile.value = e.dataTransfer.files[0] || null }
 
 async function handleUpload() {
   if (!selectedFile.value) return MessagePlugin.warning('请选择文件')
+  
+  // 前端预检文件大小（50MB）
+  const maxSize = 50 * 1024 * 1024
+  if (selectedFile.value.size > maxSize) {
+    return MessagePlugin.warning(`文件过大（${(selectedFile.value.size / 1024 / 1024).toFixed(1)}MB），最大允许 50MB`)
+  }
+
   uploading.value = true
   try {
     const fd = new FormData()
