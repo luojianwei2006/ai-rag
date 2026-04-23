@@ -163,10 +163,12 @@ nohup uvicorn main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
+    server_name your-domain.com;  # 替换为实际域名或服务器 IP
 
     root /var/www/customer-service;
     index index.html;
+
+    client_max_body_size 100m;
 
     # 前端路由（SPA）
     location / {
@@ -179,6 +181,8 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_connect_timeout 60s;
+        proxy_read_timeout 300s;
     }
 
     # WebSocket 代理（客服聊天）
@@ -188,8 +192,23 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
         proxy_read_timeout 3600s;
     }
+
+    # Gzip 压缩
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
+    gzip_min_length 1024;
+
+    # 上传文件直接访问
+    location /uploads {
+        alias /var/www/customer-service-backend/uploads;
+        expires 7d;
+    }
+
+    access_log /var/log/nginx/customer-service.log;
+    error_log /var/log/nginx/customer-service.error.log;
 }
 ```
 
@@ -283,9 +302,15 @@ http://服务器IP:8001
 #### 第 4 步：配置域名（可选）
 
 1. **域名解析**：添加 A 记录指向服务器 IP
-2. **宝塔添加站点**：网站 → 添加站点 → 填写域名
-3. **修改 Nginx 配置**：点击站点 → 配置文件，将默认内容替换为 `bt-nginx.conf` 中的内容（安装时自动生成）
-4. **申请 SSL**：站点 → SSL → Let's Encrypt → 申请 → 开启强制 HTTPS
+2. **在宝塔面板添加域名**：
+   - 网站 → 点击「customer-service」→ 域名管理 → 添加域名
+   - 添加后 Nginx 配置的 `server_name` 行会自动更新
+3. **如需修改 Nginx 配置**：点击站点 → 配置文件
+   - 安装时已自动生成配置，通常无需手动修改
+   - 配置中已预留 `#SSL-START` / `#SSL-END` 标记，申请 SSL 证书时宝塔会自动填充
+4. **申请 SSL**（推荐）：站点 → SSL → Let's Encrypt → 申请 → 开启强制 HTTPS
+
+> **💡 提示**：安装脚本会自动使用服务器 IP 作为默认 `server_name`，在宝塔面板添加域名时会自动追加到 `server_name` 行中，无需手动修改配置文件。
 
 ---
 
