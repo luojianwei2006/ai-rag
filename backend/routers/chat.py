@@ -10,7 +10,7 @@ from database import get_db, SessionLocal
 from models.models import Tenant, KnowledgeBase, ChatSession, ChatMessage
 from utils.security import get_current_tenant, decode_token
 from services.rag_service import query_knowledge_base
-from services.llm_service import call_llm, get_tenant_llm_config
+from services.llm_service import call_llm, get_tenant_llm_config, LLMError
 from services.points_service import PointsService
 
 router = APIRouter(tags=["聊天"])
@@ -395,15 +395,21 @@ async def customer_chat_ws(
                     if not api_keys:
                         reply = "抱歉，AI服务暂时不可用，请联系客服。"
                     else:
-                        reply = await call_llm(model, api_keys, history, context)
-                        
-                        # 扣除积分
-                        PointsService.deduct_points(
-                            db, tenant.id, cost, "ai_reply",
-                            description="AI客服回答（网页）",
-                            related_id=session_id
-                        )
+                        try:
+                            reply = await call_llm(model, api_keys, history, context)
+                        except LLMError:
+                            reply = "抱歉，AI服务暂时不可用，请稍后重试。"
+                        else:
+                            # 仅 LLM 调用成功时才扣积分
+                            PointsService.deduct_points(
+                                db, tenant.id, cost, "ai_reply",
+                                description="AI客服回答（网页）",
+                                related_id=session_id
+                            )
 
+            except LLMError:
+                # LLM 调用失败已在上方处理，此处不再重复
+                pass
             except Exception as e:
                 reply = "抱歉，处理您的问题时出现了错误，请稍后重试。"
 

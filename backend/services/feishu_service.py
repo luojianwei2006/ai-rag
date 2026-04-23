@@ -11,7 +11,7 @@ import httpx
 from database import SessionLocal
 from models.models import Tenant, ChatSession, ChatMessage, KnowledgeBase
 from services.rag_service import query_knowledge_base
-from services.llm_service import call_llm, get_tenant_llm_config
+from services.llm_service import call_llm, get_tenant_llm_config, LLMError
 from services.points_service import PointsService
 
 # 消息去重缓存：message_id -> timestamp
@@ -251,14 +251,17 @@ async def _process_ai_reply(tenant: Tenant, sender: dict, user_message: str) -> 
                 if not api_keys:
                     reply = "抱歉，AI服务暂时不可用，请联系客服。"
                 else:
-                    reply = await call_llm(model, api_keys, history, context)
-                    
-                    # 扣除积分
-                    PointsService.deduct_points(
-                        db, tenant.id, cost, "ai_reply",
-                        description="AI客服回答（飞书）",
-                        related_id=session.session_id
-                    )
+                    try:
+                        reply = await call_llm(model, api_keys, history, context)
+                    except LLMError:
+                        reply = "抱歉，AI服务暂时不可用，请稍后重试。"
+                    else:
+                        # 仅 LLM 调用成功时才扣积分
+                        PointsService.deduct_points(
+                            db, tenant.id, cost, "ai_reply",
+                            description="AI客服回答（飞书）",
+                            related_id=session.session_id
+                        )
         
         # 保存AI回复
         ai_msg = ChatMessage(

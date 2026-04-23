@@ -10,7 +10,7 @@ from database import get_db
 from models.models import Tenant, KnowledgeBase
 from utils.security import get_current_tenant
 from services.rag_service import build_knowledge_base, query_knowledge_base, delete_knowledge_base
-from services.llm_service import call_llm, get_tenant_llm_config
+from services.llm_service import call_llm, get_tenant_llm_config, LLMError
 from services.crawler_service import crawl_single_page, crawl_website
 from services.points_service import PointsService
 from config import settings
@@ -225,7 +225,10 @@ async def test_qa(
 
     # 调用LLM（支持轮询）
     messages = [{"role": "user", "content": req.question}]
-    answer = await call_llm(model, api_keys, messages, context)
+    try:
+        answer = await call_llm(model, api_keys, messages, context)
+    except LLMError as e:
+        raise HTTPException(status_code=502, detail=f"AI服务调用失败: {e}")
 
     return {
         "question": req.question,
