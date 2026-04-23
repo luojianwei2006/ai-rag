@@ -145,32 +145,42 @@ info "安装 Python 依赖包（首次约 5-15 分钟）..."
 # 先清除 pip 缓存，避免旧缓存干扰
 pip cache purge -q 2>/dev/null || true
 
-# 取消可能存在的全局镜像配置干扰
+# 强制清除所有 pip 镜像配置（宝塔可能自动配置了残缺镜像源）
+rm -f /root/.config/pip/pip.conf
+rm -f /etc/pip.conf
 pip config unset global.index-url 2>/dev/null || true
+pip config unset global.trusted-host 2>/dev/null || true
+pip config unset global.timeout 2>/dev/null || true
 
-MIRRORS=(
-    ""                                              # 官方 PyPI（默认，不指定镜像）
-    "-i https://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com"
-    "-i https://pypi.mirrors.ustc.edu.cn/simple --trusted-host pypi.mirrors.ustc.edu.cn"
-    "-i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host pypi.tuna.tsinghua.edu.cn"
-)
-MIRROR_NAMES=("官方 PyPI" "阿里云" "中科大" "清华")
+info "pip 配置已清理，当前配置：$(pip config list 2>/dev/null || echo '无自定义配置，使用默认')"
 
-INSTALLED=false
-for i in "${!MIRRORS[@]}"; do
-    info "尝试 ${MIRROR_NAMES[$i]} ..."
-    CMD="pip install -r requirements.txt --timeout 180 ${MIRRORS[$i]}"
-    if eval $CMD; then
-        success "Python 依赖安装完成（${MIRROR_NAMES[$i]}）"
-        INSTALLED=true
-        break
-    else
-        warn "${MIRROR_NAMES[$i]} 失败，切换下一个..."
-    fi
-done
+# 安装依赖
+info "安装 Python 依赖包（首次约 5-15 分钟）..."
 
-if [ "$INSTALLED" = false ]; then
-    error "所有源均失败，请检查网络连通性后重试，或手动执行：pip install -r requirements.txt"
+if pip install -r requirements.txt --timeout 180; then
+    success "Python 依赖安装完成（官方 PyPI）"
+else
+    warn "官方 PyPI 安装失败，可能是网络问题"
+    echo ""
+    echo "======================================================"
+    warn "服务器无法访问 PyPI 官方源，请选择以下方法之一："
+    echo ""
+    echo "  方法1 - 如果服务器有代理，设置后重试："
+    echo "    export http_proxy=http://代理地址:端口"
+    echo "    export https_proxy=http://代理地址:端口"
+    echo "    ./install-bt.sh"
+    echo ""
+    echo "  方法2 - 分步手动安装（先装大包再装剩余）："
+    echo "    cd backend && source .venv/bin/activate"
+    echo "    pip install langchain-community langchain langchain-openai langchain-google-genai"
+    echo "    pip install chromadb sentence-transformers"
+    echo "    pip install -r requirements.txt"
+    echo ""
+    echo "  方法3 - 检查服务器是否能访问外网："
+    echo "    curl -I https://pypi.org/simple/"
+    echo ""
+    echo "======================================================"
+    exit 1
 fi
 
 deactivate
