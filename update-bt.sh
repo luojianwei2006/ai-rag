@@ -34,19 +34,18 @@ else
     warn "未检测到 Git 仓库，跳过代码拉取，直接重新部署"
 fi
 
-# 更新 Python 依赖（多镜像源自动回退）
+# 更新 Python 依赖（先官方源，失败再切国内镜像）
 info "更新 Python 依赖..."
 cd "$BACKEND_DIR"
 source .venv/bin/activate
-MIRRORS=(
-    "https://mirrors.aliyun.com/pypi/simple"
-    "https://pypi.tuna.tsinghua.edu.cn/simple"
-    "https://pypi.mirrors.ustc.edu.cn/simple"
-    "https://pypi.org/simple"
-)
-for MIRROR in "${MIRRORS[@]}"; do
-    if pip install -r requirements.txt -i "$MIRROR" --timeout 120 -q --trusted-host "$(echo $MIRROR | awk -F/ '{print $3}')"; then
-        success "Python 依赖已更新（$MIRROR）"
+pip config unset global.index-url 2>/dev/null || true
+pip cache purge -q 2>/dev/null || true
+MIRRORS=("" "-i https://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com" "-i https://pypi.mirrors.ustc.edu.cn/simple --trusted-host pypi.mirrors.ustc.edu.cn")
+MIRROR_NAMES=("官方PyPI" "阿里云" "中科大")
+for i in "${!MIRRORS[@]}"; do
+    CMD="pip install -r requirements.txt --timeout 180 -q ${MIRRORS[$i]}"
+    if eval $CMD; then
+        success "Python 依赖已更新（${MIRROR_NAMES[$i]}）"
         break
     fi
 done

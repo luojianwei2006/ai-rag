@@ -139,27 +139,38 @@ success "虚拟环境已激活"
 # 升级 pip
 pip install --upgrade pip -q
 
-# 安装依赖（多镜像源自动回退，优先国内加速）
-info "安装 Python 依赖包（首次约 5-10 分钟）..."
+# 安装依赖（先用官方源，失败再切换国内镜像）
+info "安装 Python 依赖包（首次约 5-15 分钟）..."
+
+# 先清除 pip 缓存，避免旧缓存干扰
+pip cache purge -q 2>/dev/null || true
+
+# 取消可能存在的全局镜像配置干扰
+pip config unset global.index-url 2>/dev/null || true
+
 MIRRORS=(
-    "https://mirrors.aliyun.com/pypi/simple"
-    "https://pypi.tuna.tsinghua.edu.cn/simple"
-    "https://pypi.mirrors.ustc.edu.cn/simple"
-    "https://pypi.org/simple"
+    ""                                              # 官方 PyPI（默认，不指定镜像）
+    "-i https://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com"
+    "-i https://pypi.mirrors.ustc.edu.cn/simple --trusted-host pypi.mirrors.ustc.edu.cn"
+    "-i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host pypi.tuna.tsinghua.edu.cn"
 )
+MIRROR_NAMES=("官方 PyPI" "阿里云" "中科大" "清华")
+
 INSTALLED=false
-for MIRROR in "${MIRRORS[@]}"; do
-    info "尝试镜像：$MIRROR"
-    if pip install -r requirements.txt -i "$MIRROR" --timeout 120 --trusted-host "$(echo $MIRROR | awk -F/ '{print $3}')"; then
-        success "Python 依赖安装完成（$MIRROR）"
+for i in "${!MIRRORS[@]}"; do
+    info "尝试 ${MIRROR_NAMES[$i]} ..."
+    CMD="pip install -r requirements.txt --timeout 180 ${MIRRORS[$i]}"
+    if eval $CMD; then
+        success "Python 依赖安装完成（${MIRROR_NAMES[$i]}）"
         INSTALLED=true
         break
     else
-        warn "镜像 $MIRROR 安装失败，切换下一个..."
+        warn "${MIRROR_NAMES[$i]} 失败，切换下一个..."
     fi
 done
+
 if [ "$INSTALLED" = false ]; then
-    error "所有镜像源均安装失败，请检查网络或手动安装依赖"
+    error "所有源均失败，请检查网络连通性后重试，或手动执行：pip install -r requirements.txt"
 fi
 
 deactivate
