@@ -74,15 +74,66 @@ done
 
 if [ -z "$PYTHON_CMD" ]; then
     warn "未找到 Python 3.9+，尝试自动安装..."
+
     if command -v apt-get &>/dev/null; then
-        apt-get update -y && apt-get install -y python3 python3-pip python3-venv
-        PYTHON_CMD="python3"
-    elif command -v yum &>/dev/null; then
-        yum install -y python3 python3-pip
-        PYTHON_CMD="python3"
-    else
-        error "无法自动安装 Python，请手动安装 Python 3.9+ 后重试"
+        # Ubuntu / Debian — 使用 deadsnakes PPA 安装 Python 3.11
+        apt-get update -y
+        apt-get install -y software-properties-common
+        add-apt-repository -y ppa:deadsnakes/ppa
+        apt-get update -y
+        apt-get install -y python3.11 python3.11-venv python3.11-dev python3-pip
+        PYTHON_CMD="python3.11"
+    elif command -v yum &>/dev/null || command -v dnf &>/dev/null; then
+        # CentOS / RHEL / Fedora
+        PKG_MGR=$(command -v dnf 2>/dev/null || echo "yum")
+
+        # 尝试安装高版本 Python
+        if $PKG_MGR install -y python3.11 python3.11-pip python3.11-devel 2>/dev/null; then
+            PYTHON_CMD="python3.11"
+        elif $PKG_MGR install -y python3.10 python3.10-pip python3.10-devel 2>/dev/null; then
+            PYTHON_CMD="python3.10"
+        elif $PKG_MGR install -y python39 python39-pip python39-devel 2>/dev/null; then
+            PYTHON_CMD="python3.9"
+        else
+            # 使用 IUS 源
+            $PKG_MGR install -y epel-release 2>/dev/null || true
+            curl -s https://setup.ius.io/ | bash 2>/dev/null || true
+            $PKG_MGR install -y python311 python311-pip python311-devel 2>/dev/null || \
+            $PKG_MGR install -y python39 python39-pip python39-devel 2>/dev/null || true
+            # 检查安装结果
+            for c in python3.11 python3.10 python3.9; do
+                if command -v "$c" &>/dev/null; then
+                    V=$($c -c "import sys; print(sys.version_info[:2])" 2>/dev/null)
+                    if [ "$(echo $V | cut -d, -f2)" -ge 9 ] 2>/dev/null; then
+                        PYTHON_CMD="$c"
+                        break
+                    fi
+                fi
+            done
+        fi
     fi
+
+    if [ -z "$PYTHON_CMD" ] || ! command -v "$PYTHON_CMD" &>/dev/null; then
+        error "自动安装 Python 3.9+ 失败。
+
+  Ubuntu/Debian 请执行：
+    apt install software-properties-common
+    add-apt-repository ppa:deadsnakes/ppa
+    apt install python3.11 python3.11-venv python3.11-pip
+
+  CentOS 7 请执行：
+    yum install epel-release
+    yum install https://repo.ius.io/ius-release-el7.rpm
+    yum install python311 python311-pip python311-devel
+
+  CentOS 8/Rocky/Alma 请执行：
+    dnf install python3.11 python3.11-pip python3.11-devel
+
+  安装完成后重新运行: ./install-bt.sh"
+    fi
+
+    VER=$("$PYTHON_CMD" -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>/dev/null)
+    success "Python $VER 安装完成 ($PYTHON_CMD)"
 fi
 
 # ==================== 第 2 步：检测 Node.js ====================
@@ -126,10 +177,24 @@ echo "[3/6] 安装 Python 依赖..."
 
 cd "$BACKEND_DIR"
 
-# 创建虚拟环境
+# 创建虚拟环境（如果已存在，检查 Python 版本是否匹配）
+NEED_RECREATE=false
+if [ -d ".venv" ]; then
+    VENV_PYTHON_VER=$(.venv/bin/python -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>/dev/null || echo "0.0")
+    VENV_MAJOR=$(echo "$VENV_PYTHON_VER" | cut -d. -f1)
+    VENV_MINOR=$(echo "$VENV_PYTHON_VER" | cut -d. -f2)
+    if [ "$VENV_MAJOR" -lt 3 ] || ([ "$VENV_MAJOR" -eq 3 ] && [ "$VENV_MINOR" -lt 9 ]); then
+        warn "旧虚拟环境 Python $VENV_PYTHON_VER 版本过低，重新创建..."
+        rm -rf .venv
+        NEED_RECREATE=true
+    else
+        info "虚拟环境已存在（Python $VENV_PYTHON_VER）"
+    fi
+fi
 if [ ! -d ".venv" ]; then
     info "创建 Python 虚拟环境..."
     $PYTHON_CMD -m venv .venv
+    NEED_RECREATE=true
 fi
 
 # 激活虚拟环境
