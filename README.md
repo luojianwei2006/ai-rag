@@ -51,10 +51,15 @@ customer-service-platform/
 │       ├── admin/           # 管理员页面
 │       ├── tenant/          # 商户页面
 │       └── chat/            # 客户聊天页面
+├── install-bt.sh            # 宝塔原生一键安装（推荐）
+├── update-bt.sh             # 宝塔原生一键更新
+├── uninstall-bt.sh          # 宝塔原生卸载
+├── bt-nginx.conf            # Nginx 配置（安装时自动生成）
 ├── Dockerfile               # Docker 镜像构建
 ├── docker-compose.yml       # Docker Compose 配置
 ├── docker-entrypoint.sh     # 容器启动脚本
-├── deploy-bt.sh             # 宝塔一键部署脚本
+├── deploy-bt.sh             # 宝塔 Docker 一键部署
+├── nginx.conf               # Docker 内部 Nginx 配置
 ├── start.sh                 # 一键启动
 └── startup.sh               # 后台启动
 ```
@@ -216,6 +221,95 @@ kill $(pgrep -f "uvicorn.*main:app") && cd backend && nohup uvicorn main:app --h
 # 更新部署（拉取最新代码后）
 cd frontend && npm run build && cp -r dist/* /var/www/customer-service/
 ```
+
+---
+
+## 宝塔原生部署（推荐，无需 Docker）
+
+> 直接在宝塔面板上安装运行，性能更好、更省资源，适合绝大多数 VPS。
+
+### 前提条件
+
+| 要求 | 说明 |
+|------|------|
+| 操作系统 | CentOS 7+ / Ubuntu 18+ / Debian 10+ |
+| 宝塔面板 | 已安装宝塔面板（[安装教程](https://www.bt.cn/new/download.html)） |
+| Python | 3.9+（脚本自动安装） |
+| Node.js | 16+（脚本自动安装） |
+| Nginx | 宝塔面板已安装 Nginx（软件商店 → Nginx） |
+| 内存 | 建议 2GB 以上（AI 模型需要） |
+
+### 一键安装
+
+#### 第 1 步：上传项目到服务器
+
+**方式 A：从 GitHub 拉取（推荐）**
+```bash
+cd /www/wwwroot
+git clone https://github.com/luojianwei2006/ai-rag.git customer-service
+cd customer-service
+```
+
+**方式 B：宝塔面板上传**
+1. 宝塔 → **文件** → 进入 `/www/wwwroot/`
+2. 上传 `customer-service.zip` → 解压
+
+#### 第 2 步：一键安装
+
+```bash
+cd /www/wwwroot/customer-service
+chmod +x install-bt.sh
+./install-bt.sh
+```
+
+安装过程中会提示填写：
+- 管理员账号和密码
+- 访问域名或 IP（用于生成客服链接）
+
+**首次安装约需 5-15 分钟**（下载 Python 依赖 + 前端构建）。
+
+#### 第 3 步：验证访问
+
+安装完成后，浏览器打开：
+
+```
+http://服务器IP:8001
+```
+
+- 管理员后台：`http://服务器IP:8001/admin/login`
+- 默认账号：安装时设置的账号密码
+- **⚠️ 请登录后立即修改密码！**
+
+#### 第 4 步：配置域名（可选）
+
+1. **域名解析**：添加 A 记录指向服务器 IP
+2. **宝塔添加站点**：网站 → 添加站点 → 填写域名
+3. **修改 Nginx 配置**：点击站点 → 配置文件，将默认内容替换为 `bt-nginx.conf` 中的内容（安装时自动生成）
+4. **申请 SSL**：站点 → SSL → Let's Encrypt → 申请 → 开启强制 HTTPS
+
+---
+
+### 宝塔原生部署常用命令
+
+| 操作 | 命令 |
+|------|------|
+| 查看服务状态 | `systemctl status customer-service` |
+| 重启后端 | `systemctl restart customer-service` |
+| 停止后端 | `systemctl stop customer-service` |
+| 查看日志 | `tail -f /www/wwwroot/customer-service/backend/server.log` |
+| 更新部署 | `./update-bt.sh` |
+| 卸载服务 | `./uninstall-bt.sh` |
+
+---
+
+### 脚本说明
+
+| 脚本 | 说明 |
+|------|------|
+| `install-bt.sh` | **一键安装**：检测环境、安装依赖、构建前端、配置 systemd、配置 Nginx |
+| `update-bt.sh` | **一键更新**：拉取新代码、更新依赖、重新构建、重启服务 |
+| `uninstall-bt.sh` | **卸载服务**：停止服务、删除 systemd 和 Nginx 配置（数据目录保留） |
+| `bt-nginx.conf` | **Nginx 配置**：安装时自动生成，可直接用于宝塔站点配置 |
 
 ---
 
