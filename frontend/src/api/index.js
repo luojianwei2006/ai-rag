@@ -98,4 +98,31 @@ export const chatApi = {
   getChatInfo: (chatToken) => axios.get(`/api/public/chat/${chatToken}/info`)
 }
 
+// 小红书矩阵发布接口
+export const xhsApi = {
+  // 账号管理
+  getAccounts: () => api.get('/xhs/accounts'),
+  createAccount: (data) => api.post('/xhs/accounts', data),
+  updateAccount: (id, data) => api.put(`/xhs/accounts/${id}`, data),
+  deleteAccount: (id) => api.delete(`/xhs/accounts/${id}`),
+
+  // 素材库
+  getMaterials: (type) => api.get('/xhs/materials', { params: type ? { material_type: type } : {} }),
+  createMaterial: (data) => api.post('/xhs/materials', data),
+  uploadImage: (formData) => api.post('/xhs/materials/upload-image', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 60000
+  }),
+  updateMaterial: (id, data) => api.put(`/xhs/materials/${id}`, data),
+  deleteMaterial: (id) => api.delete(`/xhs/materials/${id}`),
+
+  // 任务管理
+  getTasks: () => api.get('/xhs/tasks'),
+  createTask: (data) => api.post('/xhs/tasks', data),
+  updateTask: (id, data) => api.put(`/xhs/tasks/${id}`, data),
+  deleteTask: (id) => api.delete(`/xhs/tasks/${id}`),
+  generateArticle: (taskId) => api.post(`/xhs/tasks/${taskId}/generate`, {}, { timeout: 120000 }),
+  publishTask: (taskId) => api.post(`/xhs/tasks/${taskId}/publish`),
+}
+
 export default api

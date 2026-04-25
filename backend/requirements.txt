@@ -33,3 +33,6 @@ httpx
 # 网页爬虫
 beautifulsoup4
 lxml
+
+# 小红书自动发布（Playwright 浏览器自动化）
+playwright

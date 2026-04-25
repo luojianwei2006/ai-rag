@@ -81,6 +81,9 @@ class Tenant(Base):
     knowledge_bases = relationship("KnowledgeBase", back_populates="tenant", cascade="all, delete-orphan")
     chat_sessions = relationship("ChatSession", back_populates="tenant", cascade="all, delete-orphan")
     points_transactions = relationship("PointsTransaction", back_populates="tenant", cascade="all, delete-orphan")
+    xhs_accounts = relationship("XhsAccount", back_populates="tenant", cascade="all, delete-orphan")
+    xhs_materials = relationship("XhsMaterial", back_populates="tenant", cascade="all, delete-orphan")
+    xhs_tasks = relationship("XhsTask", back_populates="tenant", cascade="all, delete-orphan")
 
 
 class KnowledgeBase(Base):
@@ -135,3 +138,85 @@ class ChatMessage(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     session = relationship("ChatSession", back_populates="messages")
+
+
+# ==================== 小红书相关模型 ====================
+
+class XhsAccount(Base):
+    """小红书账号表（矩阵管理）"""
+    __tablename__ = "xhs_accounts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
+    nickname = Column(String(100), nullable=False)          # 账号昵称（便于识别）
+    xhs_username = Column(String(100), nullable=True)       # 小红书用户名（可选，仅展示用）
+    # 登录凭证（cookies JSON字符串，由首次登录后自动保存）
+    cookies = Column(Text, nullable=True)
+    # 账号补充信息
+    persona = Column(Text, nullable=True)                   # 账号人设描述（用于提示词）
+    niche = Column(String(200), nullable=True)              # 账号定位/领域
+    tags = Column(String(500), nullable=True)               # 常用标签，逗号分隔
+    status = Column(String(20), default="active")           # active / inactive / cookie_expired
+    last_login_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    tenant = relationship("Tenant", back_populates="xhs_accounts")
+    tasks = relationship("XhsTask", back_populates="account")
+
+
+class XhsMaterial(Base):
+    """素材库表"""
+    __tablename__ = "xhs_materials"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
+    name = Column(String(200), nullable=False)              # 素材名称
+    material_type = Column(String(20), nullable=False)      # image / text / reference
+    file_path = Column(String(500), nullable=True)          # 图片/文件路径
+    content = Column(Text, nullable=True)                   # 文字素材内容 or 参考文章内容
+    description = Column(String(500), nullable=True)        # 素材描述（用于提示词中引用说明）
+    tags = Column(String(500), nullable=True)               # 标签，逗号分隔
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    tenant = relationship("Tenant", back_populates="xhs_materials")
+
+
+class XhsTask(Base):
+    """小红书发布任务表"""
+    __tablename__ = "xhs_tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
+    account_id = Column(Integer, ForeignKey("xhs_accounts.id"), nullable=False)
+
+    # 任务基本信息
+    title = Column(String(200), nullable=False)             # 文章标题
+    system_prompt = Column(Text, nullable=True)             # 大模型角色说明（系统提示词）
+    user_prompt = Column(Text, nullable=False)              # 用户提示词
+    api_key_config = Column(JSON, nullable=True)            # 使用的API Key配置 {"provider":"openai","api_key":"sk-...","model":"gpt-4o"}
+    material_ids = Column(JSON, default=list)               # 选用的素材ID列表
+
+    # 生成结果
+    generated_title = Column(String(200), nullable=True)    # AI生成的标题
+    generated_content = Column(Text, nullable=True)         # AI生成的正文
+    generated_tags = Column(Text, nullable=True)            # AI生成的标签（逗号分隔）
+
+    # 任务状态
+    status = Column(String(30), default="draft")
+    # draft（草稿）→ generating（生成中）→ generated（已生成，待发布）
+    # → publishing（发布中）→ published（已发布）→ failed（失败）
+
+    error_message = Column(Text, nullable=True)             # 错误信息
+    published_url = Column(String(500), nullable=True)      # 发布成功后的笔记链接
+
+    # 调度（可选）
+    scheduled_at = Column(DateTime(timezone=True), nullable=True)  # 定时发布时间（null=立即）
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    tenant = relationship("Tenant", back_populates="xhs_tasks")
+    account = relationship("XhsAccount", back_populates="tasks")
+

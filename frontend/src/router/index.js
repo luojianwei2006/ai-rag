@@ -54,7 +54,11 @@ const routes = [
       { path: 'chat-monitor', name: 'TenantChatMonitor', component: () => import('@/views/tenant/ChatMonitor.vue') },
       { path: 'chat-history', name: 'TenantChatHistory', component: () => import('@/views/tenant/ChatHistory.vue') },
       { path: 'change-password', name: 'TenantChangePassword', component: () => import('@/views/tenant/ChangePassword.vue') },
-      { path: 'integrations', name: 'TenantIntegrations', component: () => import('@/views/tenant/Integrations.vue') }
+      { path: 'integrations', name: 'TenantIntegrations', component: () => import('@/views/tenant/Integrations.vue') },
+      // 小红书矩阵发布
+      { path: 'xhs-accounts', name: 'XhsAccounts', component: () => import('@/views/tenant/XhsAccounts.vue') },
+      { path: 'xhs-materials', name: 'XhsMaterials', component: () => import('@/views/tenant/XhsMaterials.vue') },
+      { path: 'xhs-tasks', name: 'XhsTasks', component: () => import('@/views/tenant/XhsTasks.vue') }
     ]
   },
 

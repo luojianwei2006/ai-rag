@@ -37,6 +37,12 @@
           <template #icon><t-icon name="link" /></template>
           第三方接入
         </t-menu-item>
+        <t-submenu value="/tenant/xhs" title="小红书发布">
+          <template #icon><span style="font-size:16px">📕</span></template>
+          <t-menu-item value="/tenant/xhs-accounts">账号矩阵</t-menu-item>
+          <t-menu-item value="/tenant/xhs-materials">素材库</t-menu-item>
+          <t-menu-item value="/tenant/xhs-tasks">发布任务</t-menu-item>
+        </t-submenu>
       </t-menu>
       <div class="bottom-actions">
         <div class="points-info" v-if="auth.userInfo">
