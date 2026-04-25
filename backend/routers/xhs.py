@@ -198,7 +198,7 @@ def list_materials(
             "tags": m.tags,
             "file_path": m.file_path,
             "has_file": bool(m.file_path and os.path.exists(m.file_path)),
-            "url": f"/api/xhs/materials/{m.id}/file" if (m.file_path and os.path.exists(m.file_path)) else None,
+            "url": f"/api/xhs/public/materials/{m.id}/{_material_token(m.id)}/file" if (m.file_path and os.path.exists(m.file_path)) else None,
             "created_at": m.created_at.isoformat() if m.created_at else None,
         }
         for m in materials
@@ -305,17 +305,41 @@ def delete_material(
     return {"message": "素材已删除"}
 
 
+def _material_token(material_id: int) -> str:
+    """为素材生成一个简单的访问 token（基于 material_id + SECRET）"""
+    import hashlib, hmac
+    secret = settings.SECRET_KEY[:16]
+    return hmac.new(secret.encode(), str(material_id).encode(), hashlib.sha256).hexdigest()[:12]
+
+
 @router.get("/materials/{material_id}/file")
 def get_material_file(
     material_id: int,
     db: Session = Depends(get_db),
     tenant: Tenant = Depends(get_current_tenant),
 ):
-    """访问素材图片文件"""
+    """访问素材图片文件（需登录，用于列表获取 URL）"""
     material = db.query(XhsMaterial).filter(
         XhsMaterial.id == material_id,
         XhsMaterial.tenant_id == tenant.id,
     ).first()
+    if not material:
+        raise HTTPException(status_code=404, detail="素材不存在")
+    if not material.file_path or not os.path.exists(material.file_path):
+        raise HTTPException(status_code=404, detail="图片文件不存在")
+    return FileResponse(material.file_path)
+
+
+@router.get("/public/materials/{material_id}/{token}/file")
+def get_material_file_public(
+    material_id: int,
+    token: str,
+    db: Session = Depends(get_db),
+):
+    """公开访问素材图片（带 token 校验，无需登录，用于 img 标签直接引用）"""
+    if token != _material_token(material_id):
+        raise HTTPException(status_code=403, detail="无效的访问 token")
+    material = db.query(XhsMaterial).filter(XhsMaterial.id == material_id).first()
     if not material:
         raise HTTPException(status_code=404, detail="素材不存在")
     if not material.file_path or not os.path.exists(material.file_path):
