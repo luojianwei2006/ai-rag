@@ -338,13 +338,14 @@ def update_material(
     # 如果修改了尺寸，实际缩放图片文件
     new_width = req.width if req.width is not None else material.width
     new_height = req.height if req.height is not None else material.height
-    if req.width is not None or req.height is not None:
-        if new_width and new_height and material.file_path and os.path.exists(material.file_path):
-            old_w, old_h = _get_image_size(material.file_path)
-            # 只有尺寸确实发生了变化才执行缩放
-            if old_w != new_width or old_h != new_height:
-                if not _resize_image(material.file_path, new_width, new_height):
-                    raise HTTPException(status_code=500, detail="图片缩放失败")
+    if (req.width is not None or req.height is not None) and new_width and new_height:
+        if material.file_path and os.path.exists(material.file_path):
+            try:
+                old_w, old_h = _get_image_size(material.file_path) or (0, 0)
+                if old_w != new_width or old_h != new_height:
+                    _resize_image(material.file_path, new_width, new_height)
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"图片缩放失败: {str(e)}")
 
     for field, value in req.dict(exclude_none=True).items():
         setattr(material, field, value)
@@ -784,16 +785,13 @@ async def _do_publish(task_id: int, tenant_id: int):
         db.close()
 
 
-def _resize_image(file_path: str, new_width: int, new_height: int) -> bool:
-    """缩放图片文件到指定尺寸，保持原格式。成功返回 True，失败返回 False"""
-    try:
-        from PIL import Image as PILImage
-        with PILImage.open(file_path) as img:
-            resized = img.resize((new_width, new_height), PILImage.LANCZOS)
-            resized.save(file_path, format=img.format or "PNG")
-        return True
-    except Exception:
-        return False
+def _resize_image(file_path: str, new_width: int, new_height: int):
+    """缩放图片文件到指定尺寸，保持原格式。成功返回 True，失败抛异常"""
+    from PIL import Image as PILImage
+    with PILImage.open(file_path) as img:
+        fmt = img.format or "PNG"
+        resized = img.resize((new_width, new_height), PILImage.LANCZOS)
+        resized.save(file_path, format=fmt)
 
 
 def _get_image_size(file_path: str):
