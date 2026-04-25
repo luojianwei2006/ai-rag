@@ -34,5 +34,8 @@ httpx
 beautifulsoup4
 lxml
 
+# 图片处理
+Pillow
+
 # 小红书自动发布（Playwright 浏览器自动化）
 playwright
