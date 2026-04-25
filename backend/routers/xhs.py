@@ -599,20 +599,14 @@ async def generate_article(
 
     full_user_prompt = task.user_prompt + material_context
 
-    # 确定 API Key
+    # 确定 API Key（与知识库问答、客服聊天一致）
     messages = [{"role": "user", "content": full_user_prompt}]
     system_prompt = task.system_prompt or DEFAULT_SYSTEM_PROMPT
 
-    # 支持任务独立配置 API Key，或 fallback 商户配置
-    if task.api_key_config:
-        cfg = task.api_key_config
-        model = cfg.get("model", "gpt-4o-mini")
-        api_keys = {cfg.get("provider", "openai"): [cfg.get("api_key", "")]}
-    else:
-        model, api_keys = get_tenant_llm_config(tenant, db)
+    model, api_keys = get_tenant_llm_config(tenant, db)
 
     if not api_keys:
-        raise HTTPException(status_code=400, detail="未配置可用的 API Key")
+        raise HTTPException(status_code=400, detail="未配置可用的 API Key，请先在 API Key 配置页面添加")
 
     # 更新状态
     task.status = "generating"
