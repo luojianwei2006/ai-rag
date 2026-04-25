@@ -10,6 +10,7 @@ import logging
 import os
 from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, BackgroundTasks
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -62,6 +63,7 @@ class MaterialUpdate(BaseModel):
     name: Optional[str] = None
     content: Optional[str] = None
     description: Optional[str] = None
+    alt: Optional[str] = None
     tags: Optional[str] = None
 
 class TaskCreate(BaseModel):
@@ -191,11 +193,12 @@ def list_materials(
             "id": m.id,
             "name": m.name,
             "material_type": m.material_type,
-            "content": m.content,
             "description": m.description,
+            "alt": m.content,  # 复用 content 字段存 alt
             "tags": m.tags,
             "file_path": m.file_path,
             "has_file": bool(m.file_path and os.path.exists(m.file_path)),
+            "url": f"/api/xhs/materials/{m.id}/file" if (m.file_path and os.path.exists(m.file_path)) else None,
             "created_at": m.created_at.isoformat() if m.created_at else None,
         }
         for m in materials
@@ -300,6 +303,24 @@ def delete_material(
     db.delete(material)
     db.commit()
     return {"message": "素材已删除"}
+
+
+@router.get("/materials/{material_id}/file")
+def get_material_file(
+    material_id: int,
+    db: Session = Depends(get_db),
+    tenant: Tenant = Depends(get_current_tenant),
+):
+    """访问素材图片文件"""
+    material = db.query(XhsMaterial).filter(
+        XhsMaterial.id == material_id,
+        XhsMaterial.tenant_id == tenant.id,
+    ).first()
+    if not material:
+        raise HTTPException(status_code=404, detail="素材不存在")
+    if not material.file_path or not os.path.exists(material.file_path):
+        raise HTTPException(status_code=404, detail="图片文件不存在")
+    return FileResponse(material.file_path)
 
 
 # ===================== 发布任务 =====================
