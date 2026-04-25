@@ -177,6 +177,8 @@ class XhsMaterial(Base):
     content = Column(Text, nullable=True)                   # 保留字段（备用）
     description = Column(String(500), nullable=True)        # 图片描述（用于提示词引用）
     tags = Column(String(500), nullable=True)               # 标签，逗号分隔
+    width = Column(Integer, nullable=True)                  # 图片宽度（像素）
+    height = Column(Integer, nullable=True)                 # 图片高度（像素）
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

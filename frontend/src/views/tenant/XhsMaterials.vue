@@ -77,8 +77,11 @@
             <div v-else class="no-image">🖼️</div>
           </div>
 
-          <!-- 图片名称 -->
-          <div class="material-name" :title="m.name">{{ m.name }}</div>
+          <!-- 图片名称 + 尺寸 -->
+          <div class="material-info">
+            <div class="material-name" :title="m.name">{{ m.name }}</div>
+            <div class="material-size" v-if="m.width && m.height">{{ m.width }} × {{ m.height }}</div>
+          </div>
 
           <!-- 操作栏 -->
           <div class="material-footer">
@@ -375,21 +378,31 @@ function openEdit(m) {
   editForm.tags = m.tags || ''
   transform.rotate = 0
   transform.scale = 1
+  // 用后端存储的尺寸初始化（优先），否则等图片 load 后设置
   imgNaturalW.value = 0
   imgNaturalH.value = 0
-  resizeW.value = null
-  resizeH.value = null
+  if (m.width && m.height) {
+    imgNaturalW.value = m.width
+    imgNaturalH.value = m.height
+    resizeW.value = m.width
+    resizeH.value = m.height
+    aspectRatio = m.width / m.height
+  } else {
+    resizeW.value = null
+    resizeH.value = null
+  }
   editVisible.value = true
 }
 
 function onEditImgLoad(e) {
   imgNaturalW.value = e.target.naturalWidth
   imgNaturalH.value = e.target.naturalHeight
-  if (!resizeW.value && !resizeH.value) {
+  // 仅在未从后端加载到尺寸时才从图片元素设置
+  if (!resizeW.value || !resizeH.value) {
     resizeW.value = e.target.naturalWidth
     resizeH.value = e.target.naturalHeight
+    aspectRatio = e.target.naturalWidth / e.target.naturalHeight
   }
-  aspectRatio = e.target.naturalWidth / e.target.naturalHeight
 }
 
 function onSizeChange(dim) {
@@ -426,6 +439,8 @@ async function saveEdit() {
       description: editForm.description,
       content: editForm.alt,
       tags: editForm.tags,
+      width: resizeW.value,
+      height: resizeH.value,
     })
     MessagePlugin.success('素材已更新')
     editVisible.value = false
@@ -536,14 +551,27 @@ onMounted(loadMaterials)
   color: #ccc;
 }
 
-.material-name {
+.material-info {
   padding: 8px 10px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.material-name {
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   color: #333;
+  flex: 1;
+  min-width: 0;
+}
+.material-size {
+  font-size: 11px;
+  color: #bbb;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .material-footer {

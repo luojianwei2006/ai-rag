@@ -108,6 +108,7 @@ export const xhsApi = {
 
   // 素材库
   getMaterials: (type) => api.get('/xhs/materials', { params: type ? { material_type: type } : {} }),
+  getApiKeys: () => api.get('/xhs/api-keys'),
   createMaterial: (data) => api.post('/xhs/materials', data),
   uploadImage: (formData) => api.post('/xhs/materials/upload-image', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },

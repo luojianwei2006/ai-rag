@@ -65,6 +65,8 @@ class MaterialUpdate(BaseModel):
     description: Optional[str] = None
     alt: Optional[str] = None
     tags: Optional[str] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
 
 class TaskCreate(BaseModel):
     account_id: int
@@ -80,6 +82,53 @@ class TaskGenerate(BaseModel):
 
 class TaskPublish(BaseModel):
     task_id: int
+
+
+# ===================== API Key 列表（任务创建用） =====================
+
+@router.get("/api-keys")
+def list_available_api_keys(
+    db: Session = Depends(get_db),
+    tenant: Tenant = Depends(get_current_tenant),
+):
+    """获取商户可用的 API Key 列表（脱敏），用于任务创建下拉选择"""
+    keys = []
+
+    # 1. 商户自定义的 API Key
+    custom_keys = tenant.custom_api_keys or {}
+    api_keys_list = custom_keys.get("__v2__", [])
+    for k in api_keys_list:
+        if not k.get("enabled", True):
+            continue
+        raw = k.get("api_key", "")
+        keys.append({
+            "id": f"tenant:{k.get('id', '')}",
+            "source": "商户配置",
+            "provider": k.get("provider", ""),
+            "model": k.get("model", ""),
+            "api_key": raw,  # 原始 key，创建任务时需要存入
+            "api_key_masked": (raw[:4] + "****" + raw[-4:]) if raw and len(raw) > 8 else ("****" if raw else ""),
+        })
+
+    # 2. 系统默认 API Key（管理员配置）
+    from models.models import SystemConfig
+    import json as _json
+    sys_config = db.query(SystemConfig).filter(SystemConfig.key == "api_keys_v2").first()
+    if sys_config and sys_config.value:
+        for k in _json.loads(sys_config.value):
+            if not k.get("enabled", True):
+                continue
+            raw = k.get("api_key", "")
+            keys.append({
+                "id": f"system:{k.get('id', '')}",
+                "source": "系统默认",
+                "provider": k.get("provider", ""),
+                "model": k.get("model", ""),
+                "api_key": raw,
+                "api_key_masked": (raw[:4] + "****" + raw[-4:]) if raw and len(raw) > 8 else ("****" if raw else ""),
+            })
+
+    return keys
 
 
 # ===================== 账号矩阵 =====================
@@ -194,8 +243,10 @@ def list_materials(
             "name": m.name,
             "material_type": m.material_type,
             "description": m.description,
-            "alt": m.content,  # 复用 content 字段存 alt
+            "alt": m.content,
             "tags": m.tags,
+            "width": m.width,
+            "height": m.height,
             "file_path": m.file_path,
             "has_file": bool(m.file_path and os.path.exists(m.file_path)),
             "url": f"/api/xhs/public/materials/{m.id}/{_material_token(m.id)}/file" if (m.file_path and os.path.exists(m.file_path)) else None,
@@ -250,6 +301,9 @@ async def upload_material_image(
     with open(file_path, "wb") as f:
         f.write(content)
 
+    # 读取图片尺寸
+    img_w, img_h = _get_image_size(file_path)
+
     material = XhsMaterial(
         tenant_id=tenant.id,
         name=name or (file.filename.rsplit(".", 1)[0] if file.filename else "未命名图片"),
@@ -257,6 +311,8 @@ async def upload_material_image(
         file_path=file_path,
         description=description,
         tags=tags,
+        width=img_w,
+        height=img_h,
     )
     db.add(material)
     db.commit()
@@ -714,3 +770,13 @@ async def _do_publish(task_id: int, tenant_id: int):
             pass
     finally:
         db.close()
+
+
+def _get_image_size(file_path: str):
+    """读取图片尺寸（宽, 高），失败返回 (None, None)"""
+    try:
+        from PIL import Image as PILImage
+        with PILImage.open(file_path) as img:
+            return img.width, img.height
+    except Exception:
+        return None, None
