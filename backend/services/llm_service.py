@@ -150,8 +150,9 @@ async def _retry_async(coro_func, provider: str = "", model: str = "", label: st
             await asyncio.sleep(wait)
         except Exception as e:
             last_error = e
-            # 增强日志：打印异常类型、状态码、响应体
             import traceback
+            wait = RETRY_BACKOFF_BASE ** attempt
+            # 增强日志：打印异常类型、状态码、响应体
             error_detail = f"{type(e).__name__}: {e}"
             if hasattr(e, 'response') and e.response is not None:
                 try:
@@ -166,7 +167,6 @@ async def _retry_async(coro_func, provider: str = "", model: str = "", label: st
                 raise LLMError(
                     f"未知错误: {error_detail}", provider=provider, model=model, retryable=False
                 )
-            wait = RETRY_BACKOFF_BASE ** attempt
             await asyncio.sleep(wait)
     raise last_error  # 理论上不会到这里
 
