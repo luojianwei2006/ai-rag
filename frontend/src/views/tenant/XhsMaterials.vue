@@ -2,6 +2,22 @@
   <div class="page-container">
     <div class="page-header">
       <h2>🖼️ 素材库</h2>
+      <!-- 多选模式操作栏 -->
+      <template v-if="selectMode">
+        <t-button variant="outline" @click="cancelSelect">取消选择</t-button>
+        <t-button variant="outline" @click="selectAll">全选</t-button>
+        <t-button
+          variant="outline"
+          theme="danger"
+          :disabled="!selectedIds.length"
+          @click="batchDelete"
+        >
+          批量删除 ({{ selectedIds.length }})
+        </t-button>
+      </template>
+      <template v-else>
+        <t-button variant="outline" @click="enterSelect">多选</t-button>
+      </template>
     </div>
 
     <!-- 拖拽上传区域 -->
@@ -37,13 +53,25 @@
     <!-- 图片网格 -->
     <t-loading :loading="loading">
       <div class="materials-grid" v-if="materials.length">
-        <div class="material-card" v-for="m in materials" :key="m.id">
+        <div
+          class="material-card"
+          :class="{
+            'material-card--selected': selectMode && selectedIds.includes(m.id),
+            'material-card--selectable': selectMode,
+          }"
+          v-for="m in materials"
+          :key="m.id"
+        >
+          <!-- 多选复选框 -->
+          <div v-if="selectMode" class="select-checkbox" @click.stop="toggleSelect(m.id)">
+            <t-checkbox :checked="selectedIds.includes(m.id)" />
+          </div>
+
           <!-- 图片预览 -->
           <div
             class="image-preview"
-            :style="getPreviewStyle(m)"
-            @click="openEdit(m)"
-            :title="'点击编辑：' + m.name"
+            @click="selectMode ? toggleSelect(m.id) : openEdit(m)"
+            :title="selectMode ? '点击选择' : ('点击编辑：' + m.name)"
           >
             <img v-if="m.url" :src="m.url" :alt="m.alt || m.name" />
             <div v-else class="no-image">🖼️</div>
@@ -54,7 +82,7 @@
 
           <!-- 操作栏 -->
           <div class="material-footer">
-            <div class="url-copy" v-if="m.url" :title="'点击复制链接'">
+            <div class="url-copy" v-if="m.url && !selectMode" :title="'点击复制链接'">
               <input
                 class="url-input"
                 :value="getFullUrl(m.url)"
@@ -70,7 +98,7 @@
                 <template #icon><t-icon name="file-copy" /></template>
               </t-button>
             </div>
-            <div class="action-btns">
+            <div class="action-btns" v-if="!selectMode">
               <t-button size="small" variant="text" theme="primary" @click="openEdit(m)">编辑</t-button>
               <t-popconfirm content="确认删除此图片？" @confirm="deleteMaterial(m.id)">
                 <t-button size="small" variant="text" theme="danger">删除</t-button>
@@ -86,24 +114,61 @@
     <t-dialog
       v-model:visible="editVisible"
       header="编辑图片"
-      width="680px"
+      width="720px"
       :confirm-btn="{ content: '保存', loading: saving }"
       :cancel-btn="{ content: '取消' }"
       @confirm="saveEdit"
       @close="editVisible = false"
     >
       <div class="edit-layout" v-if="editItem">
-        <!-- 左侧：图片预览 -->
+        <!-- 左侧：图片预览 + 操作 -->
         <div class="edit-preview">
-          <div class="edit-preview-wrapper" :style="getEditPreviewStyle()">
+          <div class="edit-preview-wrapper">
             <img
               v-if="editItem.url"
               :src="editItem.url"
               :alt="editItem.alt || editItem.name"
               :style="getEditImgStyle()"
+              @load="onEditImgLoad"
             />
           </div>
-          <!-- 图片操作工具栏 -->
+          <!-- 尺寸调整 -->
+          <div class="edit-size-info">
+            <span>尺寸：{{ imgNaturalW }} × {{ imgNaturalH }}px</span>
+            <span class="edit-size-current" v-if="resizeW && resizeH">
+              → {{ resizeW }} × {{ resizeH }}px
+            </span>
+          </div>
+          <!-- 尺寸编辑 -->
+          <div class="edit-size-controls">
+            <div class="size-row">
+              <label>宽：</label>
+              <t-input-number
+                v-model="resizeW"
+                :min="1"
+                :max="4000"
+                theme="normal"
+                size="small"
+                style="width:100px"
+                @change="onSizeChange('w')"
+              />
+              <label style="margin-left:8px">高：</label>
+              <t-input-number
+                v-model="resizeH"
+                :min="1"
+                :max="4000"
+                theme="normal"
+                size="small"
+                style="width:100px"
+                @change="onSizeChange('h')"
+              />
+              <t-checkbox
+                v-model="lockRatio"
+                style="margin-left:8px"
+              >锁定比例</t-checkbox>
+            </div>
+          </div>
+          <!-- 变换操作工具栏 -->
           <div class="edit-toolbar">
             <t-button size="small" variant="outline" @click="rotateLeft" title="向左旋转90°">
               <template #icon><t-icon name="refresh" /></template> 左旋
@@ -112,10 +177,10 @@
               <template #icon><t-icon name="refresh" /></template> 右旋
             </t-button>
             <t-button size="small" variant="outline" @click="zoomIn" title="放大">
-              <template #icon><t-icon name="zoom-in" /></template> 放大
+              <template #icon><t-icon name="zoom-in" /></template>
             </t-button>
             <t-button size="small" variant="outline" @click="zoomOut" title="缩小">
-              <template #icon><t-icon name="zoom-out" /></template> 缩小
+              <template #icon><t-icon name="zoom-out" /></template>
             </t-button>
             <t-button size="small" variant="outline" @click="resetTransform" title="重置">
               <template #icon><t-icon name="restart" /></template> 重置
@@ -150,6 +215,16 @@
         </div>
       </div>
     </t-dialog>
+
+    <!-- 批量删除确认弹窗 -->
+    <t-dialog
+      v-model:visible="batchDeleteVisible"
+      header="批量删除"
+      :confirm-btn="{ content: '确认删除', theme: 'danger', loading: deleting }"
+      @confirm="doBatchDelete"
+    >
+      <p>确定要删除选中的 <strong>{{ selectedIds.length }}</strong> 张图片吗？此操作不可恢复。</p>
+    </t-dialog>
   </div>
 </template>
 
@@ -165,13 +240,29 @@ const uploadCount = ref(0)
 const uploadTotal = ref(0)
 const isDragOver = ref(false)
 const fileInput = ref(null)
+
+// 多选
+const selectMode = ref(false)
+const selectedIds = ref([])
+const batchDeleteVisible = ref(false)
+const deleting = ref(false)
+
+// 编辑
 const editVisible = ref(false)
 const editItem = ref(null)
 const saving = ref(false)
-
 const editForm = reactive({ name: '', description: '', alt: '', tags: '' })
 const transform = reactive({ rotate: 0, scale: 1 })
 
+// 图片尺寸
+const imgNaturalW = ref(0)
+const imgNaturalH = ref(0)
+const resizeW = ref(null)
+const resizeH = ref(null)
+const lockRatio = ref(true)
+let aspectRatio = 1
+
+// ===================== 加载 =====================
 async function loadMaterials() {
   loading.value = true
   try {
@@ -181,9 +272,8 @@ async function loadMaterials() {
   }
 }
 
-function triggerFileInput() {
-  fileInput.value?.click()
-}
+// ===================== 上传 =====================
+function triggerFileInput() { fileInput.value?.click() }
 
 function handleFileSelect(e) {
   const files = Array.from(e.target.files)
@@ -218,6 +308,50 @@ async function uploadFiles(files) {
   loadMaterials()
 }
 
+// ===================== 多选 =====================
+function enterSelect() {
+  selectMode.value = true
+  selectedIds.value = []
+}
+
+function cancelSelect() {
+  selectMode.value = false
+  selectedIds.value = []
+}
+
+function selectAll() {
+  if (selectedIds.value.length === materials.value.length) {
+    selectedIds.value = []
+  } else {
+    selectedIds.value = materials.value.map(m => m.id)
+  }
+}
+
+function toggleSelect(id) {
+  const idx = selectedIds.value.indexOf(id)
+  if (idx >= 0) selectedIds.value.splice(idx, 1)
+  else selectedIds.value.push(id)
+}
+
+function batchDelete() {
+  if (!selectedIds.value.length) return
+  batchDeleteVisible.value = true
+}
+
+async function doBatchDelete() {
+  deleting.value = true
+  try {
+    await xhsApi.batchDeleteMaterials(selectedIds.value)
+    MessagePlugin.success(`已删除 ${selectedIds.value.length} 张图片`)
+    batchDeleteVisible.value = false
+    selectMode.value = false
+    selectedIds.value = []
+    loadMaterials()
+  } catch { /* error handled by interceptor */ }
+  finally { deleting.value = false }
+}
+
+// ===================== URL 复制 =====================
 function getFullUrl(path) {
   if (!path) return ''
   return window.location.origin + path
@@ -232,7 +366,7 @@ async function copyUrl(url) {
   }
 }
 
-// 编辑相关
+// ===================== 编辑 =====================
 function openEdit(m) {
   editItem.value = m
   editForm.name = m.name
@@ -241,7 +375,30 @@ function openEdit(m) {
   editForm.tags = m.tags || ''
   transform.rotate = 0
   transform.scale = 1
+  imgNaturalW.value = 0
+  imgNaturalH.value = 0
+  resizeW.value = null
+  resizeH.value = null
   editVisible.value = true
+}
+
+function onEditImgLoad(e) {
+  imgNaturalW.value = e.target.naturalWidth
+  imgNaturalH.value = e.target.naturalHeight
+  if (!resizeW.value && !resizeH.value) {
+    resizeW.value = e.target.naturalWidth
+    resizeH.value = e.target.naturalHeight
+  }
+  aspectRatio = e.target.naturalWidth / e.target.naturalHeight
+}
+
+function onSizeChange(dim) {
+  if (!lockRatio.value) return
+  if (dim === 'w' && resizeW.value) {
+    resizeH.value = Math.round(resizeW.value / aspectRatio)
+  } else if (dim === 'h' && resizeH.value) {
+    resizeW.value = Math.round(resizeH.value * aspectRatio)
+  }
 }
 
 function rotateLeft() { transform.rotate -= 90 }
@@ -249,23 +406,6 @@ function rotateRight() { transform.rotate += 90 }
 function zoomIn() { transform.scale = Math.min(transform.scale + 0.25, 3) }
 function zoomOut() { transform.scale = Math.max(transform.scale - 0.25, 0.25) }
 function resetTransform() { transform.rotate = 0; transform.scale = 1 }
-
-function getPreviewStyle(m) {
-  // 卡片预览不做变换，保持原始
-  return {}
-}
-
-function getEditPreviewStyle() {
-  return {
-    width: '100%',
-    height: '320px',
-    overflow: 'hidden',
-    background: '#f5f5f5',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
-}
 
 function getEditImgStyle() {
   return {
@@ -284,7 +424,7 @@ async function saveEdit() {
     await xhsApi.updateMaterial(editItem.value.id, {
       name: editForm.name,
       description: editForm.description,
-      content: editForm.alt,  // alt 存入 content 字段
+      content: editForm.alt,
       tags: editForm.tags,
     })
     MessagePlugin.success('素材已更新')
@@ -295,6 +435,7 @@ async function saveEdit() {
   }
 }
 
+// ===================== 单个删除 =====================
 async function deleteMaterial(id) {
   await xhsApi.deleteMaterial(id)
   MessagePlugin.success('素材已删除')
@@ -311,6 +452,8 @@ onMounted(loadMaterials)
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .page-header h2 { margin: 0; font-size: 20px; }
 
@@ -354,18 +497,35 @@ onMounted(loadMaterials)
 .material-card {
   background: white;
   border-radius: 10px;
-  border: 1px solid #e8e8e8;
+  border: 2px solid transparent;
   overflow: hidden;
-  transition: box-shadow 0.2s;
+  transition: all 0.2s;
+  position: relative;
 }
 .material-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.material-card--selectable { border-color: #e8e8e8; cursor: pointer; }
+.material-card--selected {
+  border-color: #0052d9;
+  background: #f0f5ff;
+}
+
+/* 多选复选框 */
+.select-checkbox {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  background: rgba(255,255,255,0.85);
+  border-radius: 4px;
+  padding: 2px;
+}
 
 .image-preview {
   height: 180px;
   background: #f5f5f5;
   overflow: hidden;
-  cursor: pointer;
 }
+.material-card:not(.material-card--selectable) .image-preview { cursor: pointer; }
 .image-preview img { width: 100%; height: 100%; object-fit: cover; }
 .no-image {
   height: 100%;
@@ -426,6 +586,28 @@ onMounted(loadMaterials)
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+.edit-preview-wrapper {
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.edit-size-info {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+}
+.edit-size-current { color: #0052d9; font-weight: 500; }
+.edit-size-controls { padding: 0 4px; }
+.size-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
 }
 .edit-toolbar {
   display: flex;

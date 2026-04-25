@@ -114,6 +114,7 @@ export const xhsApi = {
     timeout: 60000
   }),
   updateMaterial: (id, data) => api.put(`/xhs/materials/${id}`, data),
+  batchDeleteMaterials: (ids) => api.post('/xhs/materials/batch-delete', { ids }),
   deleteMaterial: (id) => api.delete(`/xhs/materials/${id}`),
 
   // 任务管理

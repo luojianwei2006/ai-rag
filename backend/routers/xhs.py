@@ -284,6 +284,30 @@ def update_material(
     return {"message": "素材更新成功"}
 
 
+@router.post("/materials/batch-delete")
+def batch_delete_materials(
+    req: dict,
+    db: Session = Depends(get_db),
+    tenant: Tenant = Depends(get_current_tenant),
+):
+    """批量删除素材"""
+    ids = req.get("ids", [])
+    if not ids:
+        raise HTTPException(status_code=400, detail="请选择要删除的素材")
+    materials = db.query(XhsMaterial).filter(
+        XhsMaterial.id.in_(ids),
+        XhsMaterial.tenant_id == tenant.id,
+    ).all()
+    deleted = 0
+    for m in materials:
+        if m.file_path and os.path.exists(m.file_path):
+            os.remove(m.file_path)
+        db.delete(m)
+        deleted += 1
+    db.commit()
+    return {"message": f"已删除 {deleted} 个素材"}
+
+
 @router.delete("/materials/{material_id}")
 def delete_material(
     material_id: int,
