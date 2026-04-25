@@ -172,10 +172,10 @@ class XhsMaterial(Base):
     id = Column(Integer, primary_key=True, index=True)
     tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
     name = Column(String(200), nullable=False)              # 素材名称
-    material_type = Column(String(20), nullable=False)      # image / text / reference
-    file_path = Column(String(500), nullable=True)          # 图片/文件路径
-    content = Column(Text, nullable=True)                   # 文字素材内容 or 参考文章内容
-    description = Column(String(500), nullable=True)        # 素材描述（用于提示词中引用说明）
+    material_type = Column(String(20), nullable=False, default="image")  # 仅 image
+    file_path = Column(String(500), nullable=True)          # 图片文件路径
+    content = Column(Text, nullable=True)                   # 保留字段（备用）
+    description = Column(String(500), nullable=True)        # 图片描述（用于提示词引用）
     tags = Column(String(500), nullable=True)               # 标签，逗号分隔
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

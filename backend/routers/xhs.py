@@ -53,7 +53,7 @@ class AccountUpdate(BaseModel):
 
 class MaterialCreate(BaseModel):
     name: str
-    material_type: str          # image / text / reference
+    material_type: str = "image"   # 仅支持 image
     content: Optional[str] = None
     description: Optional[str] = None
     tags: Optional[str] = None
@@ -208,14 +208,11 @@ def create_material(
     db: Session = Depends(get_db),
     tenant: Tenant = Depends(get_current_tenant),
 ):
-    """添加文字/参考素材"""
-    if req.material_type not in ("image", "text", "reference"):
-        raise HTTPException(status_code=400, detail="material_type 必须为 image/text/reference")
-
+    """添加图片素材记录（无文件，仅元数据）"""
     material = XhsMaterial(
         tenant_id=tenant.id,
         name=req.name,
-        material_type=req.material_type,
+        material_type="image",
         content=req.content,
         description=req.description,
         tags=req.tags,
@@ -457,12 +454,8 @@ async def generate_article(
         ).all()
         mat_parts = []
         for m in materials:
-            if m.material_type == "text":
-                mat_parts.append(f"【文字素材 - {m.name}】\n{m.content}")
-            elif m.material_type == "reference":
-                mat_parts.append(f"【参考文章 - {m.name}】\n{m.content}")
-            elif m.material_type == "image":
-                mat_parts.append(f"【图片素材 - {m.name}】（描述：{m.description or '无'}）")
+            # 仅图片素材，将描述信息拼入提示词
+            mat_parts.append(f"【图片素材 - {m.name}】（描述：{m.description or '无'}）")
         if mat_parts:
             material_context = "\n\n参考素材：\n" + "\n\n".join(mat_parts)
 
