@@ -99,7 +99,7 @@
         <t-textarea
           v-model="cookiesForm.cookies"
           :rows="8"
-          placeholder='粘贴 Cookies JSON，格式如：[{"name":"web_session","value":"xxx",...},...]'
+          placeholder='粘贴 Cookie 文本或 JSON 数组。文本格式如：a1=xxx; webId=xxx；JSON 格式如：[{"name":"a1","value":"xxx"},...]'
           style="margin-top:12px;font-family:monospace;font-size:12px"
         />
       </div>
@@ -168,8 +168,21 @@ async function saveAccount() {
 
 async function saveCookies() {
   if (!cookiesForm.value.cookies.trim()) return MessagePlugin.warning('请粘贴 Cookies')
-  try { JSON.parse(cookiesForm.value.cookies) } catch {
-    return MessagePlugin.error('Cookies 格式不正确，请确保是合法的 JSON 数组')
+  const raw = cookiesForm.value.cookies.trim()
+  // 兼容两种格式：纯文本（key=value; ...）和 JSON 数组
+  try {
+    JSON.parse(raw) // JSON 格式，直接通过
+  } catch {
+    // 非 JSON，检查是否为 key=value 纯文本格式
+    if (!/^[^=]+=[^;]*(;\s*[^=]+=[^;]*)*$/.test(raw)) {
+      return MessagePlugin.error('Cookies 格式不正确，请粘贴 Cookie 文本或 JSON 数组')
+    }
+    // 纯文本格式自动转为 JSON 数组
+    const cookies = raw.split(';').map(c => {
+      const idx = c.indexOf('=')
+      return idx > -1 ? { name: c.substring(0, idx).trim(), value: c.substring(idx + 1).trim() } : null
+    }).filter(Boolean)
+    cookiesForm.value.cookies = JSON.stringify(cookies)
   }
   saving.value = true
   try {
