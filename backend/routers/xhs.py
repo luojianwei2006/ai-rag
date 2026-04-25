@@ -327,13 +327,25 @@ def update_material(
     db: Session = Depends(get_db),
     tenant: Tenant = Depends(get_current_tenant),
 ):
-    """更新素材"""
+    """更新素材（修改尺寸时会同步缩放图片文件）"""
     material = db.query(XhsMaterial).filter(
         XhsMaterial.id == material_id,
         XhsMaterial.tenant_id == tenant.id
     ).first()
     if not material:
         raise HTTPException(status_code=404, detail="素材不存在")
+
+    # 如果修改了尺寸，实际缩放图片文件
+    new_width = req.width if req.width is not None else material.width
+    new_height = req.height if req.height is not None else material.height
+    if req.width is not None or req.height is not None:
+        if new_width and new_height and material.file_path and os.path.exists(material.file_path):
+            old_w, old_h = _get_image_size(material.file_path)
+            # 只有尺寸确实发生了变化才执行缩放
+            if old_w != new_width or old_h != new_height:
+                if not _resize_image(material.file_path, new_width, new_height):
+                    raise HTTPException(status_code=500, detail="图片缩放失败")
+
     for field, value in req.dict(exclude_none=True).items():
         setattr(material, field, value)
     db.commit()
@@ -770,6 +782,18 @@ async def _do_publish(task_id: int, tenant_id: int):
             pass
     finally:
         db.close()
+
+
+def _resize_image(file_path: str, new_width: int, new_height: int) -> bool:
+    """缩放图片文件到指定尺寸，保持原格式。成功返回 True，失败返回 False"""
+    try:
+        from PIL import Image as PILImage
+        with PILImage.open(file_path) as img:
+            resized = img.resize((new_width, new_height), PILImage.LANCZOS)
+            resized.save(file_path, format=img.format or "PNG")
+        return True
+    except Exception:
+        return False
 
 
 def _get_image_size(file_path: str):
