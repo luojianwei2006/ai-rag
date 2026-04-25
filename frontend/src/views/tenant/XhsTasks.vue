@@ -201,7 +201,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
 import { xhsApi } from '@/api/index.js'
 
@@ -257,7 +257,7 @@ const columns = [
   { colKey: 'materials', title: '关联素材', width: 220 },
   { colKey: 'status', title: '状态', width: 100 },
   { colKey: 'generated', title: '生成内容', width: 100 },
-  { colKey: 'created_at', title: '创建时间', width: 160, cell: ({ row }) => row.created_at?.slice(0,16).replace('T',' ') },
+  { colKey: 'created_at', title: '创建时间', width: 160, cell: ({ row }) => (row?.created_at || '').slice(0,16).replace('T',' ') },
   { colKey: 'actions', title: '操作', width: 300 },
 ]
 
@@ -323,6 +323,7 @@ async function saveTask() {
       MessagePlugin.success('任务创建成功')
     }
     dialogVisible.value = false
+    await nextTick()
     loadAll()
   } finally { saving.value = false }
 }
