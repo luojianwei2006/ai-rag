@@ -1,5 +1,6 @@
 <template>
-  <div class="page-container">
+  <!-- 任务列表视图 -->
+  <div class="page-container" v-if="!dialogVisible">
     <div class="page-header">
       <h2>🚀 小红书发布任务</h2>
       <t-button theme="primary" @click="openCreate">+ 新建任务</t-button>
@@ -21,9 +22,11 @@
         <template #account="{ row }">{{ row.account_nickname }}</template>
 
         <template #materials="{ row }">
-          <t-tag v-if="row.material_ids?.length" size="small" theme="default">
-            已选 {{ row.material_ids.length }} 个素材
-          </t-tag>
+          <div class="table-materials" v-if="row.material_ids?.length">
+            <img v-for="mid in row.material_ids.slice(0, 5)" :key="mid"
+              :src="getMaterialUrl(mid)" class="table-material-thumb" />
+            <span v-if="row.material_ids.length > 5" class="table-material-more">+{{ row.material_ids.length - 5 }}</span>
+          </div>
           <span v-else style="color:#ccc">—</span>
         </template>
 
@@ -65,106 +68,6 @@
       </t-table>
     </t-loading>
 
-    <!-- 新建/编辑任务弹窗 -->
-    <t-dialog
-      v-model:visible="dialogVisible"
-      :header="editingId ? '编辑发布任务' : '新建发布任务'"
-      width="700px"
-      :confirm-btn="{ content: '保存任务', loading: saving }"
-      :cancel-btn="{ content: '取消' }"
-      @confirm="saveTask"
-      @close="dialogVisible = false"
-    >
-      <t-form :data="taskForm" label-width="110px" style="padding:8px 0">
-        <t-form-item label="文章标题" name="title">
-          <t-input v-model="taskForm.title" placeholder="将作为 AI 生成的主题方向" />
-        </t-form-item>
-
-        <t-form-item label="发布账号">
-          <t-select v-model="taskForm.account_id" placeholder="选择发布账号">
-            <t-option v-for="a in accounts" :key="a.id" :value="a.id"
-              :label="`${a.nickname}${a.has_cookies ? '' : ' ⚠️无Cookies'}`" />
-          </t-select>
-        </t-form-item>
-
-        <t-form-item label="角色说明">
-          <t-textarea v-model="taskForm.system_prompt" :rows="3"
-            placeholder="大模型角色，留空使用默认小红书创作者人设" />
-          <div class="form-tip">留空将使用默认提示词（专业小红书创作者）</div>
-        </t-form-item>
-
-        <t-form-item label="内容提示词">
-          <t-textarea v-model="taskForm.user_prompt" :rows="5"
-            placeholder="描述你想要的内容，如：写一篇关于上海外滩探店的笔记，推荐3家网红餐厅" />
-        </t-form-item>
-
-        <t-form-item label="使用的API Key">
-          <t-select
-            v-model="taskForm.selected_api_key_id"
-            placeholder="选择 API Key（留空使用默认轮询）"
-            clearable
-          >
-            <t-option
-              v-for="k in apiKeys"
-              :key="k.id"
-              :value="k.id"
-              :label="`[${k.source}] ${k.provider} / ${k.model}（${k.api_key_masked}）`"
-            />
-          </t-select>
-          <div class="form-tip">留空则自动轮询商户配置的 API Key</div>
-        </t-form-item>
-
-        <t-form-item label="关联素材">
-          <div class="material-selector">
-            <!-- 已选素材标签列表 -->
-            <div class="selected-materials" v-if="selectedMaterials.length">
-              <div class="selected-material-item" v-for="sm in selectedMaterials" :key="sm.id">
-                <img v-if="sm.url" :src="sm.url" class="selected-material-thumb" />
-                <div v-else class="selected-material-thumb no-img">🖼️</div>
-                <span class="selected-material-name">{{ sm.name }}</span>
-                <t-button size="small" variant="text" theme="danger" @click="removeMaterial(sm.id)">
-                  <template #icon><t-icon name="close" size="12px" /></template>
-                </t-button>
-              </div>
-            </div>
-            <div v-else class="no-materials">暂未选择素材</div>
-            <t-button size="small" variant="outline" @click="openMaterialPicker" style="margin-top:8px">
-              <template #icon><t-icon name="add" /></template> 选择素材
-            </t-button>
-          </div>
-        </t-form-item>
-      </t-form>
-    </t-dialog>
-
-    <!-- 素材选择器弹窗 -->
-    <t-dialog
-      v-model:visible="materialPickerVisible"
-      header="选择素材"
-      width="680px"
-      :confirm-btn="{ content: '确认选择' }"
-      :cancel-btn="{ content: '取消' }"
-      @confirm="confirmMaterialPick"
-      @close="materialPickerVisible = false"
-    >
-      <div class="material-picker-grid" v-if="allMaterials.length">
-        <div
-          class="picker-item"
-          :class="{ 'picker-item--selected': pickerSelectedIds.includes(m.id) }"
-          v-for="m in allMaterials"
-          :key="m.id"
-          @click="togglePickerSelect(m.id)"
-        >
-          <div class="picker-check">
-            <t-checkbox :checked="pickerSelectedIds.includes(m.id)" />
-          </div>
-          <img v-if="m.url" :src="m.url" class="picker-thumb" />
-          <div v-else class="picker-thumb no-img">🖼️</div>
-          <div class="picker-name">{{ m.name }}</div>
-        </div>
-      </div>
-      <t-empty v-else description="暂无图片素材，请先在素材库中上传" />
-    </t-dialog>
-
     <!-- 内容预览弹窗 -->
     <t-dialog
       v-model:visible="previewVisible"
@@ -188,6 +91,113 @@
       </div>
     </t-dialog>
   </div>
+
+  <!-- 新建/编辑任务 — 全屏视图 -->
+  <div class="fullscreen-task" v-if="dialogVisible">
+    <div class="fullscreen-header">
+      <t-button variant="text" @click="goBack">
+        <template #icon><t-icon name="chevron-left" /></template>
+        返回列表
+      </t-button>
+      <span class="fullscreen-title">{{ editingId ? '编辑发布任务' : '新建发布任务' }}</span>
+      <t-button theme="primary" :loading="saving" @click="saveTask">保存任务</t-button>
+    </div>
+
+    <div class="fullscreen-body">
+      <div class="form-section">
+        <div class="form-section-title">基本信息</div>
+        <div class="form-row">
+          <div class="form-item">
+            <label>文章标题</label>
+            <t-input v-model="taskForm.title" placeholder="将作为 AI 生成的主题方向" />
+          </div>
+          <div class="form-item">
+            <label>发布账号</label>
+            <t-select v-model="taskForm.account_id" placeholder="选择发布账号">
+              <t-option v-for="a in accounts" :key="a.id" :value="a.id"
+                :label="`${a.nickname}${a.has_cookies ? '' : ' ⚠️无Cookies'}`" />
+            </t-select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-item full">
+            <label>角色说明 <span class="optional">（选填）</span></label>
+            <t-textarea v-model="taskForm.system_prompt" :rows="2"
+              placeholder="大模型角色，留空使用默认小红书创作者人设" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-item full">
+            <label>内容提示词</label>
+            <t-textarea v-model="taskForm.user_prompt" :rows="4"
+              placeholder="描述你想要的内容，如：写一篇关于上海外滩探店的笔记，推荐3家网红餐厅" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-item">
+            <label>使用的API Key</label>
+            <t-select v-model="taskForm.selected_api_key_id" placeholder="默认轮询">
+              <t-option :value="null" label="默认（自动轮询）" />
+            </t-select>
+            <div class="form-tip">留空则自动轮询商户配置的 API Key</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">
+          关联素材
+          <span class="section-action" @click="openMaterialPicker">选择素材</span>
+        </div>
+        <div class="selected-materials-area">
+          <div class="selected-materials-grid" v-if="selectedMaterials.length">
+            <div class="sel-material-card" v-for="sm in selectedMaterials" :key="sm.id">
+              <img v-if="sm.url" :src="sm.url" class="sel-material-img" />
+              <div v-else class="sel-material-img no-img">🖼️</div>
+              <div class="sel-material-remove" @click="removeMaterial(sm.id)">
+                <t-icon name="close" size="14px" />
+              </div>
+              <div class="sel-material-size" v-if="sm.width && sm.height">{{ sm.width }}×{{ sm.height }}</div>
+            </div>
+          </div>
+          <div v-else class="no-materials-hint">
+            <t-icon name="image" size="32px" style="color:#ccc" />
+            <div>暂未选择素材，点击上方"选择素材"添加</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 素材选择器 — 全屏弹窗 -->
+    <t-dialog
+      v-model:visible="materialPickerVisible"
+      header="选择素材"
+      :width="'90vw'"
+      :top="'5vh'"
+      :confirm-btn="{ content: '确认选择', theme: 'primary' }"
+      :cancel-btn="{ content: '取消' }"
+      @confirm="confirmMaterialPick"
+      @close="materialPickerVisible = false"
+      class="material-picker-dialog"
+    >
+      <div class="material-picker-grid" v-if="allMaterials.length">
+        <div
+          class="picker-card"
+          :class="{ 'picker-card--selected': pickerSelectedIds.includes(m.id) }"
+          v-for="m in allMaterials"
+          :key="m.id"
+          @click="togglePickerSelect(m.id)"
+        >
+          <div class="picker-card-check" v-if="pickerSelectedIds.includes(m.id)">
+            <t-icon name="check-circle-filled" size="24px" style="color:#0052d9" />
+          </div>
+          <img v-if="m.url" :src="m.url" class="picker-card-img" />
+          <div v-else class="picker-card-img no-img">🖼️</div>
+        </div>
+      </div>
+      <t-empty v-else description="暂无图片素材，请先在素材库中上传" />
+    </t-dialog>
+  </div>
 </template>
 
 <script setup>
@@ -197,7 +207,6 @@ import { xhsApi } from '@/api/index.js'
 
 const tasks = ref([])
 const accounts = ref([])
-const apiKeys = ref([])
 const allMaterials = ref([])
 const loading = ref(false)
 const dialogVisible = ref(false)
@@ -212,10 +221,14 @@ const DEFAULT_SYSTEM_PROMPT = '你是一位专业的小红书内容创作者，�
 const taskForm = ref(emptyForm())
 const pickerSelectedIds = ref([])
 
-// 已选素材（完整对象，用于显示缩略图）
 const selectedMaterials = computed(() => {
   return allMaterials.value.filter(m => taskForm.value.material_ids.includes(m.id))
 })
+
+function getMaterialUrl(id) {
+  const m = allMaterials.value.find(m => m.id === id)
+  return m?.url || ''
+}
 
 function emptyForm() {
   return {
@@ -241,7 +254,7 @@ const statusLabel = (s) => ({
 const columns = [
   { colKey: 'title', title: '文章标题', ellipsis: true, width: 180 },
   { colKey: 'account', title: '发布账号', width: 120 },
-  { colKey: 'materials', title: '素材', width: 120 },
+  { colKey: 'materials', title: '关联素材', width: 220 },
   { colKey: 'status', title: '状态', width: 100 },
   { colKey: 'generated', title: '生成内容', width: 100 },
   { colKey: 'created_at', title: '创建时间', width: 160, cell: ({ row }) => row.created_at?.slice(0,16).replace('T',' ') },
@@ -251,15 +264,13 @@ const columns = [
 async function loadAll() {
   loading.value = true
   try {
-    const [t, a, k, m] = await Promise.all([
+    const [t, a, m] = await Promise.all([
       xhsApi.getTasks(),
       xhsApi.getAccounts(),
-      xhsApi.getApiKeys(),
       xhsApi.getMaterials('image'),
     ])
     tasks.value = t.map(task => ({ ...task, _generating: false, _publishing: false }))
     accounts.value = a
-    apiKeys.value = k
     allMaterials.value = m
   } finally { loading.value = false }
 }
@@ -272,24 +283,19 @@ function openCreate() {
 
 function openEdit(row) {
   editingId.value = row.id
-  // 尝试匹配已选 API Key
-  let selected_api_key_id = null
-  if (row.api_key_config) {
-    const cfg = row.api_key_config
-    const match = apiKeys.value.find(k =>
-      k.provider === cfg.provider && k.model === cfg.model && k.api_key === cfg.api_key
-    )
-    if (match) selected_api_key_id = match.id
-  }
   taskForm.value = {
     title: row.title,
     account_id: row.account_id,
     system_prompt: row.system_prompt || '',
     user_prompt: row.user_prompt || '',
     material_ids: row.material_ids || [],
-    selected_api_key_id,
+    selected_api_key_id: null,
   }
   dialogVisible.value = true
+}
+
+function goBack() {
+  dialogVisible.value = false
 }
 
 async function saveTask() {
@@ -297,26 +303,14 @@ async function saveTask() {
   if (!taskForm.value.account_id) return MessagePlugin.warning('请选择发布账号')
   if (!taskForm.value.user_prompt.trim()) return MessagePlugin.warning('请填写内容提示词')
 
-  // 根据 selected_api_key_id 查找完整 key 配置
-  let api_key_config = null
-  if (taskForm.value.selected_api_key_id) {
-    const key = apiKeys.value.find(k => k.id === taskForm.value.selected_api_key_id)
-    if (key) {
-      api_key_config = {
-        provider: key.provider,
-        model: key.model,
-        api_key: key.api_key,
-      }
-    }
-  }
-
+  // API Key 不再指定具体 key，统一使用默认轮询
   const payload = {
     title: taskForm.value.title,
     account_id: taskForm.value.account_id,
     system_prompt: taskForm.value.system_prompt || DEFAULT_SYSTEM_PROMPT,
     user_prompt: taskForm.value.user_prompt,
     material_ids: taskForm.value.material_ids,
-    api_key_config,
+    api_key_config: null,
   }
 
   saving.value = true
@@ -397,113 +391,227 @@ onMounted(loadAll)
 </script>
 
 <style scoped>
+/* ===== 列表视图 ===== */
 .page-container { padding: 0; }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .page-header h2 { margin: 0; font-size: 20px; }
+
+/* 表格中的素材缩略图 */
+.table-materials {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.table-material-thumb {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+.table-material-more {
+  font-size: 12px;
+  color: #999;
+  margin-left: 2px;
+}
+
+/* ===== 全屏任务编辑视图 ===== */
+.fullscreen-task {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+}
+.fullscreen-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: white;
+  border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+.fullscreen-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+}
+.fullscreen-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px;
+}
+
+/* 表单区块 */
+.form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.form-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-action {
+  font-size: 13px;
+  color: #0052d9;
+  cursor: pointer;
+  font-weight: 400;
+}
+.section-action:hover { color: #003cab; text-decoration: underline; }
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+.form-item { flex: 1; }
+.form-item.full { flex: unset; width: 100%; }
+.form-item label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 6px;
+}
+.optional { color: #bbb; font-weight: 400; }
 .form-tip { color: #999; font-size: 12px; margin-top: 4px; }
 
-/* 素材选择区域 */
-.material-selector { width: 100%; }
-.selected-materials {
+/* 已选素材区域 */
+.selected-materials-area {
+  min-height: 120px;
+}
+.selected-materials-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 8px;
-  border: 1px solid #e8e8e8;
-  border-radius: 6px;
-  min-height: 60px;
+  gap: 12px;
 }
-.no-materials {
-  padding: 12px 8px;
+.sel-material-card {
+  position: relative;
+  width: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #e8e8e8;
+  transition: border-color 0.15s;
+}
+.sel-material-card:hover { border-color: #bbb; }
+.sel-material-img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+.sel-material-img.no-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  font-size: 32px;
+  color: #ccc;
+}
+.sel-material-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.sel-material-card:hover .sel-material-remove { opacity: 1; }
+.sel-material-remove { color: white; }
+.sel-material-size {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 10px;
+  color: white;
+  background: rgba(0,0,0,0.5);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.no-materials-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 120px;
   color: #bbb;
   font-size: 13px;
-  border: 1px solid #e8e8e8;
-  border-radius: 6px;
-  text-align: center;
-}
-.selected-material-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
-  background: #f5f5f5;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-}
-.selected-material-thumb {
-  width: 32px;
-  height: 32px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-.selected-material-thumb.no-img {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #eee;
-  font-size: 14px;
-  color: #ccc;
-}
-.selected-material-name {
-  font-size: 12px;
-  max-width: 100px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* 素材选择器弹窗 */
+/* ===== 素材选择器 — 全屏弹窗内 ===== */
+:deep(.material-picker-dialog .t-dialog__ctx) {
+  max-height: none;
+}
 .material-picker-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
-  max-height: 400px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  max-height: 70vh;
   overflow-y: auto;
+  padding: 4px;
 }
-.picker-item {
+.picker-card {
   position: relative;
-  border: 2px solid #e8e8e8;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
+  border: 3px solid #e8e8e8;
   transition: all 0.15s;
+  aspect-ratio: 1;
 }
-.picker-item:hover { border-color: #bbb; }
-.picker-item--selected {
+.picker-card:hover { border-color: #bbb; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.picker-card--selected {
   border-color: #0052d9;
-  background: #f0f5ff;
+  box-shadow: 0 0 0 2px rgba(0,82,217,0.2);
 }
-.picker-check {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: 2;
-  background: rgba(255,255,255,0.85);
-  border-radius: 4px;
-  padding: 2px;
-}
-.picker-thumb {
+.picker-card-img {
   width: 100%;
-  height: 100px;
+  height: 100%;
   object-fit: cover;
+  display: block;
 }
-.picker-thumb.no-img {
+.picker-card-img.no-img {
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f5f5f5;
-  font-size: 28px;
+  font-size: 48px;
   color: #ccc;
 }
-.picker-name {
-  padding: 4px 6px;
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.picker-card-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
-/* 内容预览 */
+/* ===== 内容预览 ===== */
 .preview-box { display: flex; flex-direction: column; gap: 12px; }
 .preview-title { font-size: 18px; font-weight: bold; color: #333; }
 .preview-content { white-space: pre-wrap; line-height: 1.8; color: #555; font-size: 14px; max-height: 400px; overflow-y: auto; }
