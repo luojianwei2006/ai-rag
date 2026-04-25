@@ -228,10 +228,10 @@ def create_material(
 
 @router.post("/materials/upload-image")
 async def upload_material_image(
-    name: str,
+    file: UploadFile = File(...),
+    name: Optional[str] = None,
     description: Optional[str] = None,
     tags: Optional[str] = None,
-    file: UploadFile = File(...),
     db: Session = Depends(get_db),
     tenant: Tenant = Depends(get_current_tenant),
 ):
@@ -252,7 +252,7 @@ async def upload_material_image(
 
     material = XhsMaterial(
         tenant_id=tenant.id,
-        name=name or file.filename,
+        name=name or (file.filename.rsplit(".", 1)[0] if file.filename else "未命名图片"),
         material_type="image",
         file_path=file_path,
         description=description,
