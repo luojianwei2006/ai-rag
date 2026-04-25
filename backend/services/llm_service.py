@@ -150,15 +150,23 @@ async def _retry_async(coro_func, provider: str = "", model: str = "", label: st
             await asyncio.sleep(wait)
         except Exception as e:
             last_error = e
+            # 增强日志：打印异常类型、状态码、响应体
+            import traceback
+            error_detail = f"{type(e).__name__}: {e}"
+            if hasattr(e, 'response') and e.response is not None:
+                try:
+                    error_detail += f" | status={e.response.status_code} body={e.response.text[:500]}"
+                except Exception:
+                    pass
+            logger.warning(
+                "[%s] 第%d次调用遇到未知错误（%s），%ds后重试... model=%s\n%s",
+                label, attempt, error_detail, wait, model, traceback.format_exc()
+            )
             if attempt == MAX_RETRIES:
                 raise LLMError(
-                    f"未知错误: {e}", provider=provider, model=model, retryable=False
+                    f"未知错误: {error_detail}", provider=provider, model=model, retryable=False
                 )
             wait = RETRY_BACKOFF_BASE ** attempt
-            logger.warning(
-                "[%s] 第%d次调用遇到未知错误（%s），%ds后重试... model=%s",
-                label, attempt, e, wait, model
-            )
             await asyncio.sleep(wait)
     raise last_error  # 理论上不会到这里
 
