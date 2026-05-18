@@ -3,13 +3,13 @@
     <!-- 加载中 -->
     <div v-if="loading" class="loading-screen">
       <t-loading size="large" />
-      <p>正在连接客服...</p>
+      <p>{{ t('loading') }}</p>
     </div>
 
     <!-- 错误状态 -->
     <div v-else-if="error" class="error-screen">
       <div style="font-size:60px">😞</div>
-      <h3>客服服务暂时不可用</h3>
+      <h3>{{ t('serviceUnavailable') }}</h3>
       <p>{{ error }}</p>
     </div>
 
@@ -18,12 +18,15 @@
       <!-- 顶栏 -->
       <div class="chat-top">
         <div class="company-info">
-          <div class="company-avatar">{{ companyName?.[0] || '客' }}</div>
+          <div class="company-avatar">
+            <img v-if="avatarUrl" :src="avatarUrl" class="avatar-img" />
+            <template v-else>{{ companyName?.[0] || '客' }}</template>
+          </div>
           <div>
             <div class="company-name">{{ companyName }}</div>
             <div class="company-status">
               <span class="status-dot"></span>
-              {{ isHuman ? '人工客服为您服务' : 'AI智能客服在线' }}
+              {{ isHuman ? t('statusHuman') : t('statusAI') }}
             </div>
           </div>
         </div>
@@ -39,7 +42,7 @@
             <div class="msg-text">{{ msg.content }}</div>
             <div class="msg-time">{{ msg.time }}</div>
           </div>
-          <div v-if="msg.role === 'customer'" class="user-avatar">我</div>
+          <div v-if="msg.role === 'customer'" class="user-avatar">{{ t('userAvatar') }}</div>
         </div>
 
         <!-- 打字中 -->
@@ -54,13 +57,13 @@
       <!-- 输入区 -->
       <div class="input-area">
         <div class="quick-actions">
-          <span class="quick-btn" @click="sendQuick('你好，我需要咨询一下')">👋 打招呼</span>
-          <span class="quick-btn" @click="sendQuick('我需要人工客服')">👤 转人工</span>
+          <span class="quick-btn" @click="sendQuick(t('quickGreeting'))">{{ t('quickGreetingBtn') }}</span>
+          <span class="quick-btn" @click="sendQuick(t('quickTransferHuman'))">{{ t('quickTransferHumanBtn') }}</span>
         </div>
         <div class="input-row">
           <textarea
             v-model="inputText"
-            placeholder="输入您的问题..."
+            :placeholder="t('inputPlaceholder')"
             @keydown.enter.prevent="handleSend"
             ref="inputRef"
           ></textarea>
@@ -68,7 +71,7 @@
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
         </div>
-        <div class="input-hint">Enter 发送 · Shift+Enter 换行</div>
+        <div class="input-hint">{{ t('inputHint') }}</div>
       </div>
     </div>
   </div>
@@ -81,10 +84,50 @@ import axios from 'axios'
 
 const route = useRoute()
 const chatToken = route.params.chatToken
+const chatUid = route.query.uid || ''
+const chatNickname = route.query.nickname || ''
+const chatParam = route.query.p || ''  // 加密参数 p
+
+// ─── 多语言翻译字典 ───
+const i18nMessages = {
+  zh: {
+    loading: '正在连接客服...',
+    serviceUnavailable: '客服服务暂时不可用',
+    invalidLink: '该客服链接无效或已失效',
+    statusAI: 'AI智能客服在线',
+    statusHuman: '人工客服为您服务',
+    inputPlaceholder: '输入您的问题...',
+    inputHint: 'Enter 发送 · Shift+Enter 换行',
+    quickGreetingBtn: '👋 打招呼',
+    quickTransferHumanBtn: '👤 转人工',
+    quickGreeting: '你好，我需要咨询一下',
+    quickTransferHuman: '我需要人工客服',
+    reconnecting: '连接已断开，正在重连...',
+    userAvatar: '我',
+    companyFallback: '在线客服',
+  },
+  en: {
+    loading: 'Connecting to customer service...',
+    serviceUnavailable: 'Customer service is temporarily unavailable',
+    invalidLink: 'This customer service link is invalid or expired',
+    statusAI: 'AI Assistant Online',
+    statusHuman: 'Human Agent Serving',
+    inputPlaceholder: 'Type your question...',
+    inputHint: 'Enter to send · Shift+Enter for new line',
+    quickGreetingBtn: '👋 Greet',
+    quickTransferHumanBtn: '👤 Human Agent',
+    quickGreeting: 'Hi, I need some help',
+    quickTransferHuman: 'I need to speak to a human agent',
+    reconnecting: 'Connection lost, reconnecting...',
+    userAvatar: 'Me',
+    companyFallback: 'Customer Service',
+  }
+}
 
 const loading = ref(true)
 const error = ref('')
 const companyName = ref('')
+const avatarUrl = ref('')
 const messages = ref([])
 const inputText = ref('')
 const isTyping = ref(false)
@@ -92,7 +135,12 @@ const isHuman = ref(false)
 const connected = ref(false)
 const messagesArea = ref(null)
 const inputRef = ref(null)
+const currentLang = ref('zh')
 let ws = null
+
+function t(key) {
+  return i18nMessages[currentLang.value]?.[key] || i18nMessages.zh[key] || key
+}
 
 function now() {
   return new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
@@ -120,10 +168,18 @@ function sendQuick(text) {
 }
 
 function connectWs() {
-  // 开发环境使用后端端口 8000，生产环境使用当前 host
   const isDev = import.meta.env.DEV
   const host = isDev ? 'localhost:8000' : location.host
-  const wsUrl = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${host}/ws/chat/${chatToken}`
+  let wsUrl = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${host}/ws/chat/${chatToken}`
+  // 附加查询参数：优先使用加密参数 p，兼容明文 uid/nickname
+  const qs = []
+  if (chatParam) {
+    qs.push(`p=${encodeURIComponent(chatParam)}`)
+  } else {
+    if (chatUid) qs.push(`uid=${encodeURIComponent(chatUid)}`)
+    if (chatNickname) qs.push(`nickname=${encodeURIComponent(chatNickname)}`)
+  }
+  if (qs.length) wsUrl += `?${qs.join('&')}`
   ws = new WebSocket(wsUrl)
 
   ws.onopen = () => {
@@ -131,7 +187,6 @@ function connectWs() {
   }
 
   ws.onmessage = (e) => {
-    // 处理心跳包
     if (e.data === 'ping' || e.data === 'pong') {
       return
     }
@@ -148,7 +203,7 @@ function connectWs() {
 
   ws.onclose = () => {
     connected.value = false
-    addMessage('system', '连接已断开，正在重连...')
+    addMessage('system', t('reconnecting'))
     setTimeout(connectWs, 3000)
   }
 
@@ -160,11 +215,13 @@ function connectWs() {
 onMounted(async () => {
   try {
     const res = await axios.get(`/api/public/chat/${chatToken}/info`)
-    companyName.value = res.data.company_name || '在线客服'
+    companyName.value = res.data.company_name || t('companyFallback')
+    avatarUrl.value = res.data.avatar_url ? `${location.origin}${res.data.avatar_url}` : ''
+    currentLang.value = res.data.language || 'zh'
     loading.value = false
     connectWs()
   } catch (e) {
-    error.value = '该客服链接无效或已失效'
+    error.value = t('invalidLink')
     loading.value = false
   }
 })
@@ -196,7 +253,9 @@ onUnmounted(() => {
   width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.25);
   color: white; font-size: 18px; font-weight: bold;
   display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
 }
+.company-avatar .avatar-img { width: 100%; height: 100%; object-fit: cover; }
 .company-name { color: white; font-size: 16px; font-weight: 600; }
 .company-status { color: rgba(255,255,255,0.85); font-size: 12px; display: flex; align-items: center; gap: 4px; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #52c41a; }

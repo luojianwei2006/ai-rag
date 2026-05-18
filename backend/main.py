@@ -10,7 +10,7 @@ from config import settings
 from database import SessionLocal
 
 # 导入路由
-from routers import admin, tenant, knowledge, chat, feishu, wecom, points, xhs
+from routers import admin, tenant, knowledge, chat, feishu, wecom, points, xhs, embed
 
 
 @asynccontextmanager
@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI):
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     os.makedirs(settings.CHROMA_PERSIST_DIR, exist_ok=True)
     os.makedirs(os.path.join(settings.UPLOAD_DIR, "xhs_materials"), exist_ok=True)
+    os.makedirs(os.path.join(settings.UPLOAD_DIR, "avatars"), exist_ok=True)
 
     # 初始化管理员账户
     db = SessionLocal()
@@ -69,6 +70,10 @@ app.include_router(feishu.router)
 app.include_router(wecom.router)
 app.include_router(points.router)
 app.include_router(xhs.router)
+app.include_router(embed.router)
+
+# 静态文件服务（头像等上传文件）
+app.mount("/static", StaticFiles(directory=settings.UPLOAD_DIR), name="static")
 
 
 @app.get("/")

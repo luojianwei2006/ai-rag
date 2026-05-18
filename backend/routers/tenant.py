@@ -1,6 +1,9 @@
 import secrets
 import string
-from fastapi import APIRouter, Depends, HTTPException, status
+import os
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi.responses import JSONResponse
+from PIL import Image
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from database import get_db
@@ -52,6 +55,16 @@ class UpdateApiKeyRequest(BaseModel):
     preferred_model: Optional[str] = None
     # 新格式：列表型Key配置
     api_keys_list: Optional[list] = None
+
+
+class UpdateSettingsRequest(BaseModel):
+    chat_language: Optional[str] = None  # zh, en
+    ai_enabled: Optional[bool] = None
+
+
+class RegenerateEmbedKeyRequest(BaseModel):
+    """重新生成嵌入 API Key（空 body 即可）"""
+    pass
 
 
 class TestApiKeyRequest(BaseModel):
@@ -169,7 +182,11 @@ async def get_profile(tenant: Tenant = Depends(get_current_tenant), db: Session 
             "api_keys_list": masked_list,
             "preferred_model": tenant.preferred_model,
             "chat_url": f"/chat/{tenant.chat_token}",
-            "points_balance": tenant.points_balance
+            "points_balance": tenant.points_balance,
+            "chat_language": tenant.chat_language or "zh",
+            "ai_enabled": tenant.ai_enabled if tenant.ai_enabled is not None else True,
+            "avatar_url": tenant.avatar_url,
+            "embed_api_key": tenant.embed_api_key or ""
         }
 
     return {
@@ -182,7 +199,11 @@ async def get_profile(tenant: Tenant = Depends(get_current_tenant), db: Session 
         "api_keys_list": [],
         "preferred_model": tenant.preferred_model,
         "chat_url": f"/chat/{tenant.chat_token}",
-        "points_balance": tenant.points_balance
+        "points_balance": tenant.points_balance,
+        "chat_language": tenant.chat_language or "zh",
+        "ai_enabled": tenant.ai_enabled if tenant.ai_enabled is not None else True,
+        "avatar_url": tenant.avatar_url,
+        "embed_api_key": tenant.embed_api_key or ""
     }
 
 
@@ -342,3 +363,140 @@ async def test_tenant_api_key(
         raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"连接异常: {str(e)}")
+
+
+@router.put("/settings")
+async def update_settings(
+    req: UpdateSettingsRequest,
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """更新商户设置（语言、AI开关等）"""
+    if req.chat_language is not None:
+        if req.chat_language not in ("zh", "en"):
+            raise HTTPException(status_code=400, detail="不支持的语言，请选择 zh 或 en")
+        tenant.chat_language = req.chat_language
+    if req.ai_enabled is not None:
+        tenant.ai_enabled = req.ai_enabled
+    db.commit()
+    return {"message": "设置已更新", "chat_language": tenant.chat_language, "ai_enabled": tenant.ai_enabled}
+
+
+@router.get("/embed-key")
+async def get_embed_key(tenant: Tenant = Depends(get_current_tenant)):
+    """获取当前嵌入监控 API Key"""
+    return {"embed_api_key": tenant.embed_api_key or ""}
+
+
+@router.post("/embed-key/regenerate")
+async def regenerate_embed_key(
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """重新生成嵌入监控 API Key"""
+    import secrets
+    # 确保新 key 不重复
+    while True:
+        new_key = secrets.token_urlsafe(32)
+        exists = db.query(Tenant).filter(Tenant.embed_api_key == new_key).first()
+        if not exists:
+            break
+    tenant.embed_api_key = new_key
+    db.commit()
+    return {"message": "API Key 已重新生成", "embed_api_key": new_key}
+
+
+# ─────── 头像上传 ───────
+
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+MAX_AVATAR_SIZE = 2 * 1024 * 1024  # 2MB
+
+
+@router.post("/avatar")
+async def upload_avatar(
+    file: UploadFile = File(...),
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """上传商户头像"""
+    # 校验文件类型
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=400, detail="仅支持 JPG/PNG/GIF/WebP 格式")
+
+    # 校验文件大小
+    file.file.seek(0, 2)  # 移到文件末尾
+    file_size = file.file.tell()
+    file.file.seek(0)  # 移回开头
+    if file_size > MAX_AVATAR_SIZE:
+        raise HTTPException(status_code=400, detail="文件大小不能超过 2MB")
+
+    # 确定文件扩展名
+    ext_map = {"image/jpeg": ".jpg", "image/png": ".png", "image/gif": ".gif", "image/webp": ".webp"}
+    ext = ext_map.get(file.content_type, ".jpg")
+
+    # 保存路径：static/avatars/{tenant_id}.{ext}
+    from config import settings
+    avatar_dir = os.path.join(settings.UPLOAD_DIR, "avatars")
+    os.makedirs(avatar_dir, exist_ok=True)
+
+    # 删除旧头像文件（如果存在）
+    if tenant.avatar_url:
+        old_path = os.path.join(settings.UPLOAD_DIR, tenant.avatar_url.replace("/static/", "", 1))
+        if os.path.exists(old_path):
+            try:
+                os.remove(old_path)
+            except Exception:
+                pass
+
+    filename = f"{tenant.id}{ext}"
+    file_path = os.path.join(avatar_dir, filename)
+
+    # 保存并压缩图片
+    try:
+        content = await file.read()
+        with open(file_path, "wb") as f:
+            f.write(content)
+
+        # 用 Pillow 压缩/裁剪为正方形
+        with Image.open(file_path) as img:
+            # 转换为 RGB（处理 RGBA/P 模式）
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+            # 裁剪为正方形（居中裁剪）
+            w, h = img.size
+            side = min(w, h)
+            left = (w - side) // 2
+            top = (h - side) // 2
+            img = img.crop((left, top, left + side, top + side))
+            # 缩放到 200x200
+            img = img.resize((200, 200), Image.LANCZOS)
+            img.save(file_path, "JPEG", quality=85)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"图片处理失败: {str(e)}")
+
+    # 保存 URL 到数据库
+    avatar_url = f"/static/avatars/{filename}"
+    tenant.avatar_url = avatar_url
+    db.commit()
+
+    return {"message": "头像上传成功", "avatar_url": avatar_url}
+
+
+@router.delete("/avatar")
+async def delete_avatar(
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """删除商户头像"""
+    if tenant.avatar_url:
+        from config import settings
+        old_path = os.path.join(settings.UPLOAD_DIR, tenant.avatar_url.replace("/static/", "", 1))
+        if os.path.exists(old_path):
+            try:
+                os.remove(old_path)
+            except Exception:
+                pass
+        tenant.avatar_url = None
+        db.commit()
+
+    return {"message": "头像已删除"}

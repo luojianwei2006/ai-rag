@@ -27,7 +27,7 @@ logger = logging.getLogger("llm_service")
 
 # ─── 超时配置 ───────────────────────────────────────────────
 CONNECT_TIMEOUT = 10.0  # 连接超时 10s
-READ_TIMEOUT = 60.0     # 读取超时 60s（模型推理可能较慢）
+READ_TIMEOUT = 120.0    # 读取超时 120s（文章生成等场景推理较慢）
 
 # ─── 重试配置 ───────────────────────────────────────────────
 MAX_RETRIES = 3
@@ -192,43 +192,46 @@ async def _call_openai_compatible(
     timeout = httpx.Timeout(connect=CONNECT_TIMEOUT, read=READ_TIMEOUT, write=10.0, pool=10.0)
 
     async def _do_call():
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            resp = await client.post(
-                f"{api_base}/chat/completions",
-                headers=headers,
-                json=payload
-            )
-            # 处理 HTTP 错误
-            if resp.status_code == 401 or resp.status_code == 403:
-                raise LLMAuthError(provider=api_base, model=model)
-            if resp.status_code == 429:
-                raise LLMRateLimitError(provider=api_base, model=model)
-            if resp.status_code >= 500:
-                raise LLMServerError(
-                    resp.status_code, resp.text[:200], provider=api_base, model=model
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                resp = await client.post(
+                    f"{api_base}/chat/completions",
+                    headers=headers,
+                    json=payload
                 )
-            resp.raise_for_status()
-            data = resp.json()
+        except httpx.TimeoutException as e:
+            raise LLMTimeoutError(provider=api_base, model=model) from e
+        # 处理 HTTP 错误
+        if resp.status_code == 401 or resp.status_code == 403:
+            raise LLMAuthError(provider=api_base, model=model)
+        if resp.status_code == 429:
+            raise LLMRateLimitError(provider=api_base, model=model)
+        if resp.status_code >= 500:
+            raise LLMServerError(
+                resp.status_code, resp.text[:200], provider=api_base, model=model
+            )
+        resp.raise_for_status()
+        data = resp.json()
 
-            # 解析响应
-            if "error" in data:
-                err = data["error"]
-                msg = err.get("message", str(err)) if isinstance(err, dict) else str(err)
-                raise LLMResponseError(f"API返回错误: {msg}", provider=api_base, model=model)
+        # 解析响应
+        if "error" in data:
+            err = data["error"]
+            msg = err.get("message", str(err)) if isinstance(err, dict) else str(err)
+            raise LLMResponseError(f"API返回错误: {msg}", provider=api_base, model=model)
 
-            if "choices" not in data or not data["choices"]:
-                raise LLMResponseError(f"响应无choices字段: {json.dumps(data, ensure_ascii=False)[:300]}", provider=api_base, model=model)
+        if "choices" not in data or not data["choices"]:
+            raise LLMResponseError(f"响应无choices字段: {json.dumps(data, ensure_ascii=False)[:300]}", provider=api_base, model=model)
 
-            choice = data["choices"][0]
-            # 优先返回 content，无 content 则尝试 reasoning_content（DeepSeek R1 等）
-            msg = choice.get("message", {})
-            content = msg.get("content")
-            if content:
-                return content
-            reasoning = msg.get("reasoning_content")
-            if reasoning:
-                return reasoning
-            raise LLMResponseError(f"响应消息为空: {json.dumps(msg, ensure_ascii=False)[:300]}", provider=api_base, model=model)
+        choice = data["choices"][0]
+        # 优先返回 content，无 content 则尝试 reasoning_content（DeepSeek R1 等）
+        msg = choice.get("message", {})
+        content = msg.get("content")
+        if content:
+            return content
+        reasoning = msg.get("reasoning_content")
+        if reasoning:
+            return reasoning
+        raise LLMResponseError(f"响应消息为空: {json.dumps(msg, ensure_ascii=False)[:300]}", provider=api_base, model=model)
 
     return await _retry_async(_do_call, provider=api_base, model=model, label="OpenAI兼容")
 
@@ -243,7 +246,7 @@ def _call_glm_sync(model: str, api_key: str, messages: list, system_prompt: str)
     response = client.chat.completions.create(
         model=model,
         messages=all_messages,
-        timeout=60,
+        timeout=120,
     )
     if not response.choices:
         raise LLMResponseError("GLM响应无choices", provider="glm", model=model)
@@ -296,32 +299,35 @@ async def _call_gemini(model: str, api_key: str, messages: list, system_prompt: 
     timeout = httpx.Timeout(connect=CONNECT_TIMEOUT, read=READ_TIMEOUT, write=10.0, pool=10.0)
 
     async def _do_call():
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            resp = await client.post(url, json=payload)
-            if resp.status_code == 400:
-                raise LLMAuthError(provider=provider, model=model)
-            if resp.status_code == 429:
-                raise LLMRateLimitError(provider=provider, model=model)
-            if resp.status_code >= 500:
-                raise LLMServerError(resp.status_code, resp.text[:200], provider=provider, model=model)
-            resp.raise_for_status()
-            data = resp.json()
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                resp = await client.post(url, json=payload)
+        except httpx.TimeoutException as e:
+            raise LLMTimeoutError(provider=provider, model=model) from e
+        if resp.status_code == 400:
+            raise LLMAuthError(provider=provider, model=model)
+        if resp.status_code == 429:
+            raise LLMRateLimitError(provider=provider, model=model)
+        if resp.status_code >= 500:
+            raise LLMServerError(resp.status_code, resp.text[:200], provider=provider, model=model)
+        resp.raise_for_status()
+        data = resp.json()
 
-            if "error" in data:
-                raise LLMResponseError(f"Gemini错误: {data['error']}", provider=provider, model=model)
+        if "error" in data:
+            raise LLMResponseError(f"Gemini错误: {data['error']}", provider=provider, model=model)
 
-            candidates = data.get("candidates", [])
-            if not candidates:
-                raise LLMResponseError(f"Gemini响应无candidates: {json.dumps(data, ensure_ascii=False)[:300]}", provider=provider, model=model)
+        candidates = data.get("candidates", [])
+        if not candidates:
+            raise LLMResponseError(f"Gemini响应无candidates: {json.dumps(data, ensure_ascii=False)[:300]}", provider=provider, model=model)
 
-            parts = candidates[0].get("content", {}).get("parts", [])
-            if not parts:
-                raise LLMResponseError("Gemini响应parts为空", provider=provider, model=model)
+        parts = candidates[0].get("content", {}).get("parts", [])
+        if not parts:
+            raise LLMResponseError("Gemini响应parts为空", provider=provider, model=model)
 
-            text = parts[0].get("text", "")
-            if not text:
-                raise LLMResponseError("Gemini响应文本为空", provider=provider, model=model)
-            return text
+        text = parts[0].get("text", "")
+        if not text:
+            raise LLMResponseError("Gemini响应文本为空", provider=provider, model=model)
+        return text
 
     return await _retry_async(_do_call, provider=provider, model=model, label="Gemini")
 
@@ -360,7 +366,9 @@ async def call_llm(
     model: str,
     api_keys: list,
     messages: List[dict],
-    context: str = ""
+    context: str = "",
+    system_prompt: Optional[str] = None,
+    lang_instruction: str = "",
 ) -> str:
     """调用大模型接口，支持轮询多个 API Key
 
@@ -369,6 +377,8 @@ async def call_llm(
         api_keys: [(model_name, api_key), ...] 轮询列表
         messages: 对话历史 [{"role": "user", "content": "..."}, ...]
         context: 知识库上下文
+        system_prompt: 自定义系统提示词（不传则使用默认客服助手提示词）
+        lang_instruction: 语言指令（如 "You MUST respond in English."）
 
     Returns:
         LLM 回复文本
@@ -380,15 +390,26 @@ async def call_llm(
         raise LLMError("未配置 API Key", model=model)
 
     # 构建系统提示
-    system_prompt = (
-        "你是一个专业的客服助手。回答要求：\n"
-        "1. 简洁直接，只回答用户问题的核心内容；\n"
-        "2. 不展开无关信息，不做额外解释或补充；\n"
-        "3. 如果知识库中有相关内容，依据知识库作答；\n"
-        "4. 如果知识库中没有相关信息，直接告知无法找到，不要编造。"
-    )
-    if context:
-        system_prompt += f"\n\n知识库参考内容：\n{context}"
+    if system_prompt is not None:
+        # 外部传入的自定义 system_prompt，直接使用
+        effective_system_prompt = system_prompt
+        if context:
+            effective_system_prompt += f"\n\n知识库参考内容：\n{context}"
+    else:
+        # 默认客服助手提示词
+        effective_system_prompt = (
+            "你是一个专业的客服助手。回答要求：\n"
+            "1. 简洁直接，只回答用户问题的核心内容；\n"
+            "2. 不展开无关信息，不做额外解释或补充；\n"
+            "3. 如果知识库中有相关内容，依据知识库作答；\n"
+            "4. 如果知识库中没有相关信息，直接告知无法找到，不要编造。"
+        )
+        if context:
+            effective_system_prompt += f"\n\n知识库参考内容：\n{context}"
+
+    # 追加语言指令
+    if lang_instruction:
+        effective_system_prompt += lang_instruction
 
     errors = []
 
@@ -397,7 +418,7 @@ async def call_llm(
         if m == model or m.startswith(model) or model.startswith(m.split('-')[0] if '-' in m else m):
             try:
                 start = time.time()
-                result = await _dispatch_call(m, key, messages, system_prompt)
+                result = await _dispatch_call(m, key, messages, effective_system_prompt)
                 elapsed = time.time() - start
                 logger.info("LLM调用成功: model=%s, 耗时=%.1fs, 回复长度=%d", m, elapsed, len(result))
                 return result
@@ -414,7 +435,7 @@ async def call_llm(
             continue  # 已经试过了
         try:
             start = time.time()
-            result = await _dispatch_call(m, key, messages, system_prompt)
+            result = await _dispatch_call(m, key, messages, effective_system_prompt)
             elapsed = time.time() - start
             logger.info("LLM调用成功(备用Key): model=%s, 耗时=%.1fs, 回复长度=%d", m, elapsed, len(result))
             return result

@@ -6,23 +6,37 @@
         <span>会话列表</span>
         <t-tag theme="primary" size="small">{{ onlineSessions.length }} 在线</t-tag>
       </div>
-      <div
-        v-for="s in sessions"
-        :key="s.session_id"
-        class="session-item"
-        :class="{ active: selectedSession?.session_id === s.session_id, online: s.online, human: s.is_human_service }"
-        @click="selectSession(s)"
-      >
-        <div class="session-avatar">{{ s.customer_name?.[0] || '访' }}</div>
-        <div class="session-info">
-          <div class="session-name">
-            {{ s.customer_name || '访客' }}
-            <t-tag v-if="s.is_human_service" size="small" theme="warning" style="margin-left:4px">人工</t-tag>
+        <div
+          v-for="s in sessions"
+          :key="s.session_id"
+          class="session-item"
+          :class="{ active: selectedSession?.session_id === s.session_id, online: s.online, human: s.is_human_service, taken: s.taken_over }"
+          @click="selectSession(s)"
+        >
+          <div class="session-avatar">{{ (s.customer_name && s.customer_name !== '访客' ? s.customer_name : (s.uid || '访'))[0] }}</div>
+          <div class="session-info">
+            <div class="session-name">
+              <template v-if="s.uid">
+                <span class="session-uid">{{ s.uid }}</span>
+                <span v-if="s.customer_name && s.customer_name !== '访客'" class="session-nickname">{{ s.customer_name }}</span>
+              </template>
+              <template v-else>
+                {{ s.customer_name || '访客' }}
+              </template>
+              <t-tag v-if="s.is_human_service" size="small" theme="warning" style="margin-left:4px">人工</t-tag>
+              <t-tag v-if="s.taken_over" size="small" theme="danger" style="margin-left:4px">已接管</t-tag>
+            </div>
+            <div class="session-msg">{{ s.last_message || '暂无消息' }}</div>
           </div>
-          <div class="session-msg">{{ s.last_message || '暂无消息' }}</div>
+          <div class="session-actions">
+            <t-tooltip content="复制 uid">
+              <span class="copy-btn" @click.stop="copySessionLink(s)">
+                <t-icon name="file-copy" />
+              </span>
+            </t-tooltip>
+          </div>
+          <div class="session-status" :class="s.online ? 'online' : 'offline'"></div>
         </div>
-        <div class="session-status" :class="s.online ? 'online' : 'offline'"></div>
-      </div>
       <div v-if="sessions.length === 0" class="no-sessions">暂无会话</div>
     </div>
 
@@ -138,6 +152,18 @@ function formatTime(t) {
   if (!t) return ''
   return new Date(t).toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
+function copySessionLink(session) {
+  const uid = session.uid || ''
+  if (!uid) {
+    MessagePlugin.warning('该会话没有 uid')
+    return
+  }
+  navigator.clipboard.writeText(uid).then(() => {
+    MessagePlugin.success('uid 已复制')
+  }).catch(() => {
+    MessagePlugin.error('复制失败，请手动复制')
+  })
+}
 
 async function loadSessions() {
   try {
@@ -146,6 +172,12 @@ async function loadSessions() {
 }
 
 async function selectSession(session) {
+  // 如果会话已被嵌入监控端接管，阻止进入并提示
+  if (session.taken_over) {
+    MessagePlugin.warning('该会话已被嵌入监控端接管，请在嵌入监控页面处理')
+    return
+  }
+
   selectedSession.value = session
   try {
     messages.value = await chatApi.getMessages(session.session_id)
@@ -173,47 +205,103 @@ async function sendHumanReply() {
 
 function connectWebSocket() {
   const token = localStorage.getItem('token')
+  if (!token) {
+    console.error('[ChatMonitor] 缺少 token，无法建立 WebSocket 连接')
+    return
+  }
   // 开发环境使用后端端口 8000，生产环境使用当前 host
   const isDev = import.meta.env.DEV
   const host = isDev ? 'localhost:8000' : location.host
   const wsUrl = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${host}/ws/monitor/${token}`
+  console.log('[ChatMonitor] 连接 WebSocket:', wsUrl)
   ws = new WebSocket(wsUrl)
+
+  ws.onopen = () => {
+    console.log('[ChatMonitor] WebSocket 已连接')
+  }
 
   ws.onmessage = (e) => {
     // 处理心跳包
     if (e.data === 'ping' || e.data === 'pong') {
+      console.log('[ChatMonitor] 心跳:', e.data)
       return
     }
-    const data = JSON.parse(e.data)
-    if (data.type === 'new_session') {
-      loadSessions()
-      MessagePlugin.info(`新用户开始咨询`)
-    } else if (data.type === 'message' || data.type === 'human_requested') {
-      // 更新会话列表
-      const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
-      if (idx >= 0) {
-        sessions.value[idx].last_message = data.content?.substring(0, 50)
-        if (data.type === 'human_requested') {
-          sessions.value[idx].is_human_service = true
-          MessagePlugin.warning(`会话 ${data.session_id.substring(0, 8)} 请求人工服务`)
+    try {
+      const data = JSON.parse(e.data)
+      console.log('[ChatMonitor] 解析消息:', data.type, data)
+
+      if (data.type === 'new_session') {
+        loadSessions()
+        MessagePlugin.info(`新用户开始咨询`)
+      } else if (data.type === 'message' || data.type === 'human_requested') {
+        // 更新会话列表（使用新对象触发响应式更新）
+        const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
+        if (idx >= 0) {
+          const updated = {
+            ...sessions.value[idx],
+            last_message: data.content?.substring(0, 50)
+          }
+          if (data.type === 'human_requested') {
+            updated.is_human_service = true
+          }
+          sessions.value[idx] = updated
+          // 移到列表顶部
+          sessions.value.splice(idx, 1)
+          sessions.value.unshift(updated)
+          if (data.type === 'human_requested') {
+            MessagePlugin.warning(`会话 ${data.session_id?.substring(0, 8)} 请求人工服务`)
+          }
+        } else {
+          // 列表中还没有这个会话，重新加载
+          loadSessions()
+        }
+        // 如果当前查看的会话有新消息
+        if (selectedSession.value?.session_id === data.session_id) {
+          if (data.role && data.content) {
+            const newMsg = {
+              id: Date.now(),  // 临时 ID，确保 Vue 能正确渲染
+              role: data.role,
+              content: data.content,
+              created_at: data.timestamp
+            }
+            console.log('[ChatMonitor] 推送消息到界面:', newMsg)
+            messages.value.push(newMsg)
+            nextTick(() => {
+              messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
+            })
+          }
+        }
+      } else if (data.type === 'session_closed') {
+        const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
+        if (idx >= 0) {
+          sessions.value[idx] = { ...sessions.value[idx], online: false }
+        }
+      } else if (data.type === 'session_online') {
+        const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
+        if (idx >= 0) {
+          sessions.value[idx] = { ...sessions.value[idx], online: true }
+        }
+      } else if (data.type === 'taken_over' || data.type === 'released') {
+        const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
+        if (idx >= 0) {
+          sessions.value[idx] = {
+            ...sessions.value[idx],
+            taken_over: data.type === 'taken_over',
+            is_human_service: data.type === 'taken_over' ? true : sessions.value[idx].is_human_service
+          }
         }
       }
-      // 如果当前查看的会话有新消息
-      if (selectedSession.value?.session_id === data.session_id) {
-        if (data.role && data.content) {
-          messages.value.push({ role: data.role, content: data.content, created_at: data.timestamp })
-          nextTick(() => {
-            messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
-          })
-        }
-      }
-    } else if (data.type === 'session_closed') {
-      const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
-      if (idx >= 0) sessions.value[idx].online = false
+    } catch (err) {
+      console.error('[ChatMonitor] 消息解析失败:', err)
     }
   }
 
-  ws.onclose = () => {
+  ws.onerror = (e) => {
+    console.error('[ChatMonitor] WebSocket 错误:', e)
+  }
+
+  ws.onclose = (e) => {
+    console.log('[ChatMonitor] WebSocket 已断开:', e.code, e.reason, '3秒后重连...')
     setTimeout(connectWebSocket, 3000)
   }
 }
@@ -247,14 +335,23 @@ onUnmounted(() => {
 }
 .session-item:hover { background: #f5f7fa; }
 .session-item.active { background: #e8f0fe; }
+.session-item.taken { background: #fff1f0; opacity: 0.7; }
+.session-item.taken:hover { background: #fff1f0; }
 .session-avatar {
   width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2);
   color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
 }
 .session-info { flex: 1; overflow: hidden; }
-.session-name { font-size: 14px; font-weight: 500; color: #333; }
+.session-name { font-size: 14px; font-weight: 500; color: #333; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.session-uid { color: #4facfe; font-weight: 600; }
+.session-nickname { color: #333; }
 .session-msg { font-size: 12px; color: #888; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.session-status { width: 8px; height: 8px; border-radius: 50%; }
+.session-actions { display: flex; align-items: center; margin-left: 4px; flex-shrink: 0; }
+.copy-btn { padding: 4px; cursor: pointer; display: flex; border-radius: 4px; transition: background 0.15s; }
+.copy-btn:hover { background: rgba(0,0,0,0.05); }
+.session-actions .t-icon { font-size: 16px; color: #999; transition: color 0.15s; }
+.copy-btn:hover .t-icon { color: #4facfe; }
+.session-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .session-status.online { background: #52c41a; }
 .session-status.offline { background: #d1d5db; }
 .no-sessions { text-align: center; padding: 40px 0; color: #aaa; font-size: 14px; }

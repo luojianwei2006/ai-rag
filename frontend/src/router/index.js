@@ -55,6 +55,7 @@ const routes = [
       { path: 'chat-history', name: 'TenantChatHistory', component: () => import('@/views/tenant/ChatHistory.vue') },
       { path: 'change-password', name: 'TenantChangePassword', component: () => import('@/views/tenant/ChangePassword.vue') },
       { path: 'integrations', name: 'TenantIntegrations', component: () => import('@/views/tenant/Integrations.vue') },
+      { path: 'settings', name: 'TenantSettings', component: () => import('@/views/tenant/Settings.vue') },
       // 小红书矩阵发布
       { path: 'xhs-accounts', name: 'XhsAccounts', component: () => import('@/views/tenant/XhsAccounts.vue') },
       { path: 'xhs-materials', name: 'XhsMaterials', component: () => import('@/views/tenant/XhsMaterials.vue') },
@@ -67,6 +68,13 @@ const routes = [
     path: '/chat/:chatToken',
     name: 'CustomerChat',
     component: () => import('@/views/chat/CustomerChat.vue')
+  },
+
+  // 嵌入监控页面（公开，供第三方 iframe 嵌入）
+  {
+    path: '/embed/monitor',
+    name: 'EmbedMonitor',
+    component: () => import('@/views/embed/Monitor.vue')
   },
 
   // 默认重定向

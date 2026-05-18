@@ -65,6 +65,10 @@ export const tenantApi = {
   getProfile: () => api.get('/tenant/profile'),
   updateApiKeys: (data) => api.put('/tenant/api-keys', data),
   testApiKey: (data) => api.post('/tenant/api-keys/test', data),
+  // 设置
+  updateSettings: (data) => api.put('/tenant/settings', data),
+  uploadAvatar: (formData) => api.post('/tenant/avatar', formData),
+  deleteAvatar: () => api.delete('/tenant/avatar'),
   // 飞书配置
   getFeishuConfig: () => api.get('/feishu/config'),
   updateFeishuConfig: (data) => api.post('/feishu/config', data),
@@ -72,7 +76,10 @@ export const tenantApi = {
   // 企业微信配置
   getWeComConfig: () => api.get('/wecom/config'),
   updateWeComConfig: (data) => api.post('/wecom/config', data),
-  testWeComConnection: (data) => api.post('/wecom/test', data)
+  testWeComConnection: (data) => api.post('/wecom/test', data),
+  // 嵌入监控 API Key
+  getEmbedKey: () => api.get('/tenant/embed-key'),
+  regenerateEmbedKey: () => api.post('/tenant/embed-key/regenerate')
 }
 
 // 知识库接口

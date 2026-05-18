@@ -567,13 +567,64 @@ def delete_task(
 
 # ===================== 生成文章 =====================
 
+def _build_system_prompt(task: XhsTask, account: Optional[XhsAccount] = None) -> str:
+    """构建小红书文章生成的 system prompt
+
+    优先级：任务自定义 system_prompt > 账号人设 > 默认小红书创作者提示词
+    """
+    if task.system_prompt:
+        base = task.system_prompt
+    elif account and account.persona:
+        base = account.persona
+    else:
+        base = DEFAULT_SYSTEM_PROMPT
+
+    # 补充输出格式要求
+    format_instruction = """
+
+【输出格式要求】
+请严格按照以下格式输出，不要添加额外说明：
+
+标题：你生成的标题（20字以内）
+
+正文内容（2-5段，总字数300-800字，风格活泼，善用emoji）
+
+#标签1 #标签2 #标签3 #标签4 #标签5"""
+
+    return base + format_instruction
+
+
+def _build_user_prompt(task: XhsTask, materials: list) -> str:
+    """构建 user prompt：标题方向 + 内容提示词 + 素材参考"""
+    parts = [f"【文章主题】{task.title}"]
+
+    if task.user_prompt:
+        parts.append(f"【内容要求】{task.user_prompt}")
+
+    if materials:
+        mat_lines = []
+        for m in materials:
+            desc = m.description or "无描述"
+            mat_lines.append(f"- {m.name}（{desc}）")
+        parts.append("【参考素材（请围绕这些素材创作）】\n" + "\n".join(mat_lines))
+
+    return "\n\n".join(parts)
+
+
 @router.post("/tasks/{task_id}/generate")
 async def generate_article(
     task_id: int,
     db: Session = Depends(get_db),
     tenant: Tenant = Depends(get_current_tenant),
 ):
-    """调用大模型生成文章内容（同步，前端 loading 等待）"""
+    """调用大模型生成文章内容（同步，前端 loading 等待）
+
+    流程：
+    1. 从任务获取：标题、角色说明(system_prompt)、内容提示词(user_prompt)
+    2. 补充：账号人设（如有）、关联素材描述
+    3. API Key：未指定则通过 get_tenant_llm_config 自动轮询商户/系统配置的 Key
+    4. 调用 LLM → 解析输出（标题/正文/标签）→ 保存到任务
+    """
     task = db.query(XhsTask).filter(
         XhsTask.id == task_id,
         XhsTask.tenant_id == tenant.id
@@ -583,57 +634,75 @@ async def generate_article(
     if task.status == "generating":
         raise HTTPException(status_code=400, detail="任务正在生成中，请勿重复点击")
 
-    # 构建提示词：拼入选用素材
-    material_context = ""
+    # 查询关联账号（可能需要其人设信息）
+    account = db.query(XhsAccount).filter(XhsAccount.id == task.account_id).first()
+
+    # 查询关联素材（如有）
+    materials = []
     if task.material_ids:
         materials = db.query(XhsMaterial).filter(
             XhsMaterial.id.in_(task.material_ids),
             XhsMaterial.tenant_id == tenant.id,
         ).all()
-        mat_parts = []
-        for m in materials:
-            # 仅图片素材，将描述信息拼入提示词
-            mat_parts.append(f"【图片素材 - {m.name}】（描述：{m.description or '无'}）")
-        if mat_parts:
-            material_context = "\n\n参考素材：\n" + "\n\n".join(mat_parts)
 
-    full_user_prompt = task.user_prompt + material_context
+    # 构建 system_prompt 和 user_prompt
+    system_prompt = _build_system_prompt(task, account)
+    user_prompt = _build_user_prompt(task, materials)
 
-    # 确定 API Key（与知识库问答、客服聊天一致）
-    messages = [{"role": "user", "content": full_user_prompt}]
-    system_prompt = task.system_prompt or DEFAULT_SYSTEM_PROMPT
+    logger.info(
+        "生成文章: task=%d, title='%s', user_prompt长度=%d, 素材数量=%d",
+        task.id, task.title, len(user_prompt), len(materials),
+    )
 
+    # 获取 API Key 配置（轮询机制）
     model, api_keys = get_tenant_llm_config(tenant, db)
 
     if not api_keys:
-        raise HTTPException(status_code=400, detail="未配置可用的 API Key，请先在 API Key 配置页面添加")
+        raise HTTPException(
+            status_code=400,
+            detail="未配置可用的 API Key，请先在 API Key 配置页面添加"
+        )
 
-    # 更新状态
+    logger.info("API Key 配置: preferred_model=%s, 可用Key数量=%d", model, len(api_keys))
+
+    # 更新任务状态为生成中
     task.status = "generating"
     task.error_message = None
+    task.generated_title = None
+    task.generated_content = None
+    task.generated_tags = None
     db.commit()
 
     try:
-        # 在 system_prompt 前加上角色说明
-        full_messages = [
-            {"role": "system", "content": system_prompt},
-        ] + messages
+        messages = [{"role": "user", "content": user_prompt}]
+        result = await call_llm(model, api_keys, messages, "", system_prompt=system_prompt)
 
-        result = await call_llm(model, api_keys, full_messages, "")
+        if not result or not result.strip():
+            raise LLMError("大模型返回空内容")
+
+        logger.info("生成文章成功: task=%d, 回复长度=%d", task.id, len(result))
+
     except LLMError as e:
         task.status = "failed"
-        task.error_message = str(e)
+        task.error_message = f"AI 生成失败: {e}"
         db.commit()
+        logger.error("生成文章失败: task=%d, error=%s", task.id, e)
         raise HTTPException(status_code=502, detail=f"AI 生成失败: {e}")
 
-    # 解析生成内容（尝试提取标题 + 正文 + 标签）
+    # 解析生成内容（提取标题 + 正文 + 标签）
     generated_title, generated_content, generated_tags = _parse_generated(result, task.title)
 
     task.status = "generated"
     task.generated_title = generated_title
     task.generated_content = generated_content
     task.generated_tags = generated_tags
+    task.error_message = None
     db.commit()
+
+    logger.info(
+        "文章已保存: task=%d, title='%s', content长度=%d, tags='%s'",
+        task.id, generated_title, len(generated_content), generated_tags,
+    )
 
     return {
         "message": "文章生成成功",
@@ -645,35 +714,48 @@ async def generate_article(
 
 def _parse_generated(text: str, fallback_title: str):
     """
-    尝试从 LLM 输出中解析 标题/正文/标签。
-    格式宽松，支持：
-      标题：xxx
-      正文：xxx
-      标签：#xxx #xxx
+    从 LLM 输出中解析 标题/正文/标签。
+
+    支持宽松格式：
+      标题：xxx  /  【标题】xxx
+      正文：xxx  /  直接是正文内容
+      #标签 #标签（末尾，或独立一行）
+
     如果无法解析则整段作为正文。
     """
     import re
 
     title = fallback_title
-    content = text
+    content = text.strip()
     tags = ""
 
-    # 提取标题
-    title_match = re.search(r"(?:标题[：:]\s*)(.+)", text)
-    if title_match:
-        title = title_match.group(1).strip()[:20]
-
-    # 提取标签（末尾 #标签 形式）
+    # 提取标签（所有 #标签 形式，包括混在正文中的）
     tag_matches = re.findall(r"#([\u4e00-\u9fa5a-zA-Z0-9_]{1,20})", text)
     if tag_matches:
-        tags = ",".join(tag_matches[:8])
-        # 从正文中去掉标签行
-        text = re.sub(r"(\s*#[\u4e00-\u9fa5a-zA-Z0-9_]+)+\s*$", "", text).strip()
+        tags = ",".join(list(dict.fromkeys(tag_matches))[:8])  # 去重，最多8个
+        # 只删除末尾独立的标签行（行以#开头），不删除正文中的#标签
+        content = re.sub(r"\n\s*(#[\u4e00-\u9fa5a-zA-Z0-9_]+(\s+#[\u4e00-\u9fa5a-zA-Z0-9_]+)*)\s*$", "", content).strip()
+        # 去掉末尾紧贴的标签
+        content = re.sub(r"(\s*#[\u4e00-\u9fa5a-zA-Z0-9_]+)+\s*$", "", content).strip()
 
-    # 提取正文（去掉标题行）
-    content = re.sub(r"^(?:标题[：:]\s*.+\n?)", "", text, flags=re.MULTILINE).strip()
+    # 提取标题（多种格式）
+    title_patterns = [
+        r"^(?:标题[：:]\s*)(.+)",           # 标题：xxx
+        r"^【标题】\s*(.+)",                # 【标题】xxx
+        r"^#\s*(.+?)\s*#",                   # # 标题 # (夹在标签中间)
+    ]
+    for pattern in title_patterns:
+        title_match = re.search(pattern, content, re.MULTILINE)
+        if title_match:
+            title = title_match.group(1).strip()[:20]
+            content = re.sub(pattern, "", content, count=1, flags=re.MULTILINE).strip()
+            break
+
     # 去掉 "正文：" 前缀
-    content = re.sub(r"^正文[：:]\s*", "", content, flags=re.MULTILINE).strip()
+    content = re.sub(r"^(?:正文[：:]\s*)", "", content, flags=re.MULTILINE).strip()
+
+    # 清理多余空行
+    content = re.sub(r"\n{3,}", "\n\n", content).strip()
 
     return title, content, tags
 

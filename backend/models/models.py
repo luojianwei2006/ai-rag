@@ -73,7 +73,19 @@ class Tenant(Base):
     
     # 积分余额
     points_balance = Column(Integer, default=0)
-    
+
+    # 客服聊天语言设置 zh=中文, en=英文
+    chat_language = Column(String(10), default="zh")
+
+    # AI客服开关，关闭后全部走人工
+    ai_enabled = Column(Boolean, default=True)
+
+    # 商户头像 URL
+    avatar_url = Column(String(500), nullable=True)
+
+    # 嵌入监控 API Key（用于第三方嵌入监控页面 + 加密 uid/nickname）
+    embed_api_key = Column(String(64), unique=True, nullable=True, index=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -116,10 +128,14 @@ class ChatSession(Base):
     id = Column(Integer, primary_key=True, index=True)
     tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
     session_id = Column(String(64), unique=True, index=True, nullable=False)
+    uid = Column(String(100), index=True, nullable=True)  # 商户自定义用户唯一标识
     customer_name = Column(String(100), nullable=True, default="访客")
     customer_ip = Column(String(50), nullable=True)
     status = Column(String(20), default="active")  # active, human, closed
     is_human_service = Column(Boolean, default=False)
+    online = Column(Boolean, default=False)  # 用户是否在线
+    taken_over = Column(Boolean, default=False)  # 是否被嵌入监控端接管
+    last_active = Column(DateTime(timezone=True), nullable=True)  # 最后活跃时间
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
