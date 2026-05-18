@@ -283,7 +283,95 @@ systemctl start customer-service
 
 > 将 `/path/to/customer-service-platform` 替换为实际路径。
 
-### 四、部署验证
+---
+
+### 四、后端打包成单个可执行文件（PyInstaller）
+
+如果不想安装 Python 环境，可以用 **PyInstaller** 把后端打包成**单个可执行文件**，直接运行。
+
+#### 1. 安装 PyInstaller
+
+```bash
+cd customer-service-platform/backend
+source .venv/bin/activate
+pip install pyinstaller
+```
+
+#### 2. 打包（生成单个文件）
+
+```bash
+# --onefile：打包成单个可执行文件
+# --name：输出文件名
+# --hidden-import：隐藏导入（FastAPI/SQLAlchemy 需要）
+pyinstaller --onefile --name customer-service-api \
+  --hidden-import sqlalchemy \
+  --hidden-import chromadb \
+  --hidden-import playwright \
+  main.py
+```
+
+打包完成后，可执行文件在 `dist/customer-service-api`。
+
+#### 3. 运行打包后的文件
+
+```bash
+# 直接运行，不需要 Python 环境
+cd customer-service-platform/backend
+./dist/customer-service-api --host 0.0.0.0 --port 8000
+```
+
+#### 4. 注意事项
+
+| 问题 | 说明 |
+|------|------|
+| **跨平台** | macOS 打包的文件**不能**在 Linux 上运行，需要在目标系统上打包 |
+| **前端 `dist/`** | PyInstaller 只打包后端，前端需要单独部署或用 Nginx 代理 |
+| **`.env` 配置文件** | 需要手动复制到可执行文件同级目录 |
+| **Playwright 浏览器** | 如果用到 XHS 发布功能，需要额外打包浏览器二进制文件 |
+| **SQLite** | ChromaDB 需要 sqlite3 >= 3.35.0，注意目标系统版本 |
+
+#### 5. 简化版打包脚本（推荐）
+
+创建 `backend/build.sh`：
+
+```bash
+#!/bin/bash
+set -e
+
+echo "开始打包后端..."
+
+cd "$(dirname "$0")"
+
+# 激活虚拟环境
+source .venv/bin/activate
+
+# 安装打包依赖
+pip install pyinstaller -q
+
+# 清理旧产物
+rm -rf build/ dist/ *.spec
+
+# 打包
+pyinstaller --onefile --name customer-service-api \
+  --hidden-import sqlalchemy \
+  --hidden-import chromadb \
+  --hidden-import playwright \
+  --add-data ".venv/lib/python*/site-packages/chromadb:chromadb" \
+  main.py
+
+echo "✅ 打包完成！可执行文件：dist/customer-service-api"
+echo "运行方式：./dist/customer-service-api --host 0.0.0.0 --port 8000"
+```
+
+使用：
+```bash
+chmod +x backend/build.sh
+./backend/build.sh
+```
+
+---
+
+### 五、部署验证
 
 | 检查项 | 命令 / 地址 |
 |--------|------------|
@@ -292,7 +380,7 @@ systemctl start customer-service
 | API 文档 | `http://your-domain.com/api/docs` |
 | WebSocket | 客户聊天页面连接测试 |
 
-### 五、常用运维命令
+### 六、常用运维命令
 
 ```bash
 # 查看后端日志
