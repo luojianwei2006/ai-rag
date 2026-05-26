@@ -146,8 +146,7 @@ const connected = ref(false)
 const messagesArea = ref(null)
 const inputRef = ref(null)
 const currentLang = ref('zh')
-const pendingImage = ref('')       // 待发送图片的本地 data URL
-const pendingImageUrl = ref('')    // 待发送图片的服务器 URL
+const pendingImage = ref('')       // 待发送图片的 base64 data URL
 let ws = null
 
 function t(key) {
@@ -168,25 +167,22 @@ function addMessage(role, content, msgType = 'text') {
 function handleSend() {
   const hasText = inputText.value.trim()
   const hasImage = !!pendingImage.value
-  
+
   if (!connected.value || (!hasText && !hasImage)) return
 
   if (hasImage) {
-    // 发送图片
-    const imgUrl = pendingImageUrl.value
-    addMessage('customer', imgUrl, 'image')
-    ws.send(JSON.stringify({ content: imgUrl, msg_type: 'image' }))
+    const imgData = pendingImage.value  // 已经是 data:image/png;base64,... 格式
+    addMessage('customer', imgData, 'image')
+    ws.send(JSON.stringify({ content: imgData, msg_type: 'image' }))
     clearPendingImage()
-    isTyping.value = true
+    if (!hasText) return
   }
 
-  if (hasText) {
-    const text = inputText.value.trim()
-    inputText.value = ''
-    addMessage('customer', text)
-    ws.send(JSON.stringify({ content: text, msg_type: 'text' }))
-    isTyping.value = true
-  }
+  const text = inputText.value.trim()
+  inputText.value = ''
+  addMessage('customer', text)
+  ws.send(JSON.stringify({ content: text, msg_type: 'text' }))
+  isTyping.value = true
 }
 
 function sendQuick(text) {
@@ -242,8 +238,8 @@ function connectWs() {
 async function handleImageUpload(e) {
   const file = e.target.files?.[0]
   if (!file) return
-  await uploadAndSetImage(file)
-  e.target.value = '' // reset input
+  await fileToBase64(file)
+  e.target.value = ''
 }
 
 async function handlePaste(e) {
@@ -253,33 +249,32 @@ async function handlePaste(e) {
     if (item.type.startsWith('image/')) {
       e.preventDefault()
       const file = item.getAsFile()
-      await uploadAndSetImage(file)
+      await fileToBase64(file)
       return
     }
   }
 }
 
-async function uploadAndSetImage(file) {
-  // 先显示本地预览
-  const reader = new FileReader()
-  reader.onload = () => { pendingImage.value = reader.result }
-  reader.readAsDataURL(file)
-
-  // 上传到服务器
-  try {
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await axios.post(`/api/public/chat/upload-image?chat_token=${chatToken}`, formData)
-    pendingImageUrl.value = `${location.origin}${res.data.url}`
-  } catch (e) {
-    pendingImage.value = ''
-    addMessage('system', '图片上传失败，请重试')
-  }
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    // 最大 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      addMessage('system', '图片不能超过5MB')
+      reject(new Error('too large'))
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      pendingImage.value = reader.result
+      resolve()
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
 }
 
 function clearPendingImage() {
   pendingImage.value = ''
-  pendingImageUrl.value = ''
 }
 
 function previewImage(url) {
