@@ -177,8 +177,18 @@ function copySessionLink(session) {
 
 async function loadSessions() {
   try {
-    sessions.value = await chatApi.getSessions()
-  } catch (e) {}
+    const data = await chatApi.getSessions()
+    sessions.value = data
+    // 同步 selectedSession 引用，避免 10 秒刷新后引用 stale
+    if (selectedSession.value) {
+      const found = data.find(s => s.session_id === selectedSession.value.session_id)
+      if (found) {
+        selectedSession.value = found
+      }
+    }
+  } catch (e) {
+    console.error('[ChatMonitor] loadSessions 失败:', e)
+  }
 }
 
 async function selectSession(session) {
@@ -198,16 +208,26 @@ async function selectSession(session) {
 
 async function sendHumanReply() {
   if (!replyContent.value.trim()) return
+  const content = replyContent.value.trim()
   replying.value = true
   try {
     await chatApi.humanReply({
       session_id: selectedSession.value.session_id,
-      content: replyContent.value.trim()
+      content: content
     })
-    // 不本地推送，WebSocket 广播会推送回来
+    // 本地先推送，不依赖 WebSocket 广播回传
+    const newMsg = {
+      id: Date.now(),
+      role: 'human_agent',
+      msg_type: 'text',
+      content: content,
+      created_at: new Date().toISOString()
+    }
+    messages.value.push(newMsg)
     replyContent.value = ''
     await nextTick()
     messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
+    console.log('[ChatMonitor] ✅ 本地推送人工回复:', content.substring(0, 50))
   } finally {
     replying.value = false
   }
