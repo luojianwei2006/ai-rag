@@ -61,7 +61,7 @@
           <span class="quick-btn" @click="sendQuick(t('quickGreeting'))">{{ t('quickGreetingBtn') }}</span>
           <span class="quick-btn" @click="sendQuick(t('quickTransferHuman'))">{{ t('quickTransferHumanBtn') }}</span>
           <label class="quick-btn upload-btn">
-            🖼️ 发截图
+            {{ t('uploadBtn') }}
             <input type="file" accept="image/*" style="display:none" @change="handleImageUpload" />
           </label>
         </div>
@@ -83,13 +83,13 @@
             <!-- 上传中蒙版 -->
             <div v-if="uploading" class="upload-overlay">
               <t-loading size="small" />
-              <span>上传中...</span>
+              <span>{{ t('uploadingText') }}</span>
             </div>
             <!-- 上传失败 -->
             <div v-if="uploadError" class="upload-overlay error">
               <span class="error-icon">⚠️</span>
-              <span class="error-text">上传失败</span>
-              <span class="retry-btn" @click="retryUpload">重试</span>
+              <span class="error-text">{{ t('uploadFail') }}</span>
+              <span class="retry-btn" @click="retryUpload">{{ t('retryBtn') }}</span>
             </div>
           </div>
           <span class="remove-img" @click="clearPendingImage">✕</span>
@@ -128,6 +128,10 @@ const i18nMessages = {
     reconnecting: '连接已断开，正在重连...',
     userAvatar: '我',
     companyFallback: '在线客服',
+    uploadBtn: '🖼️ 发截图',
+    uploadingText: '上传中...',
+    uploadFail: '上传失败',
+    retryBtn: '重试',
   },
   en: {
     loading: 'Connecting to customer service...',
@@ -144,6 +148,10 @@ const i18nMessages = {
     reconnecting: 'Connection lost, reconnecting...',
     userAvatar: 'Me',
     companyFallback: 'Customer Service',
+    uploadBtn: '🖼️ Send Screenshot',
+    uploadingText: 'Uploading...',
+    uploadFail: 'Upload Failed',
+    retryBtn: 'Retry',
   }
 }
 
