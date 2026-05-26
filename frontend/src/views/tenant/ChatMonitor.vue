@@ -65,8 +65,8 @@
           </div>
         </div>
 
-        <!-- 人工回复区域：支持人工接管状态、网页在线用户或第三方平台用户 -->
-        <div v-if="selectedSession.is_human_service || selectedSession.online || isThirdPartySession" class="reply-area">
+        <!-- 人工回复区域：非托管状态显示输入框 -->
+        <div v-if="selectedSession && !selectedSession.taken_over" class="reply-area">
           <textarea
             v-model="replyContent"
             :placeholder="replyPlaceholder"
@@ -83,6 +83,9 @@
           >
             发送人工回复
           </t-button>
+        </div>
+        <div v-else-if="selectedSession.taken_over" class="reply-area taken-notice">
+          ⚠️ 该会话已被嵌入监控端接管，无法在此回复
         </div>
       </template>
     </div>
@@ -393,6 +396,9 @@ onUnmounted(() => {
 .message-time { font-size: 11px; color: #aaa; margin-top: 3px; text-align: right; }
 
 .reply-area { padding: 12px 16px; border-top: 1px solid #f0f0f0; }
+.reply-area.taken-notice {
+  text-align: center; color: #999; font-size: 13px; padding: 20px;
+}
 .reply-textarea {
   width: 100%;
   min-height: 60px;
