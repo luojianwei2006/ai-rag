@@ -309,6 +309,15 @@ async def human_reply(
             "timestamp": datetime.now().isoformat()
         })
 
+    # 广播给管理后台监控端（让管理员自己的回复也实时显示）
+    await broadcast_to_all(tenant, {
+        "type": "message",
+        "session_id": req.session_id,
+        "role": "human_agent",
+        "content": req.content,
+        "timestamp": datetime.now().isoformat()
+    })
+
     return {
         "message": "发送成功",
         "points_deducted": cost,

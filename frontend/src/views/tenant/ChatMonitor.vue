@@ -204,7 +204,7 @@ async function sendHumanReply() {
       session_id: selectedSession.value.session_id,
       content: replyContent.value.trim()
     })
-    messages.value.push({ role: 'human_agent', content: replyContent.value, created_at: new Date().toISOString() })
+    // 不本地推送，WebSocket 广播会推送回来
     replyContent.value = ''
     await nextTick()
     messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
@@ -227,18 +227,16 @@ function connectWebSocket() {
   ws = new WebSocket(wsUrl)
 
   ws.onopen = () => {
-    console.log('[ChatMonitor] WebSocket 已连接')
+    console.log('[ChatMonitor] WebSocket 已连接 ✅')
   }
 
   ws.onmessage = (e) => {
     // 处理心跳包
     if (e.data === 'ping' || e.data === 'pong') {
-      console.log('[ChatMonitor] 心跳:', e.data)
       return
     }
     try {
       const data = JSON.parse(e.data)
-      console.log('[ChatMonitor] 解析消息:', data.type, data)
 
       if (data.type === 'new_session') {
         loadSessions()
@@ -258,6 +256,10 @@ function connectWebSocket() {
           // 移到列表顶部
           sessions.value.splice(idx, 1)
           sessions.value.unshift(updated)
+          // 同步更新 selectedSession 引用（避免引用丢失导致消息不刷新）
+          if (selectedSession.value?.session_id === data.session_id) {
+            selectedSession.value = updated
+          }
           if (data.type === 'human_requested') {
             MessagePlugin.warning(`会话 ${data.session_id?.substring(0, 8)} 请求人工服务`)
           }
@@ -282,7 +284,7 @@ function connectWebSocket() {
             })
           }
         } else {
-          console.log('[ChatMonitor] ⏭️ 消息不属于当前会话: selected=', selectedSession.value?.session_id?.substring(0,8), 'received=', data.session_id?.substring(0,8))
+          console.log('[ChatMonitor] ⏭️ skip: selected=', selectedSession.value?.session_id?.substring(0,8), 'received=', data.session_id?.substring(0,8))
         }
       } else if (data.type === 'session_closed') {
         const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
