@@ -367,6 +367,7 @@ async def human_reply(
     await broadcast_to_all(tenant, {
         "type": "message",
         "session_id": req.session_id,
+        "uid": session.uid or "",
         "role": "human_agent",
         "content": req.content,
         "timestamp": datetime.now().isoformat()

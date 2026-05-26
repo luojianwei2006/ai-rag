@@ -265,13 +265,17 @@ function connectWebSocket() {
       console.log('[ChatMonitor WS] 收到消息 type=', data.type, 'session_id=', data.session_id?.substring(0,8), 'role=', data.role, 'content=', data.content?.substring(0,30))
 
       if (data.type === 'new_session') {
-        console.log('[ChatMonitor WS] ➕ 新会话:', data.customer_name)
+        console.log('[ChatMonitor WS] ➕ 新会话:', data.customer_name, 'uid=', data.uid)
         loadSessions()
         MessagePlugin.info(`新用户开始咨询`)
       } else if (data.type === 'message' || data.type === 'human_requested') {
-        console.log('[ChatMonitor WS] 📨 消息/请求 session_id=', data.session_id?.substring(0,8), 'selected=', selectedSession.value?.session_id?.substring(0,8))
+        const matchKey = data.uid || data.session_id
+        console.log('[ChatMonitor WS] 📨 消息/请求 matchKey=', matchKey?.substring(0,8), 'selected.uid=', selectedSession.value?.uid, 'selected.sid=', selectedSession.value?.session_id?.substring(0,8))
         // 更新会话列表（使用新对象触发响应式更新）
-        const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
+        // 优先用 uid 匹配（客户刷新后 session_id 会变，uid 不变）
+        const idx = data.uid
+          ? sessions.value.findIndex(s => s.uid === data.uid)
+          : sessions.value.findIndex(s => s.session_id === data.session_id)
         if (idx >= 0) {
           const updated = {
             ...sessions.value[idx],
@@ -285,20 +289,26 @@ function connectWebSocket() {
           sessions.value.splice(idx, 1)
           sessions.value.unshift(updated)
           // 同步更新 selectedSession 引用（避免引用丢失导致消息不刷新）
-          if (selectedSession.value?.session_id === data.session_id) {
+          const isSelected = data.uid
+            ? selectedSession.value?.uid === data.uid
+            : selectedSession.value?.session_id === data.session_id
+          if (isSelected) {
             console.log('[ChatMonitor WS] 🔄 同步 selectedSession 引用')
             selectedSession.value = updated
           }
           if (data.type === 'human_requested') {
-            MessagePlugin.warning(`会话 ${data.session_id?.substring(0, 8)} 请求人工服务`)
+            MessagePlugin.warning(`会话 ${matchKey?.substring(0, 8)} 请求人工服务`)
           }
         } else {
           // 列表中还没有这个会话，重新加载
           console.log('[ChatMonitor WS] ⚠️ 会话不在列表中，重新加载')
           loadSessions()
         }
-        // 如果当前查看的会话有新消息
-        if (selectedSession.value?.session_id === data.session_id) {
+        // 如果当前查看的会话有新消息（优先 uid 匹配）
+        const isCurrentSession = data.uid
+          ? selectedSession.value?.uid === data.uid
+          : selectedSession.value?.session_id === data.session_id
+        if (isCurrentSession) {
           if (data.role && data.content) {
             const newMsg = {
               id: Date.now(),
@@ -316,23 +326,29 @@ function connectWebSocket() {
             console.log('[ChatMonitor WS] ⚠️ 消息缺少 role 或 content，不推送')
           }
         } else {
-          console.log('[ChatMonitor WS] ⏭️ skip: selected=', selectedSession.value?.session_id?.substring(0,8), 'received=', data.session_id?.substring(0,8))
+          console.log('[ChatMonitor WS] ⏭️ skip: selected.uid=', selectedSession.value?.uid, 'selected.sid=', selectedSession.value?.session_id?.substring(0,8), 'received.uid=', data.uid, 'received.sid=', data.session_id?.substring(0,8))
         }
       } else if (data.type === 'session_closed') {
-        console.log('[ChatMonitor WS] 🔴 会话关闭:', data.session_id?.substring(0,8))
-        const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
+        console.log('[ChatMonitor WS] 🔴 会话关闭:', data.uid || data.session_id?.substring(0,8))
+        const idx = data.uid
+          ? sessions.value.findIndex(s => s.uid === data.uid)
+          : sessions.value.findIndex(s => s.session_id === data.session_id)
         if (idx >= 0) {
           sessions.value[idx] = { ...sessions.value[idx], online: false }
         }
       } else if (data.type === 'session_online') {
-        console.log('[ChatMonitor WS] 🟢 会话上线:', data.session_id?.substring(0,8))
-        const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
+        console.log('[ChatMonitor WS] 🟢 会话上线:', data.uid || data.session_id?.substring(0,8))
+        const idx = data.uid
+          ? sessions.value.findIndex(s => s.uid === data.uid)
+          : sessions.value.findIndex(s => s.session_id === data.session_id)
         if (idx >= 0) {
           sessions.value[idx] = { ...sessions.value[idx], online: true }
         }
       } else if (data.type === 'taken_over' || data.type === 'released') {
-        console.log('[ChatMonitor WS] 🔐 托管状态变化:', data.type, data.session_id?.substring(0,8))
-        const idx = sessions.value.findIndex(s => s.session_id === data.session_id)
+        console.log('[ChatMonitor WS] 🔐 托管状态变化:', data.type, data.uid || data.session_id?.substring(0,8))
+        const idx = data.uid
+          ? sessions.value.findIndex(s => s.uid === data.uid)
+          : sessions.value.findIndex(s => s.session_id === data.session_id)
         if (idx >= 0) {
           sessions.value[idx] = {
             ...sessions.value[idx],
