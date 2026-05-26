@@ -23,6 +23,10 @@ class ChangePasswordRequest(BaseModel):
     new_password: str
 
 
+class ResetTenantPasswordRequest(BaseModel):
+    new_password: str
+
+
 class SmtpConfigRequest(BaseModel):
     smtp_host: str
     smtp_port: str
@@ -354,3 +358,22 @@ async def toggle_tenant(
     tenant.is_active = not tenant.is_active
     db.commit()
     return {"is_active": tenant.is_active}
+
+
+@router.post("/tenants/{tenant_id}/reset-password")
+async def reset_tenant_password(
+    tenant_id: int,
+    req: ResetTenantPasswordRequest,
+    admin: Admin = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """管理员重置商户密码"""
+    from models.models import Tenant
+    tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+    if not tenant:
+        raise HTTPException(status_code=404, detail="商户不存在")
+    if not req.new_password or len(req.new_password) < 6:
+        raise HTTPException(status_code=400, detail="密码长度不能少于6位")
+    tenant.hashed_password = get_password_hash(req.new_password)
+    db.commit()
+    return {"message": f"商户 {tenant.email} 密码已重置"}

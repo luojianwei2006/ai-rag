@@ -332,6 +332,7 @@ async def customer_chat_ws(
     chat_token: str
 ):
     """客户聊天 WebSocket，支持 uid 和 nickname 查询参数"""
+    import traceback
     db = SessionLocal()
     try:
         tenant = db.query(Tenant).filter(Tenant.chat_token == chat_token).first()
@@ -603,6 +604,8 @@ async def customer_chat_ws(
             "timestamp": datetime.now().isoformat()
         })
     except Exception as e:
+        print(f"[WS chat ERROR] {type(e).__name__}: {e}")
+        traceback.print_exc()
         manager.disconnect_customer(session_id if 'session_id' in locals() else "")
     finally:
         db.close()

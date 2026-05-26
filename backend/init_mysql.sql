@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS chat_sessions (
     status VARCHAR(20) DEFAULT 'active' COMMENT 'active, human, closed',
     is_human_service TINYINT(1) DEFAULT 0,
     online TINYINT(1) DEFAULT 0 COMMENT '用户是否在线',
-    taken_over_ TINYINT(1) DEFAULT 0 COMMENT '是否被嵌入监控端接管',
+    taken_over TINYINT(1) DEFAULT 0 COMMENT '是否被嵌入监控端接管',
     last_active DATETIME(6) DEFAULT NULL,
     created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
     updated_at DATETIME(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),

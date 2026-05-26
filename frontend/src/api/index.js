@@ -47,6 +47,7 @@ export const adminApi = {
   testApiKey: (data) => api.post('/admin/api-keys/test', data),
   getTenants: () => api.get('/admin/tenants'),
   toggleTenant: (id) => api.patch(`/admin/tenants/${id}/toggle`),
+  resetTenantPassword: (id, data) => api.post(`/admin/tenants/${id}/reset-password`, data),
   // 积分管理
   getPointsConfig: () => api.get('/admin/points/config'),
   savePointsConfig: (data) => api.post('/admin/points/config', data),

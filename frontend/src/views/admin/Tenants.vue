@@ -22,14 +22,23 @@
         <t-button size="small" variant="text" @click="copyLink(row.chat_token)" style="margin-left:4px">复制</t-button>
       </template>
       <template #actions="{ row }">
-        <t-button
-          size="small"
-          :theme="row.is_active ? 'danger' : 'success'"
-          variant="outline"
-          @click="toggleTenant(row)"
-        >
-          {{ row.is_active ? '禁用' : '启用' }}
-        </t-button>
+        <t-space>
+          <t-button
+            size="small"
+            :theme="row.is_active ? 'danger' : 'success'"
+            variant="outline"
+            @click="toggleTenant(row)"
+          >
+            {{ row.is_active ? '禁用' : '启用' }}
+          </t-button>
+          <t-button
+            size="small"
+            variant="outline"
+            @click="showPasswordDialog(row)"
+          >
+            修改密码
+          </t-button>
+        </t-space>
       </template>
     </t-table>
 
@@ -41,6 +50,18 @@
         </t-form-item>
         <t-form-item label="公司名称">
           <t-input v-model="newTenant.company_name" placeholder="选填" />
+        </t-form-item>
+      </t-form>
+    </t-dialog>
+
+    <!-- 修改商户密码对话框 -->
+    <t-dialog v-model:visible="showPwdDialog" header="修改商户密码" :on-confirm="handleResetPassword">
+      <t-form :data="pwdForm" label-width="80px">
+        <t-form-item label="商户">
+          <t-input :value="selectedTenant?.email" disabled />
+        </t-form-item>
+        <t-form-item label="新密码" required>
+          <t-input v-model="pwdForm.new_password" type="password" placeholder="至少6位" />
         </t-form-item>
       </t-form>
     </t-dialog>
@@ -57,6 +78,11 @@ const tenants = ref([])
 const showRegisterDialog = ref(false)
 const newTenant = ref({ email: '', company_name: '' })
 
+// 修改密码
+const showPwdDialog = ref(false)
+const selectedTenant = ref(null)
+const pwdForm = ref({ new_password: '' })
+
 const columns = [
   { colKey: 'id', title: 'ID', width: 60 },
   { colKey: 'email', title: '邮箱' },
@@ -64,7 +90,7 @@ const columns = [
   { colKey: 'is_active', title: '状态', cell: 'is_active' },
   { colKey: 'chat_url', title: '客服链接', cell: 'chat_url' },
   { colKey: 'created_at', title: '注册时间', width: 160 },
-  { colKey: 'actions', title: '操作', cell: 'actions', width: 80 }
+  { colKey: 'actions', title: '操作', cell: 'actions', width: 180 }
 ]
 
 async function loadTenants() {
@@ -102,6 +128,24 @@ function copyLink(token) {
   const url = `${window.location.origin}/chat/${token}`
   navigator.clipboard.writeText(url)
   MessagePlugin.success('链接已复制')
+}
+
+function showPasswordDialog(row) {
+  selectedTenant.value = row
+  pwdForm.value.new_password = ''
+  showPwdDialog.value = true
+}
+
+async function handleResetPassword() {
+  if (!pwdForm.value.new_password || pwdForm.value.new_password.length < 6) {
+    MessagePlugin.warning('密码长度不能少于6位')
+    return
+  }
+  try {
+    await adminApi.resetTenantPassword(selectedTenant.value.id, { new_password: pwdForm.value.new_password })
+    MessagePlugin.success(`商户 ${selectedTenant.value.email} 密码已重置`)
+    showPwdDialog.value = false
+  } catch (e) {}
 }
 
 onMounted(loadTenants)
