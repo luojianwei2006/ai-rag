@@ -210,6 +210,7 @@ async function sendHumanReply() {
   if (!replyContent.value.trim()) return
   const content = replyContent.value.trim()
   replying.value = true
+  console.log('[ChatMonitor] 发送人工回复:', content.substring(0, 50), 'session=', selectedSession.value?.session_id?.substring(0,8))
   try {
     await chatApi.humanReply({
       session_id: selectedSession.value.session_id,
@@ -223,11 +224,12 @@ async function sendHumanReply() {
       content: content,
       created_at: new Date().toISOString()
     }
+    console.log('[ChatMonitor] ✅ 本地推送人工回复:', newMsg)
     messages.value.push(newMsg)
     replyContent.value = ''
     await nextTick()
+    console.log('[ChatMonitor] messageContainer.value=', messageContainer.value)
     messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
-    console.log('[ChatMonitor] ✅ 本地推送人工回复:', content.substring(0, 50))
   } finally {
     replying.value = false
   }
@@ -333,6 +335,17 @@ function connectWebSocket() {
             ...sessions.value[idx],
             taken_over: data.type === 'taken_over',
             is_human_service: data.type === 'taken_over' ? true : sessions.value[idx].is_human_service
+          }
+        }
+      } else if (data.type === 'init') {
+        // WebSocket 连接成功后的初始数据推送
+        console.log('[ChatMonitor WS] ✅ init 收到初始会话列表，共', data.sessions?.length, '条')
+        if (Array.isArray(data.sessions)) {
+          sessions.value = data.sessions
+          // 同步 selectedSession 引用
+          if (selectedSession.value) {
+            const found = data.sessions.find(s => s.session_id === selectedSession.value.session_id)
+            if (found) selectedSession.value = found
           }
         }
       } else {

@@ -57,37 +57,48 @@ class ConnectionManager:
     def __init__(self):
         # 客户连接: session_id -> WebSocket
         self.customer_connections: Dict[str, WebSocket] = {}
+        # uid -> 当前 session_id（uid 客户刷新后自动更新，用于可靠投递）
+        self.customer_uid_map: Dict[str, str] = {}
         # 商户监控连接: tenant_id -> Set[WebSocket]
         self.tenant_monitor_connections: Dict[int, Set[WebSocket]] = {}
 
-    async def connect_customer(self, session_id: str, ws: WebSocket):
+    async def connect_customer(self, session_id: str, ws: WebSocket, uid: str = None):
         await ws.accept()
         self.customer_connections[session_id] = ws
+        if uid:
+            old_sid = self.customer_uid_map.get(uid)
+            if old_sid and old_sid != session_id:
+                print(f"[manager] uid={uid} 旧连接 {old_sid[:8]} → 新连接 {session_id[:8]}")
+            self.customer_uid_map[uid] = session_id
 
     def disconnect_customer(self, session_id: str):
-        self.customer_connections.pop(session_id, None)
+        ws = self.customer_connections.pop(session_id, None)
+        # 清除 uid 映射（仅当该 session_id 仍是当前映射时）
+        uid_to_remove = [u for u, sid in self.customer_uid_map.items() if sid == session_id]
+        for u in uid_to_remove:
+            del self.customer_uid_map[u]
+            print(f"[manager] uid={u} 连接已断开，清除映射")
 
-    async def connect_tenant_monitor(self, tenant_id: int, ws: WebSocket):
-        if tenant_id not in self.tenant_monitor_connections:
-            self.tenant_monitor_connections[tenant_id] = set()
-        self.tenant_monitor_connections[tenant_id].add(ws)
-        print(f"[monitor] 监控端已连接 tenant={tenant_id} total_conns={len(self.tenant_monitor_connections[tenant_id])}")
-
-    def disconnect_tenant_monitor(self, tenant_id: int, ws: WebSocket):
-        if tenant_id in self.tenant_monitor_connections:
-            self.tenant_monitor_connections[tenant_id].discard(ws)
-            print(f"[monitor] 监控端已断开 tenant={tenant_id} remaining={len(self.tenant_monitor_connections[tenant_id])}")
-
-    async def send_to_customer(self, session_id: str, message: dict):
+    async def send_to_customer(self, session_id: str, message: dict) -> bool:
+        """按 session_id 发送，返回是否成功"""
         ws = self.customer_connections.get(session_id)
-        print(f"[send_to_customer] session_id={session_id[:8]} role={message.get('role','')} has_ws={ws is not None}")
         if ws:
             try:
                 await ws.send_json(message)
-                print(f"[send_to_customer] ✅ 发送成功 session_id={session_id[:8]}")
+                return True
             except Exception as e:
                 print(f"[send_to_customer] ❌ 发送失败 session_id={session_id[:8]}: {e}")
                 self.disconnect_customer(session_id)
+        return False
+
+    async def send_to_customer_by_uid(self, uid: str, message: dict) -> bool:
+        """按 uid 发送（找到该 uid 当前连接的 session），返回是否成功"""
+        session_id = self.customer_uid_map.get(uid)
+        if session_id:
+            print(f"[send_to_customer_by_uid] uid={uid} → session_id={session_id[:8]}")
+            return await self.send_to_customer(session_id, message)
+        print(f"[send_to_customer_by_uid] uid={uid} 没有活跃连接")
+        return False
 
     async def broadcast_to_tenant(self, tenant_id: int, message: dict):
         """向商户的所有监控连接广播消息"""
@@ -309,15 +320,27 @@ async def human_reply(
             print(f"[HumanReply] 无法发送企业微信消息: user_id={user_id}, wecom_configured={bool(tenant.wecom_corp_id)}")
     
     else:
-        # 网页用户：通过 WebSocket 推送
-        print(f"[human_reply] 准备发给客户 session_id={req.session_id[:8]} content='{req.content[:30]}'")
-        await manager.send_to_customer(req.session_id, {
+        # 网页用户：通过 WebSocket 推送（优先 session_id，失败则用 uid 兜底）
+        print(f"[human_reply] 准备发给客户 session_id={req.session_id[:8]} uid={session.uid} content='{req.content[:30]}'")
+        sent = await manager.send_to_customer(req.session_id, {
             "type": "message",
             "role": "human_agent",
             "content": req.content,
             "timestamp": datetime.now().isoformat()
         })
-        print(f"[human_reply] ✅ 已发给客户 session_id={req.session_id[:8]}")
+        # session_id 投递失败，尝试通过 uid 找到客户当前连接
+        if not sent and session.uid:
+            print(f"[human_reply] session_id 投递失败，尝试 uid={session.uid} 投递")
+            sent = await manager.send_to_customer_by_uid(session.uid, {
+                "type": "message",
+                "role": "human_agent",
+                "content": req.content,
+                "timestamp": datetime.now().isoformat()
+            })
+        if sent:
+            print(f"[human_reply] ✅ 已发给客户")
+        else:
+            print(f"[human_reply] ⚠️ 客户不在线，消息已存库")
 
     # 广播给管理后台监控端（让管理员自己的回复也实时显示）
     print(f"[human_reply] 准备广播给管理后台 tenant={tenant.id} session_id={req.session_id[:8]}")
@@ -436,7 +459,7 @@ async def customer_chat_ws(
         db.add(session)
         db.commit()
 
-        await manager.connect_customer(session_id, websocket)
+        await manager.connect_customer(session_id, websocket, uid=req_uid)
 
         # 更新在线状态
         session.online = True
