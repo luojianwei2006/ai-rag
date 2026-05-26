@@ -80,26 +80,34 @@ class ConnectionManager:
 
     async def send_to_customer(self, session_id: str, message: dict):
         ws = self.customer_connections.get(session_id)
+        print(f"[send_to_customer] session_id={session_id[:8]} role={message.get('role','')} has_ws={ws is not None}")
         if ws:
             try:
                 await ws.send_json(message)
-            except Exception:
+                print(f"[send_to_customer] ✅ 发送成功 session_id={session_id[:8]}")
+            except Exception as e:
+                print(f"[send_to_customer] ❌ 发送失败 session_id={session_id[:8]}: {e}")
                 self.disconnect_customer(session_id)
 
     async def broadcast_to_tenant(self, tenant_id: int, message: dict):
         """向商户的所有监控连接广播消息"""
         connections = self.tenant_monitor_connections.get(tenant_id, set())
         msg_type = message.get("type", "?")
-        print(f"[broadcast] tenant={tenant_id} conns={len(connections)} type={msg_type} sid={message.get('session_id','')[:8]} role={message.get('role','')}")
+        session_id_short = (message.get('session_id') or "")[:8]
+        role = message.get("role", "")
+        content_short = (message.get("content") or "")[:30]
+        print(f"[broadcast] tenant={tenant_id} conns={len(connections)} type={msg_type} sid={session_id_short} role={role} content='{content_short}'")
         disconnected = set()
-        for ws in connections:
+        for ws in list(connections):
             try:
                 await ws.send_json(message)
             except Exception as e:
-                print(f"[broadcast] 广播失败 tenant={tenant_id}: {e}")
+                print(f"[broadcast] ❌ 发送失败 tenant={tenant_id}: {e}")
                 disconnected.add(ws)
         for ws in disconnected:
             connections.discard(ws)
+        if disconnected:
+            print(f"[broadcast] 清理了 {len(disconnected)} 个断开的连接")
 
 
 manager = ConnectionManager()
@@ -302,14 +310,17 @@ async def human_reply(
     
     else:
         # 网页用户：通过 WebSocket 推送
+        print(f"[human_reply] 准备发给客户 session_id={req.session_id[:8]} content='{req.content[:30]}'")
         await manager.send_to_customer(req.session_id, {
             "type": "message",
             "role": "human_agent",
             "content": req.content,
             "timestamp": datetime.now().isoformat()
         })
+        print(f"[human_reply] ✅ 已发给客户 session_id={req.session_id[:8]}")
 
     # 广播给管理后台监控端（让管理员自己的回复也实时显示）
+    print(f"[human_reply] 准备广播给管理后台 tenant={tenant.id} session_id={req.session_id[:8]}")
     await broadcast_to_all(tenant, {
         "type": "message",
         "session_id": req.session_id,
@@ -317,6 +328,7 @@ async def human_reply(
         "content": req.content,
         "timestamp": datetime.now().isoformat()
     })
+    print(f"[human_reply] ✅ 已广播给管理后台")
 
     return {
         "message": "发送成功",
@@ -508,7 +520,8 @@ async def customer_chat_ws(
             db.add(user_msg)
             db.commit()
 
-            # 广播给商户
+            # 广播给商户（客户发了消息）
+            print(f"[WS chat] 客户消息广播 session_id={session_id[:8]} content='{user_message[:30]}'")
             await broadcast_to_all(tenant, {
                 "type": "message",
                 "session_id": session_id,
@@ -518,6 +531,7 @@ async def customer_chat_ws(
                 "content": user_message,
                 "timestamp": datetime.now().isoformat()
             })
+            print(f"[WS chat] ✅ 客户消息已广播 session_id={session_id[:8]}")
 
             # 检查是否请求人工
             is_human_request = any(kw in user_message for kw in HUMAN_KEYWORDS)
@@ -624,14 +638,17 @@ async def customer_chat_ws(
             db.commit()
 
             # 发送给客户
+            print(f"[WS chat] 准备发 AI 回复给客户 session_id={session_id[:8]} content='{reply[:30]}'")
             await websocket.send_json({
                 "type": "message",
                 "role": "ai",
                 "content": reply,
                 "timestamp": datetime.now().isoformat()
             })
+            print(f"[WS chat] ✅ AI 回复已发给客户 session_id={session_id[:8]}")
 
             # 广播给商户
+            print(f"[WS chat] 准备广播 AI 回复给管理后台 session_id={session_id[:8]}")
             await broadcast_to_all(tenant, {
                 "type": "message",
                 "session_id": session_id,
@@ -641,6 +658,7 @@ async def customer_chat_ws(
                 "content": reply,
                 "timestamp": datetime.now().isoformat()
             })
+            print(f"[WS chat] ✅ AI 回复已广播给管理后台")
 
     except WebSocketDisconnect:
         manager.disconnect_customer(session_id)

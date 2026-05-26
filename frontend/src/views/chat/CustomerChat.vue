@@ -230,14 +230,20 @@ function connectWs() {
     if (e.data === 'ping' || e.data === 'pong') {
       return
     }
+    console.log('[CustomerChat WS] 收到消息:', e.data.substring(0, 200))
     const data = JSON.parse(e.data)
     isTyping.value = false
 
     if (data.type === 'message') {
       if (data.role === 'ai' || data.role === 'human_agent' || data.role === 'system') {
+        console.log(`[CustomerChat WS] ✅ 显示消息 role=${data.role} content=`, (data.content || '').substring(0, 50))
         addMessage(data.role, data.content, data.msg_type || 'text')
         if (data.role === 'human_agent') isHuman.value = true
+      } else {
+        console.log(`[CustomerChat WS] ⚠️ 未知 role="${data.role}"，未显示`)
       }
+    } else {
+      console.log(`[CustomerChat WS] 非 message 类型: type=${data.type}`)
     }
   }
 
