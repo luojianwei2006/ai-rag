@@ -285,6 +285,8 @@ function clearPendingImage() {
 function previewImage(url) {
   window.open(url, '_blank')
 }
+
+onMounted(async () => {
   try {
     const res = await axios.get(`/api/public/chat/${chatToken}/info`)
     companyName.value = res.data.company_name || t('companyFallback')
