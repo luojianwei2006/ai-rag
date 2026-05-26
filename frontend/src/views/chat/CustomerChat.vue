@@ -39,7 +39,7 @@
             {{ msg.role === 'human_agent' ? '👤' : '🤖' }}
           </div>
           <div class="msg-bubble">
-            <img v-if="msg.msg_type === 'image'" :src="msg.content" class="msg-image" @click="previewImage(msg.content)" />
+            <img v-if="msg.msg_type === 'image'" :src="imgUrl(msg.content)" class="msg-image" @click="previewImage(imgUrl(msg.content))" />
             <div v-else class="msg-text">{{ msg.content }}</div>
             <div class="msg-time">{{ msg.time }}</div>
           </div>
@@ -78,7 +78,20 @@
           </button>
         </div>
         <div v-if="pendingImage" class="pending-image">
-          <img :src="pendingImage" />
+          <div class="img-wrapper">
+            <img :src="pendingImage" />
+            <!-- 上传中蒙版 -->
+            <div v-if="uploading" class="upload-overlay">
+              <t-loading size="small" />
+              <span>上传中...</span>
+            </div>
+            <!-- 上传失败 -->
+            <div v-if="uploadError" class="upload-overlay error">
+              <span class="error-icon">⚠️</span>
+              <span class="error-text">上传失败</span>
+              <span class="retry-btn" @click="retryUpload">重试</span>
+            </div>
+          </div>
           <span class="remove-img" @click="clearPendingImage">✕</span>
         </div>
         <div class="input-hint">{{ t('inputHint') }}</div>
@@ -148,6 +161,9 @@ const inputRef = ref(null)
 const currentLang = ref('zh')
 const pendingImage = ref('')       // 本地预览 base64
 const pendingImageUrl = ref('')    // 服务器返回的 URL（发送用）
+const uploading = ref(false)       // 上传中
+const uploadError = ref(false)     // 上传失败
+let lastFile = null                // 最近一次上传的文件（用于重试）
 let ws = null
 
 function t(key) {
@@ -167,12 +183,12 @@ function addMessage(role, content, msgType = 'text') {
 
 function handleSend() {
   const hasText = inputText.value.trim()
-  const hasImage = !!pendingImage.value && !!pendingImageUrl.value
+  const hasImage = !!pendingImage.value && !!pendingImageUrl.value && !uploading.value && !uploadError.value
 
   if (!connected.value || (!hasText && !hasImage)) return
 
   if (hasImage) {
-    const imgUrl = pendingImageUrl.value  // 发送服务器 URL，不是 base64
+    const imgUrl = pendingImageUrl.value
     addMessage('customer', imgUrl, 'image')
     ws.send(JSON.stringify({ content: imgUrl, msg_type: 'image' }))
     clearPendingImage()
@@ -267,7 +283,7 @@ function fileToBase64(file) {
     }
     const reader = new FileReader()
     reader.onload = () => {
-      pendingImage.value = reader.result  // 本地预览用 base64
+      pendingImage.value = reader.result
       resolve()
     }
     reader.onerror = reject
@@ -275,21 +291,39 @@ function fileToBase64(file) {
   })
 }
 
+function imgUrl(path) {
+  // dev 模式：拼接后端端口 8000；生产模式：同源
+  const base = import.meta.env.DEV ? 'http://localhost:8000' : location.origin
+  return `${base}${path}`
+}
+
 async function uploadImage(file) {
+  uploading.value = true
+  uploadError.value = false
+  lastFile = file
   try {
     const formData = new FormData()
     formData.append('file', file)
     const res = await axios.post(`/api/public/chat/upload-image?chat_token=${chatToken}`, formData)
-    pendingImageUrl.value = `${location.origin}${res.data.url}`
+    pendingImageUrl.value = imgUrl(res.data.url)
   } catch (e) {
-    pendingImage.value = ''
-    addMessage('system', '图片上传失败，请重试')
+    uploadError.value = true
+  } finally {
+    uploading.value = false
   }
+}
+
+async function retryUpload() {
+  if (!lastFile) return
+  uploadImage(lastFile)
 }
 
 function clearPendingImage() {
   pendingImage.value = ''
   pendingImageUrl.value = ''
+  uploading.value = false
+  uploadError.value = false
+  lastFile = null
 }
 
 function previewImage(url) {
@@ -409,12 +443,29 @@ textarea:focus { border-color: #667eea; }
 
 /* 待发送图片预览 */
 .pending-image {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+  display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px;
 }
-.pending-image img {
+.img-wrapper {
+  position: relative; display: inline-block;
+}
+.pending-image .img-wrapper img {
   max-width: 120px; max-height: 80px; border-radius: 8px; object-fit: cover;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e5e7eb; display: block;
 }
+/* 上传蒙版 */
+.upload-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.55); border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; color: white; font-size: 12px;
+}
+.upload-overlay.error { background: rgba(255,77,79,0.75); }
+.error-icon { font-size: 20px; }
+.error-text { font-size: 12px; }
+.retry-btn {
+  font-size: 11px; color: white; text-decoration: underline; cursor: pointer;
+  margin-top: 2px;
+}
+.retry-btn:hover { color: #ffd666; }
 .remove-img {
   width: 20px; height: 20px; border-radius: 50%; background: #ff4d4f;
   color: white; font-size: 12px; display: flex; align-items: center;

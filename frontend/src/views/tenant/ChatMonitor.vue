@@ -58,7 +58,7 @@
           <div v-for="m in messages" :key="m.id" class="message-row" :class="m.role">
             <div class="message-bubble">
               <div class="message-role">{{ roleLabel(m.role) }}</div>
-              <img v-if="m.msg_type === 'image'" :src="m.content" class="message-image" @click="previewImage(m.content)" />
+              <img v-if="m.msg_type === 'image'" :src="imgUrl(m.content)" class="message-image" @click="previewImage(imgUrl(m.content))" />
               <div v-else class="message-content">{{ m.content }}</div>
               <div class="message-time">{{ formatTime(m.created_at) }}</div>
             </div>
@@ -148,6 +148,10 @@ const canSendReply = computed(() => {
 
 function roleLabel(role) {
   return { customer: '客户', ai: 'AI助手', human_agent: '人工客服', system: '系统' }[role] || role
+}
+function imgUrl(path) {
+  const base = import.meta.env.DEV ? 'http://localhost:8000' : location.origin
+  return path.startsWith('http') ? path : `${base}${path}`
 }
 function previewImage(url) {
   window.open(url, '_blank')

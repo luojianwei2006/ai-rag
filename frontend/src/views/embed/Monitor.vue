@@ -85,7 +85,7 @@
           <div class="message-list" ref="messageContainer">
             <div v-for="m in messages" :key="m.id" class="message-item" :class="m.role">
               <div class="msg-role">{{ roleLabel(m.role) }}</div>
-              <img v-if="m.msg_type === 'image'" :src="m.content" class="msg-image" @click="previewImage(m.content)" />
+              <img v-if="m.msg_type === 'image'" :src="imgUrl(m.content)" class="msg-image" @click="previewImage(imgUrl(m.content))" />
               <div v-else class="msg-content">{{ m.content }}</div>
               <div class="msg-time">{{ formatTime(m.created_at) }}</div>
             </div>
@@ -151,6 +151,10 @@ function getAvatar(session) {
 
 function roleLabel(role) {
   return { customer: '客户', ai: 'AI', human_agent: '人工', system: '系统' }[role] || role
+}
+function imgUrl(path) {
+  const base = import.meta.env.DEV ? 'http://localhost:8000' : location.origin
+  return path.startsWith('http') ? path : `${base}${path}`
 }
 function previewImage(url) {
   window.open(url, '_blank')
