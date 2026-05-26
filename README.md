@@ -402,101 +402,140 @@ cd frontend && npm run build && cp -r dist/* /var/www/customer-service/
 
 ## Docker 部署
 
-### 方式一：Docker Compose 部署（推荐）
+项目提供完整的 Docker 支持，推荐用 `docker compose` 一键部署前后端。
+
+### 前置准备
 
 ```bash
 cd customer-service-platform
 
-# 构建并启动（首次约 5-15 分钟）
+# 1. 创建后端环境变量文件（如果没有）
+cp backend/.env.example backend/.env
+# 编辑 backend/.env，填写必要的配置（SECRET_KEY、OPENAI_API_KEY 等）
+
+# 2. 确认 docker-compose.yml 中的端口和路径
+```
+
+### 方式一：Docker Compose 部署（✅ 推荐）
+
+```bash
+cd customer-service-platform
+
+# 构建并启动（首次约 10-20 分钟，需要下载依赖和 Playwright 浏览器）
 docker compose up -d --build
 
 # 查看日志
 docker compose logs -f
 
+# 查看服务状态
+docker compose ps
+
 # 停止服务
 docker compose down
 
-# 更新部署（拉取新代码后）
+# 停止并删除数据卷（⚠️ 会删除数据库和上传文件）
+docker compose down -v
+
+# 重新构建（代码更新后）
 docker compose down
 docker compose up -d --build
 ```
 
-自定义配置：编辑 `docker-compose.yml`，修改端口、环境变量等。
+访问地址：
+- 前端：`http://localhost:80`
+- 后端 API 文档：`http://localhost:8000/docs`
 
-### 方式二：手动 Docker 部署
+### 方式二：手动构建并运行
+
+#### 后端
 
 ```bash
-cd customer-service-platform
+cd customer-service-platform/backend
 
-# 1. 构建镜像（首次约 5-15 分钟）
-docker build -t customer-service-img .
+# 构建后端镜像
+docker build -t customer-service-backend:latest .
 
-# 2. 启动容器
+# 运行后端容器
 docker run -d \
-    --name customer-service \
-    --restart always \
-    -p 8001:80 \
-    -v $(pwd)/data:/app/data \
-    -v $(pwd)/uploads:/app/uploads \
-    -v $(pwd)/chroma_db:/app/chroma_db \
-    -e SECRET_KEY="你的自定义密钥" \
-    -e ADMIN_USERNAME="admin" \
-    -e ADMIN_PASSWORD="admin123" \
-    customer-service-img
+  --name customer-service-backend \
+  --restart unless-stopped \
+  -p 8000:8000 \
+  -v $(pwd)/uploads:/app/uploads \
+  -v $(pwd)/xhs_screenshots:/app/xhs_screenshots \
+  -v $(pwd)/chroma_db:/app/chroma_db \
+  -v $(pwd)/platform.db:/app/platform.db \
+  --env-file .env \
+  customer-service-backend:latest
 
-# 3. 查看日志
-docker logs -f customer-service
+# 查看日志
+docker logs -f customer-service-backend
+```
+
+#### 前端
+
+```bash
+cd customer-service-platform/frontend
+
+# 构建前端镜像
+docker build -t customer-service-frontend:latest .
+
+# 运行前端容器
+docker run -d \
+  --name customer-service-frontend \
+  --restart unless-stopped \
+  -p 80:80 \
+  customer-service-frontend:latest
+
+# 查看日志
+docker logs -f customer-service-frontend
+```
+
+### 自定义配置
+
+| 配置项 | 说明 | 修改位置 |
+|--------|------|-----------|
+| 后端端口 | 默认 8000 | `docker-compose.yml` 或 `docker run -p` |
+| 前端端口 | 默认 80 | `docker-compose.yml` 或 `docker run -p` |
+| 环境变量 | LLM 配置、密钥等 | `backend/.env` |
+| Nginx 配置 | 前端路由、API 代理 | `frontend/docker/nginx.conf` |
+| 健康检查 | 服务可用性检测 | `backend/Dockerfile` / `frontend/Dockerfile` |
+
+### 常见问题
+
+| 问题 | 解决方案 |
+|------|-----------|
+| Playwright 浏览器安装失败 | 检查 Dockerfile 中 `apt-get install` 的包是否完整 |
+| ChromaDB 报错 sqlite3 版本低 | 使用 `python:3.11-slim` 镜像（已包含较新 sqlite3） |
+| 前端访问后端 API 跨域 | 后端已配置 CORS，或配置 Nginx 反向代理 |
+| 上传文件丢失 | 确保 `uploads/` 目录已挂载为数据卷 |
+
+### 生产环境建议
+
+```bash
+# 1. 使用特定版本标签，不要用 latest
+docker build -t customer-service-backend:v1.0.0 ./backend
+docker build -t customer-service-frontend:v1.0.0 ./frontend
+
+# 2. 使用外部数据库（PostgreSQL/MySQL）替代 SQLite
+# 修改 backend/.env 中的 DATABASE_URL
+
+# 3. 配置 HTTPS（在 Nginx 容器中配置 SSL 证书）
+# 将证书挂载到 frontend 容器： -v ./ssl:/etc/nginx/ssl
+
+# 4. 使用 Docker Swarm 或 Kubernetes 编排（多实例部署）
 ```
 
 ### Docker 部署常用命令
 
 | 操作 | 命令 |
 |------|------|
-| 查看日志 | `docker logs -f customer-service` |
-| 重启服务 | `docker restart customer-service` |
-| 停止服务 | `docker stop customer-service` |
-| 删除容器 | `docker rm -f customer-service` |
-| 进入容器 | `docker exec -it customer-service bash` |
-| 查看状态 | `docker ps \| grep customer-service` |
+| 查看日志 | `docker compose logs -f` 或 `docker logs -f <容器名>` |
+| 重启服务 | `docker compose restart` 或 `docker restart <容器名>` |
+| 停止服务 | `docker compose down` 或 `docker stop <容器名>` |
+| 删除容器 | `docker compose down` 或 `docker rm -f <容器名>` |
+| 进入容器 | `docker exec -it <容器名> /bin/bash` |
+| 查看状态 | `docker compose ps` 或 `docker ps \| grep customer-service` |
 
-### Docker 环境变量
-
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| `SECRET_KEY` | JWT 密钥（务必修改！） | 随机生成 |
-| `ADMIN_USERNAME` | 管理员账号 | admin |
-| `ADMIN_PASSWORD` | 管理员密码（务必修改！） | admin123 |
-| `FRONTEND_URL` | 前端地址（客服链接用） | 空 |
-
-### 数据持久化
-
-Docker 部署会自动将以下目录挂载到宿主机，**重装/更新容器不会丢失数据**：
-
-| 容器路径 | 宿主机路径 | 说明 |
-|----------|-----------|------|
-| `/app/data` | `./data` | 数据库文件 |
-| `/app/uploads` | `./uploads` | 用户上传的知识库文件 |
-| `/app/chroma_db` | `./chroma_db` | 向量数据库 |
-
-### 常见问题
-
-**Q: 首次构建很慢？**
-A: 需要下载 Python 依赖和 AI 模型（sentence-transformers），国内服务器建议配置 Docker 镜像加速：
-
-```bash
-mkdir -p /etc/docker
-cat > /etc/docker/daemon.json << 'EOF'
-{
-    "registry-mirrors": [
-        "https://mirror.ccs.tencentyun.com",
-        "https://docker.mirrors.ustc.edu.cn"
-    ]
-}
-EOF
-systemctl restart docker
-```
-
-**Q: 端口 8001 被占用？**
 A: 使用 `docker run -p 其他端口:80` 修改映射端口。
 
 **Q: 如何备份数据？**

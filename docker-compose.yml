@@ -1,27 +1,78 @@
-# 客服管理平台 Docker 部署配置
-# 宝塔一键部署：上传项目 → docker-compose up -d
-
 version: '3.8'
 
 services:
-  app:
-    build: .
-    container_name: customer-service
-    restart: always
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: customer-service-backend
+    restart: unless-stopped
     ports:
-      - "8001:80"
+      - "8000:8000"
     environment:
-      - SECRET_KEY=${SECRET_KEY:-please-change-this-secret-key}
-      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
-      - FRONTEND_URL=${FRONTEND_URL:-}
+      # 从 .env 文件读取环境变量
+      - PYTHONPATH=/app
+    env_file:
+      - ./backend/.env
     volumes:
-      # 数据持久化（数据库、上传文件、向量库）
-      - app-data:/app/data
-      - app-uploads:/app/uploads
-      - app-chroma:/app/chroma_db
+      # 持久化数据
+      - ./backend/uploads:/app/uploads
+      - ./backend/xhs_screenshots:/app/xhs_screenshots
+      - ./backend/chroma_db:/app/chroma_db
+      - ./backend/platform.db:/app/platform.db
+    networks:
+      - customer-service-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: customer-service-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - customer-service-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  # （可选）Nginx 反向代理（统一入口）
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: customer-service-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "443:443"
+  #     - "80:80"
+  #   volumes:
+  #     - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+  #     - ./ssl:/etc/nginx/ssl
+  #   depends_on:
+  #     - frontend
+  #     - backend
+  #   networks:
+  #     - customer-service-network
+
+networks:
+  customer-service-network:
+    driver: bridge
 
 volumes:
-  app-data:
-  app-uploads:
-  app-chroma:
+  backend-uploads:
+  backend-chroma:
+  backend-db:
