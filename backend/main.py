@@ -1,8 +1,9 @@
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse
 from database import engine, Base
 from models.models import Admin, SystemConfig
 from utils.security import get_password_hash
@@ -86,6 +87,16 @@ frontend_dist = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "
 if os.path.isdir(frontend_dist):
     app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
     print(f"✅ 前端已挂载: {frontend_dist}")
+
+    # SPA fallback：非 API 路径返回 index.html，让 Vue Router 处理前端路由
+    index_html = os.path.join(frontend_dist, "index.html")
+    @app.middleware("http")
+    async def spa_fallback(request: Request, call_next):
+        response = await call_next(request)
+        if response.status_code == 404 and not request.url.path.startswith("/api") and not request.url.path.startswith("/ws"):
+            if os.path.isfile(index_html):
+                return FileResponse(index_html)
+        return response
 
 
 if __name__ == "__main__":
