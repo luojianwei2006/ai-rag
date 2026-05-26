@@ -8,9 +8,17 @@ echo "📦 构建前端..."
 cd "$ROOT/frontend"
 npm install --legacy-peer-deps 2>/dev/null || true
 npx vite build --mode production
-cd "$ROOT"
 
-echo "🚀 启动服务..."
+echo "🐍 准备 Python 环境..."
 cd "$ROOT/backend"
-source .venv/bin/activate
+if [ ! -d ".venv" ]; then
+    echo "   创建虚拟环境..."
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+else
+    source .venv/bin/activate
+fi
+
+echo "🚀 启动服务 (http://0.0.0.0:8000)..."
 uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
