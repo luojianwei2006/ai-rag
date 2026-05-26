@@ -292,7 +292,7 @@ function fileToBase64(file) {
 }
 
 function imgUrl(path) {
-  // dev 模式：拼接后端端口 8000；生产模式：同源
+  if (path.startsWith('http')) return path
   const base = import.meta.env.DEV ? 'http://localhost:8000' : location.origin
   return `${base}${path}`
 }

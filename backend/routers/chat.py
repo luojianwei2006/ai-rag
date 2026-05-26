@@ -357,6 +357,7 @@ async def upload_chat_image(chat_token: str, file: UploadFile = File(...), db: S
         f.write(content)
 
     url = f"/static/chat_images/{tenant.id}/{filename}"
+    print(f"[Upload] tenant={tenant.id} file={filename} size={len(content)} ext={ext} url={url}")
     return {"url": url}
 
 
