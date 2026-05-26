@@ -137,16 +137,15 @@ const replyPlaceholder = computed(() => {
   if (isWeComSession.value) {
     return '输入人工回复内容（企业微信用户）...'
   }
-  return '输入人工回复内容（仅在人工接管后发送）...'
+  return '输入人工回复内容，Enter 发送...'
 })
 
 // 是否可以发送回复
 const canSendReply = computed(() => {
   if (!selectedSession.value) return false
-  // 第三方平台用户（飞书/企业微信）可以随时回复
-  if (isThirdPartySession.value) return true
-  // 网页用户需要在线
-  return selectedSession.value.online
+  // 被托管的不允许回复
+  if (selectedSession.value.taken_over) return false
+  return true
 })
 
 function roleLabel(role) {
