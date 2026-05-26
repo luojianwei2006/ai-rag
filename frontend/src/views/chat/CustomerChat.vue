@@ -39,7 +39,8 @@
             {{ msg.role === 'human_agent' ? '👤' : '🤖' }}
           </div>
           <div class="msg-bubble">
-            <div class="msg-text">{{ msg.content }}</div>
+            <img v-if="msg.msg_type === 'image'" :src="msg.content" class="msg-image" @click="previewImage(msg.content)" />
+            <div v-else class="msg-text">{{ msg.content }}</div>
             <div class="msg-time">{{ msg.time }}</div>
           </div>
           <div v-if="msg.role === 'customer'" class="user-avatar">{{ t('userAvatar') }}</div>
@@ -59,17 +60,26 @@
         <div class="quick-actions">
           <span class="quick-btn" @click="sendQuick(t('quickGreeting'))">{{ t('quickGreetingBtn') }}</span>
           <span class="quick-btn" @click="sendQuick(t('quickTransferHuman'))">{{ t('quickTransferHumanBtn') }}</span>
+          <label class="quick-btn upload-btn">
+            🖼️ 发截图
+            <input type="file" accept="image/*" style="display:none" @change="handleImageUpload" />
+          </label>
         </div>
         <div class="input-row">
           <textarea
             v-model="inputText"
             :placeholder="t('inputPlaceholder')"
             @keydown.enter.prevent="handleSend"
+            @paste="handlePaste"
             ref="inputRef"
           ></textarea>
-          <button class="send-btn" @click="handleSend" :disabled="!inputText.trim() || !connected">
+          <button class="send-btn" @click="handleSend" :disabled="(!inputText.trim() && !pendingImage) || !connected">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
+        </div>
+        <div v-if="pendingImage" class="pending-image">
+          <img :src="pendingImage" />
+          <span class="remove-img" @click="clearPendingImage">✕</span>
         </div>
         <div class="input-hint">{{ t('inputHint') }}</div>
       </div>
@@ -136,6 +146,8 @@ const connected = ref(false)
 const messagesArea = ref(null)
 const inputRef = ref(null)
 const currentLang = ref('zh')
+const pendingImage = ref('')       // 待发送图片的本地 data URL
+const pendingImageUrl = ref('')    // 待发送图片的服务器 URL
 let ws = null
 
 function t(key) {
@@ -146,20 +158,35 @@ function now() {
   return new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 
-function addMessage(role, content) {
-  messages.value.push({ role, content, time: now() })
+function addMessage(role, content, msgType = 'text') {
+  messages.value.push({ role, content, msg_type: msgType, time: now() })
   nextTick(() => {
     messagesArea.value?.scrollTo({ top: messagesArea.value.scrollHeight, behavior: 'smooth' })
   })
 }
 
 function handleSend() {
-  const text = inputText.value.trim()
-  if (!text || !connected.value) return
-  inputText.value = ''
-  addMessage('customer', text)
-  ws.send(JSON.stringify({ content: text }))
-  isTyping.value = true
+  const hasText = inputText.value.trim()
+  const hasImage = !!pendingImage.value
+  
+  if (!connected.value || (!hasText && !hasImage)) return
+
+  if (hasImage) {
+    // 发送图片
+    const imgUrl = pendingImageUrl.value
+    addMessage('customer', imgUrl, 'image')
+    ws.send(JSON.stringify({ content: imgUrl, msg_type: 'image' }))
+    clearPendingImage()
+    isTyping.value = true
+  }
+
+  if (hasText) {
+    const text = inputText.value.trim()
+    inputText.value = ''
+    addMessage('customer', text)
+    ws.send(JSON.stringify({ content: text, msg_type: 'text' }))
+    isTyping.value = true
+  }
 }
 
 function sendQuick(text) {
@@ -195,7 +222,7 @@ function connectWs() {
 
     if (data.type === 'message') {
       if (data.role === 'ai' || data.role === 'human_agent' || data.role === 'system') {
-        addMessage(data.role, data.content)
+        addMessage(data.role, data.content, data.msg_type || 'text')
         if (data.role === 'human_agent') isHuman.value = true
       }
     }
@@ -212,7 +239,52 @@ function connectWs() {
   }
 }
 
-onMounted(async () => {
+async function handleImageUpload(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  await uploadAndSetImage(file)
+  e.target.value = '' // reset input
+}
+
+async function handlePaste(e) {
+  const items = e.clipboardData?.items
+  if (!items) return
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      e.preventDefault()
+      const file = item.getAsFile()
+      await uploadAndSetImage(file)
+      return
+    }
+  }
+}
+
+async function uploadAndSetImage(file) {
+  // 先显示本地预览
+  const reader = new FileReader()
+  reader.onload = () => { pendingImage.value = reader.result }
+  reader.readAsDataURL(file)
+
+  // 上传到服务器
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await axios.post(`/api/public/chat/upload-image?chat_token=${chatToken}`, formData)
+    pendingImageUrl.value = `${location.origin}${res.data.url}`
+  } catch (e) {
+    pendingImage.value = ''
+    addMessage('system', '图片上传失败，请重试')
+  }
+}
+
+function clearPendingImage() {
+  pendingImage.value = ''
+  pendingImageUrl.value = ''
+}
+
+function previewImage(url) {
+  window.open(url, '_blank')
+}
   try {
     const res = await axios.get(`/api/public/chat/${chatToken}/info`)
     companyName.value = res.data.company_name || t('companyFallback')
@@ -314,4 +386,29 @@ textarea:focus { border-color: #667eea; }
 .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .send-btn svg { width: 18px; height: 18px; }
 .input-hint { font-size: 11px; color: #ccc; text-align: center; margin-top: 4px; }
+
+/* 图片消息 */
+.msg-image {
+  max-width: 240px; max-height: 300px; border-radius: 12px; cursor: pointer;
+  display: block; object-fit: cover; transition: opacity 0.2s;
+}
+.msg-image:hover { opacity: 0.85; }
+.customer .msg-image { border: 2px solid rgba(255,255,255,0.3); }
+
+/* 待发送图片预览 */
+.pending-image {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+}
+.pending-image img {
+  max-width: 120px; max-height: 80px; border-radius: 8px; object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+.remove-img {
+  width: 20px; height: 20px; border-radius: 50%; background: #ff4d4f;
+  color: white; font-size: 12px; display: flex; align-items: center;
+  justify-content: center; cursor: pointer;
+}
+
+/* 上传按钮 */
+.upload-btn { cursor: pointer; }
 </style>

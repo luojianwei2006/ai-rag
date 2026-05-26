@@ -1,9 +1,11 @@
 import json
+import os
+import uuid
 import secrets
 import asyncio
 from datetime import datetime
 from typing import Dict, Set
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, UploadFile, File
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database import get_db, SessionLocal
@@ -14,6 +16,7 @@ from services.rag_service import query_knowledge_base
 from services.llm_service import call_llm, get_tenant_llm_config, LLMError
 from services.points_service import PointsService
 from routers.embed import embed_manager
+from config import settings
 
 router = APIRouter(tags=["聊天"])
 
@@ -200,6 +203,7 @@ async def get_session_messages(
     return [{
         "id": m.id,
         "role": m.role,
+        "msg_type": m.msg_type or "text",
         "content": m.content,
         "created_at": m.created_at.isoformat() if m.created_at else None
     } for m in messages]
@@ -324,6 +328,37 @@ async def get_chat_info(chat_token: str, db: Session = Depends(get_db)):
     }
 
 
+# ─────── 客户端图片上传 ───────
+
+@router.post("/api/public/chat/upload-image")
+async def upload_chat_image(chat_token: str, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    """客户聊天上传图片"""
+    tenant = db.query(Tenant).filter(Tenant.chat_token == chat_token).first()
+    if not tenant or not tenant.is_active:
+        raise HTTPException(status_code=404, detail="客服服务不可用")
+
+    # 校验文件类型
+    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else "png"
+    if ext not in ("png", "jpg", "jpeg", "gif", "webp", "bmp"):
+        raise HTTPException(status_code=400, detail="仅支持图片格式: png/jpg/jpeg/gif/webp/bmp")
+
+    # 限制大小 10MB
+    content = await file.read()
+    if len(content) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="图片大小不能超过 10MB")
+
+    # 保存到 uploads/chat_images/
+    upload_dir = os.path.join(settings.UPLOAD_DIR, "chat_images", str(tenant.id))
+    os.makedirs(upload_dir, exist_ok=True)
+    filename = f"{uuid.uuid4().hex}.{ext}"
+    filepath = os.path.join(upload_dir, filename)
+    with open(filepath, "wb") as f:
+        f.write(content)
+
+    url = f"/static/chat_images/{tenant.id}/{filename}"
+    return {"url": url}
+
+
 # ─────── WebSocket ───────
 
 @router.websocket("/ws/chat/{chat_token}")
@@ -411,6 +446,7 @@ async def customer_chat_ws(
                     await websocket.send_json({
                         "type": "history_message",
                         "role": hm.role,
+                        "msg_type": hm.msg_type or "text",
                         "content": hm.content,
                         "timestamp": hm.created_at.isoformat() if hm.created_at else ""
                     })
@@ -447,12 +483,13 @@ async def customer_chat_ws(
             data = await websocket.receive_text()
             payload = json.loads(data)
             user_message = payload.get("content", "").strip()
+            msg_type = payload.get("msg_type", "text")  # text / image
 
             if not user_message:
                 continue
 
             # 保存用户消息
-            user_msg = ChatMessage(session_id=session_id, role="customer", content=user_message)
+            user_msg = ChatMessage(session_id=session_id, role="customer", msg_type=msg_type, content=user_message)
             db.add(user_msg)
             db.commit()
 
@@ -462,6 +499,7 @@ async def customer_chat_ws(
                 "session_id": session_id,
                 "uid": session.uid or "",
                 "role": "customer",
+                "msg_type": msg_type,
                 "content": user_message,
                 "timestamp": datetime.now().isoformat()
             })

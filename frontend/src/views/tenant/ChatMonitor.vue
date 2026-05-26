@@ -58,7 +58,8 @@
           <div v-for="m in messages" :key="m.id" class="message-row" :class="m.role">
             <div class="message-bubble">
               <div class="message-role">{{ roleLabel(m.role) }}</div>
-              <div class="message-content">{{ m.content }}</div>
+              <img v-if="m.msg_type === 'image'" :src="m.content" class="message-image" @click="previewImage(m.content)" />
+              <div v-else class="message-content">{{ m.content }}</div>
               <div class="message-time">{{ formatTime(m.created_at) }}</div>
             </div>
           </div>
@@ -147,6 +148,9 @@ const canSendReply = computed(() => {
 
 function roleLabel(role) {
   return { customer: '客户', ai: 'AI助手', human_agent: '人工客服', system: '系统' }[role] || role
+}
+function previewImage(url) {
+  window.open(url, '_blank')
 }
 function formatTime(t) {
   if (!t) return ''
@@ -259,8 +263,9 @@ function connectWebSocket() {
         if (selectedSession.value?.session_id === data.session_id) {
           if (data.role && data.content) {
             const newMsg = {
-              id: Date.now(),  // 临时 ID，确保 Vue 能正确渲染
+              id: Date.now(),
               role: data.role,
+              msg_type: data.msg_type || 'text',
               content: data.content,
               created_at: data.timestamp
             }
@@ -398,4 +403,11 @@ onUnmounted(() => {
 .reply-textarea:focus {
   border-color: #667eea;
 }
+
+/* 图片消息 */
+.message-image {
+  max-width: 240px; max-height: 300px; border-radius: 8px; cursor: pointer;
+  display: block; margin-bottom: 6px; object-fit: cover;
+}
+.message-image:hover { opacity: 0.85; }
 </style>

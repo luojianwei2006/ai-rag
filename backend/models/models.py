@@ -150,6 +150,7 @@ class ChatMessage(Base):
     id = Column(Integer, primary_key=True, index=True)
     session_id = Column(String(64), ForeignKey("chat_sessions.session_id"), nullable=False)
     role = Column(String(20), nullable=False)  # customer, ai, human_agent
+    msg_type = Column(String(20), default="text")  # text, image
     content = Column(Text, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

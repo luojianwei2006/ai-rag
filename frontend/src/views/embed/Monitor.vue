@@ -85,7 +85,8 @@
           <div class="message-list" ref="messageContainer">
             <div v-for="m in messages" :key="m.id" class="message-item" :class="m.role">
               <div class="msg-role">{{ roleLabel(m.role) }}</div>
-              <div class="msg-content">{{ m.content }}</div>
+              <img v-if="m.msg_type === 'image'" :src="m.content" class="msg-image" @click="previewImage(m.content)" />
+              <div v-else class="msg-content">{{ m.content }}</div>
               <div class="msg-time">{{ formatTime(m.created_at) }}</div>
             </div>
             <div v-if="messages.length === 0" class="no-messages">
@@ -150,6 +151,9 @@ function getAvatar(session) {
 
 function roleLabel(role) {
   return { customer: '客户', ai: 'AI', human_agent: '人工', system: '系统' }[role] || role
+}
+function previewImage(url) {
+  window.open(url, '_blank')
 }
 
 function formatTime(t) {
@@ -346,6 +350,7 @@ function handleWebSocketMessage(data) {
         const newMsg = {
           id: Date.now(),  // 必须有 id，否则 :key="m.id" 渲染异常
           role: data.role,
+          msg_type: data.msg_type || 'text',
           content: data.content,
           created_at: data.timestamp
         }
@@ -693,4 +698,11 @@ onUnmounted(() => {
   padding: 16px;
   border-top: 1px solid #e5e7eb;
 }
+
+/* 图片消息 */
+.msg-image {
+  max-width: 240px; max-height: 300px; border-radius: 8px; cursor: pointer;
+  display: block; margin-bottom: 6px; object-fit: cover;
+}
+.msg-image:hover { opacity: 0.85; }
 </style>

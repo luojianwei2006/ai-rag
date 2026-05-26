@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS chat_messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     session_id VARCHAR(64) NOT NULL,
     role VARCHAR(20) NOT NULL COMMENT 'customer, ai, human_agent',
+    msg_type VARCHAR(20) DEFAULT 'text' COMMENT 'text, image',
     content TEXT NOT NULL,
     created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
     INDEX idx_chat_messages_session_id (session_id),
