@@ -79,6 +79,17 @@ class ConnectionManager:
             del self.customer_uid_map[u]
             print(f"[manager] uid={u} 连接已断开，清除映射")
 
+    async def connect_tenant_monitor(self, tenant_id: int, ws: WebSocket):
+        if tenant_id not in self.tenant_monitor_connections:
+            self.tenant_monitor_connections[tenant_id] = set()
+        self.tenant_monitor_connections[tenant_id].add(ws)
+        print(f"[monitor] 监控端已连接 tenant={tenant_id} total_conns={len(self.tenant_monitor_connections[tenant_id])}")
+
+    def disconnect_tenant_monitor(self, tenant_id: int, ws: WebSocket):
+        if tenant_id in self.tenant_monitor_connections:
+            self.tenant_monitor_connections[tenant_id].discard(ws)
+            print(f"[monitor] 监控端已断开 tenant={tenant_id} remaining={len(self.tenant_monitor_connections[tenant_id])}")
+
     async def send_to_customer(self, session_id: str, message: dict) -> bool:
         """按 session_id 发送，返回是否成功"""
         ws = self.customer_connections.get(session_id)
