@@ -136,10 +136,19 @@ manager = ConnectionManager()
 
 
 async def broadcast_to_all(tenant, message: dict):
-    """同时推送给商户监控端和嵌入监控端"""
-    await manager.broadcast_to_tenant(tenant.id, message)
+    """同时推送给商户监控端和嵌入监控端（任一侧失败不影响另一侧）"""
+    # 先推商户监控端
+    try:
+        await manager.broadcast_to_tenant(tenant.id, message)
+    except Exception as e:
+        print(f"[broadcast_to_all] ❌ 商户监控端推送失败: {e}")
+
+    # 再推嵌入监控端（如果存在）
     if tenant.embed_api_key:
-        await embed_manager.broadcast(tenant.embed_api_key, message)
+        try:
+            await embed_manager.broadcast(tenant.embed_api_key, message)
+        except Exception as e:
+            print(f"[broadcast_to_all] ❌ 嵌入监控端推送失败: {e}")
 
 
 # ─────── REST 接口 ───────
