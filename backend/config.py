@@ -9,7 +9,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24小时
 
-    # 数据库
+    # 数据库（默认 SQLite，可通过 .env 切换为 MySQL）
+    # MySQL 格式：mysql+pymysql://用户名:密码@主机:3306/数据库名
     DATABASE_URL: str = "sqlite:///./platform.db"
 
     # 管理员默认账户

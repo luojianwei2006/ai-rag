@@ -39,3 +39,4 @@ Pillow
 
 # 小红书自动发布（Playwright 浏览器自动化）
 playwright
+PyMySQL==1.2.0
