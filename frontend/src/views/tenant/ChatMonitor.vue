@@ -7,8 +7,8 @@
         <t-tag theme="primary" size="small">{{ onlineSessions.length }} 在线</t-tag>
       </div>
         <div
-          v-for="s in sessions"
-          :key="s.session_id"
+          v-for="s of sessions"
+          :key="s.session_id || s"
           class="session-item"
           :class="{ active: selectedSession?.session_id === s.session_id, online: s.online, human: s.is_human_service, taken: s.taken_over }"
           @click="selectSession(s)"
@@ -55,7 +55,7 @@
         </div>
 
         <div class="chat-messages" ref="messageContainer">
-          <div v-for="m in messages" :key="m.id" class="message-row" :class="m.role">
+          <div v-for="m of messages" :key="m.id || Date.now()" class="message-row" :class="m.role">
             <div class="message-bubble">
               <div class="message-role">{{ roleLabel(m.role) }}</div>
               <img v-if="m.msg_type === 'image'" :src="imgUrl(m.content)" class="message-image" @click="previewImage(imgUrl(m.content))" />
@@ -178,16 +178,19 @@ function copySessionLink(session) {
 async function loadSessions() {
   try {
     const data = await chatApi.getSessions()
-    sessions.value = data
+    const arr = Array.isArray(data) ? data : []
+    console.log('[ChatMonitor] loadSessions 返回', arr.length, '条')
+    sessions.value = arr
     // 同步 selectedSession 引用，避免 10 秒刷新后引用 stale
     if (selectedSession.value) {
-      const found = data.find(s => s.session_id === selectedSession.value.session_id)
+      const found = arr.find(s => s && s.session_id === selectedSession.value.session_id)
       if (found) {
         selectedSession.value = found
       }
     }
   } catch (e) {
     console.error('[ChatMonitor] loadSessions 失败:', e)
+    sessions.value = []
   }
 }
 
