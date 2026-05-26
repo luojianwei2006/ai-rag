@@ -91,7 +91,8 @@ class ConnectionManager:
         for ws in connections:
             try:
                 await ws.send_json(message)
-            except Exception:
+            except Exception as e:
+                print(f"[broadcast] 广播消息失败 tenant={tenant_id}: {e}")
                 disconnected.add(ws)
         for ws in disconnected:
             connections.discard(ws)

@@ -146,7 +146,8 @@ const connected = ref(false)
 const messagesArea = ref(null)
 const inputRef = ref(null)
 const currentLang = ref('zh')
-const pendingImage = ref('')       // 待发送图片的 base64 data URL
+const pendingImage = ref('')       // 本地预览 base64
+const pendingImageUrl = ref('')    // 服务器返回的 URL（发送用）
 let ws = null
 
 function t(key) {
@@ -166,14 +167,14 @@ function addMessage(role, content, msgType = 'text') {
 
 function handleSend() {
   const hasText = inputText.value.trim()
-  const hasImage = !!pendingImage.value
+  const hasImage = !!pendingImage.value && !!pendingImageUrl.value
 
   if (!connected.value || (!hasText && !hasImage)) return
 
   if (hasImage) {
-    const imgData = pendingImage.value  // 已经是 data:image/png;base64,... 格式
-    addMessage('customer', imgData, 'image')
-    ws.send(JSON.stringify({ content: imgData, msg_type: 'image' }))
+    const imgUrl = pendingImageUrl.value  // 发送服务器 URL，不是 base64
+    addMessage('customer', imgUrl, 'image')
+    ws.send(JSON.stringify({ content: imgUrl, msg_type: 'image' }))
     clearPendingImage()
     if (!hasText) return
   }
@@ -238,7 +239,8 @@ function connectWs() {
 async function handleImageUpload(e) {
   const file = e.target.files?.[0]
   if (!file) return
-  await fileToBase64(file)
+  await fileToBase64(file)   // 本地预览
+  uploadImage(file)          // 上传服务器拿到 URL
   e.target.value = ''
 }
 
@@ -250,6 +252,7 @@ async function handlePaste(e) {
       e.preventDefault()
       const file = item.getAsFile()
       await fileToBase64(file)
+      uploadImage(file)
       return
     }
   }
@@ -257,7 +260,6 @@ async function handlePaste(e) {
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
-    // 最大 5MB
     if (file.size > 5 * 1024 * 1024) {
       addMessage('system', '图片不能超过5MB')
       reject(new Error('too large'))
@@ -265,7 +267,7 @@ function fileToBase64(file) {
     }
     const reader = new FileReader()
     reader.onload = () => {
-      pendingImage.value = reader.result
+      pendingImage.value = reader.result  // 本地预览用 base64
       resolve()
     }
     reader.onerror = reject
@@ -273,8 +275,21 @@ function fileToBase64(file) {
   })
 }
 
+async function uploadImage(file) {
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await axios.post(`/api/public/chat/upload-image?chat_token=${chatToken}`, formData)
+    pendingImageUrl.value = `${location.origin}${res.data.url}`
+  } catch (e) {
+    pendingImage.value = ''
+    addMessage('system', '图片上传失败，请重试')
+  }
+}
+
 function clearPendingImage() {
   pendingImage.value = ''
+  pendingImageUrl.value = ''
 }
 
 function previewImage(url) {
