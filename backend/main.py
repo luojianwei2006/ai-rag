@@ -72,18 +72,20 @@ app.include_router(points.router)
 app.include_router(xhs.router)
 app.include_router(embed.router)
 
+# 健康检查（放在 mount 前确保不被前端 SPA 拦截）
+@app.get("/health")
+@app.get("/api/health")
+async def health():
+    return {"status": "ok"}
+
 # 静态文件服务（头像等上传文件）
 app.mount("/static", StaticFiles(directory=settings.UPLOAD_DIR), name="static")
 
-
-@app.get("/")
-async def root():
-    return {"message": "客服管理平台 API 运行正常", "version": "1.0.0"}
-
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
+# 前端静态文件（生产模式：直接由后端服务 Vue 打包产物）
+frontend_dist = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "dist")
+if os.path.isdir(frontend_dist):
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+    print(f"✅ 前端已挂载: {frontend_dist}")
 
 
 if __name__ == "__main__":
