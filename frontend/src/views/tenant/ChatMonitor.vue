@@ -273,12 +273,14 @@ function connectWebSocket() {
               content: data.content,
               created_at: data.timestamp
             }
-            console.log('[ChatMonitor] 推送消息到界面:', newMsg)
+            console.log('[ChatMonitor] ✅ 推送消息到界面:', newMsg.role, newMsg.content?.substring(0, 50))
             messages.value.push(newMsg)
             nextTick(() => {
               messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
             })
           }
+        } else {
+          console.log('[ChatMonitor] ⏭️ 消息不属于当前会话: selected=', selectedSession.value?.session_id?.substring(0,8), 'received=', data.session_id?.substring(0,8))
         }
       } else if (data.type === 'session_closed') {
         const idx = sessions.value.findIndex(s => s.session_id === data.session_id)

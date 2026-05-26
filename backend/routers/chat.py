@@ -71,10 +71,12 @@ class ConnectionManager:
         if tenant_id not in self.tenant_monitor_connections:
             self.tenant_monitor_connections[tenant_id] = set()
         self.tenant_monitor_connections[tenant_id].add(ws)
+        print(f"[monitor] 监控端已连接 tenant={tenant_id} total_conns={len(self.tenant_monitor_connections[tenant_id])}")
 
     def disconnect_tenant_monitor(self, tenant_id: int, ws: WebSocket):
         if tenant_id in self.tenant_monitor_connections:
             self.tenant_monitor_connections[tenant_id].discard(ws)
+            print(f"[monitor] 监控端已断开 tenant={tenant_id} remaining={len(self.tenant_monitor_connections[tenant_id])}")
 
     async def send_to_customer(self, session_id: str, message: dict):
         ws = self.customer_connections.get(session_id)
@@ -87,12 +89,14 @@ class ConnectionManager:
     async def broadcast_to_tenant(self, tenant_id: int, message: dict):
         """向商户的所有监控连接广播消息"""
         connections = self.tenant_monitor_connections.get(tenant_id, set())
+        msg_type = message.get("type", "?")
+        print(f"[broadcast] tenant={tenant_id} conns={len(connections)} type={msg_type} sid={message.get('session_id','')[:8]} role={message.get('role','')}")
         disconnected = set()
         for ws in connections:
             try:
                 await ws.send_json(message)
             except Exception as e:
-                print(f"[broadcast] 广播消息失败 tenant={tenant_id}: {e}")
+                print(f"[broadcast] 广播失败 tenant={tenant_id}: {e}")
                 disconnected.add(ws)
         for ws in disconnected:
             connections.discard(ws)
