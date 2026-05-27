@@ -118,9 +118,15 @@
           </t-select>
         </t-form-item>
 
-        <!-- 模型选择 -->
-        <t-form-item label="选择模型" name="model" :rules="[{required: true, message: '请选择模型'}]">
-          <t-select v-model="dialogForm.model" placeholder="请先选择厂家" :disabled="!dialogForm.provider" style="width:100%">
+        <!-- 模型选择：自定义厂家时手动输入，否则下拉选择 -->
+        <t-form-item label="模型名称" name="model" :rules="[{required: true, message: '请输入模型名称'}]">
+          <t-select
+            v-if="!isCustomProvider"
+            v-model="dialogForm.model"
+            placeholder="请先选择厂家"
+            :disabled="!dialogForm.provider"
+            style="width:100%"
+          >
             <t-option
               v-for="m in (PROVIDERS[dialogForm.provider]?.models || [])"
               :key="m.value"
@@ -128,7 +134,28 @@
               :label="m.label"
             />
           </t-select>
+          <t-input
+            v-else
+            v-model="dialogForm.model"
+            placeholder="请输入模型名称，如 gpt-4o、llama3 等"
+            style="width:100%"
+          />
           <div v-if="selectedModelDesc" class="model-desc">{{ selectedModelDesc }}</div>
+        </t-form-item>
+
+        <!-- API Base URL：仅自定义厂家显示 -->
+        <t-form-item
+          v-if="isCustomProvider"
+          label="API Base URL"
+          name="api_base"
+          :rules="[{required: true, message: '请输入 API Base URL'}]"
+        >
+          <t-input
+            v-model="dialogForm.api_base"
+            placeholder="https://api.openai.com/v1"
+            style="width:100%"
+          />
+          <div class="key-hint">OpenAI 兼容格式的接口地址，通常为 .../v1 结尾</div>
         </t-form-item>
 
         <!-- API Key 输入 -->
@@ -227,6 +254,14 @@ const PROVIDERS = {
       { value: 'z-ai/glm5', label: 'GLM-5' },
       { value: 'z-ai/glm4.7', label: 'GLM-4.7' },
     ]
+  },
+  custom_openai: {
+    name: '自定义 OpenAI 兼容',
+    icon: '🔧',
+    keyHint: '输入任意 OpenAI 兼容格式的 API Key，如 sk-...',
+    models: [],  // 空数组 = 模型名手动输入
+    isCustom: true,
+    defaultApiBase: 'https://api.openai.com/v1'
   }
 }
 
@@ -241,10 +276,13 @@ const dialogForm = ref({
   provider: '',
   model: '',
   api_key: '',
+  api_base: '',
   enabled: true
 })
 
 // -------- 计算属性 --------
+const isCustomProvider = computed(() => dialogForm.value.provider === 'custom_openai')
+
 const selectedModelDesc = computed(() => {
   if (!dialogForm.value.provider || !dialogForm.value.model) return ''
   const models = PROVIDERS[dialogForm.value.provider]?.models || []
@@ -266,16 +304,21 @@ function getModelLabel(provider, model) {
 
 function onProviderChange() {
   dialogForm.value.model = ''
+  dialogForm.value.api_base = ''
   // 自动选第一个模型
   const models = PROVIDERS[dialogForm.value.provider]?.models || []
   if (models.length > 0) {
     dialogForm.value.model = models[0].value
   }
+  // 自定义厂家：填入默认 api_base
+  if (dialogForm.value.provider === 'custom_openai') {
+    dialogForm.value.api_base = 'https://api.openai.com/v1'
+  }
 }
 
 function openAddDialog() {
   editIndex.value = -1
-  dialogForm.value = { provider: '', model: '', api_key: '', enabled: true }
+  dialogForm.value = { provider: '', model: '', api_key: '', api_base: '', enabled: true }
   dialogVisible.value = true
 }
 
@@ -285,6 +328,7 @@ function openEditDialog(item, index) {
     provider: item.provider,
     model: item.model,
     api_key: '',   // 编辑时不回显真实Key
+    api_base: item.api_base || '',
     enabled: item.enabled
   }
   dialogVisible.value = true
@@ -313,6 +357,7 @@ async function handleDialogSave() {
       ...old,
       provider: dialogForm.value.provider,
       model: dialogForm.value.model,
+      api_base: dialogForm.value.api_base || '',
       enabled: dialogForm.value.enabled,
       // 如果新key不为空则更新，否则保持
       api_key: dialogForm.value.api_key || old.api_key,
@@ -325,6 +370,7 @@ async function handleDialogSave() {
       id,
       provider: dialogForm.value.provider,
       model: dialogForm.value.model,
+      api_base: dialogForm.value.api_base || '',
       api_key: dialogForm.value.api_key,
       api_key_masked: maskKey(dialogForm.value.api_key),
       enabled: dialogForm.value.enabled,
@@ -346,16 +392,14 @@ async function handleTest(item) {
     MessagePlugin.warning('请先启用该Key')
     return
   }
-  if (!item.api_key) {
-    MessagePlugin.warning('该Key未显示，请先点击编辑按钮重新输入API Key后再测试')
-    return
-  }
+  // 前端不拦截：api_key 为空时后端会从数据库读取真实 key
   item._testStatus = 'testing'
   try {
     await adminApi.testApiKey({
       provider: item.provider,
       model: item.model,
-      api_key: item.api_key
+      api_key: item.api_key || '',      // 有则传，无则传空字符串
+      api_base: item.api_base || undefined
     })
     item._testStatus = 'ok'
     MessagePlugin.success('连接测试成功 ✅')
@@ -368,12 +412,12 @@ async function handleTest(item) {
 async function handleSaveAll() {
   saving.value = true
   try {
-    // 调试：打印要保存的数据
     const keysToSave = keyList.value.map(k => ({
       id: k.id,
       provider: k.provider,
       model: k.model,
       api_key: k.api_key || '',
+      api_base: k.api_base || '',
       enabled: k.enabled
     }))
     console.log('Saving keys:', keysToSave)
@@ -382,7 +426,6 @@ async function handleSaveAll() {
     MessagePlugin.success('API Key 配置保存成功 ✅')
     await loadKeys()
   } catch (e) {
-    // 错误由拦截器处理
     console.error('Save error:', e)
   } finally {
     saving.value = false

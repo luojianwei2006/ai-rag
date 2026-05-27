@@ -43,10 +43,11 @@ class ApiKeyConfigRequest(BaseModel):
 
 
 class ApiKeyItem(BaseModel):
-    id: Optional[str] = None          # 前端生成的唯一ID
-    provider: str                      # glm / openai / gemini / deepseek / qwen
-    model: str                         # 具体模型名
+    id: Optional[str] = None
+    provider: str
+    model: str
     api_key: str
+    api_base: Optional[str] = ""   # 自定义厂家时填写
     enabled: bool = True
 
 
@@ -58,6 +59,7 @@ class TestApiKeyRequest(BaseModel):
     provider: str
     model: str
     api_key: str = ""
+    api_base: Optional[str] = None
 
 
 class TestEmailRequest(BaseModel):
@@ -189,23 +191,23 @@ async def save_api_keys(
             pm_key = f"{k.get('provider', '')}:{k.get('model', '')}"
             old_keys_by_provider_model[pm_key] = k.get("api_key", "")
 
-    save_list = []
-    for item in req.keys:
-        # 如果前端传来空key，先尝试用id匹配，再用provider+model匹配
-        real_key = item.api_key
-        if not real_key:
-            real_key = old_keys_map.get(item.id, "")
-        if not real_key:
-            pm_key = f"{item.provider}:{item.model}"
-            real_key = old_keys_by_provider_model.get(pm_key, "")
-        
-        save_list.append({
-            "id": item.id or item.provider,
-            "provider": item.provider,
-            "model": item.model,
-            "api_key": real_key,
-            "enabled": item.enabled
-        })
+        save_list = []
+        for item in req.keys:
+            real_key = item.api_key
+            if not real_key:
+                real_key = old_keys_map.get(item.id, "")
+            if not real_key:
+                pm_key = f"{item.provider}:{item.model}"
+                real_key = old_keys_by_provider_model.get(pm_key, "")
+
+            save_list.append({
+                "id": item.id or item.provider,
+                "provider": item.provider,
+                "model": item.model,
+                "api_key": real_key,
+                "api_base": item.api_base or "",
+                "enabled": item.enabled
+            })
 
     config = db.query(SystemConfig).filter(SystemConfig.key == "api_keys_v2").first()
     if config:
@@ -227,6 +229,7 @@ async def test_api_key(
     provider = req.provider
     model = req.model
     api_key = req.api_key
+    api_base = req.api_base or ""
 
     # 如果api_key为空，从数据库取对应的key
     if not api_key:
@@ -235,12 +238,29 @@ async def test_api_key(
             for k in json.loads(old_config.value):
                 if k.get("provider") == provider and k.get("model") == model:
                     api_key = k.get("api_key", "")
+                    if not api_base:
+                        api_base = k.get("api_base", "")
                     break
 
     if not api_key:
         raise HTTPException(status_code=400, detail="API Key不能为空，请先在输入框中填写Key后再测试")
 
     try:
+        # 自定义 OpenAI 兼容：用前端传来的 api_base
+        if provider == "custom_openai":
+            base = api_base or "https://api.openai.com/v1"
+            async with httpx.AsyncClient(timeout=15) as client:
+                resp = await client.post(
+                    f"{base}/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                    json={"model": model, "messages": [{"role": "user", "content": "hi"}], "max_tokens": 5}
+                )
+                if resp.status_code == 200:
+                    return {"success": True, "message": "连接成功 ✅"}
+                else:
+                    detail = resp.json().get("error", {}).get("message", resp.text[:200])
+                    raise HTTPException(status_code=400, detail=f"连接失败: {detail}")
+
         if provider == "glm":
             async with httpx.AsyncClient(timeout=15) as client:
                 resp = await client.post(
@@ -306,21 +326,37 @@ async def test_api_key(
                     raise HTTPException(status_code=400, detail=f"连接失败: {detail}")
 
         elif provider == "nvidia_zai":
+            base = api_base or "https://integrate.api.nvidia.com/v1"
             async with httpx.AsyncClient(timeout=15) as client:
                 resp = await client.post(
-                    "https://integrate.api.nvidia.com/v1/chat/completions",
+                    f"{base}/chat/completions",
                     headers={"Authorization": f"Bearer {api_key}"},
                     json={"model": model, "messages": [{"role": "user", "content": "hi"}], "max_tokens": 5}
                 )
                 if resp.status_code == 200:
                     return {"success": True, "message": "连接成功 ✅"}
                 else:
-                    # 返回详细的错误信息给前端
                     raw_text = resp.text[:500]
                     raise HTTPException(status_code=400, detail=f"HTTP {resp.status_code}: {raw_text}")
 
         else:
-            raise HTTPException(status_code=400, detail=f"不支持的厂家: {provider}")
+            # 兜底：当作 OpenAI 兼容格式，使用 api_base
+            base = api_base or "https://api.openai.com/v1"
+            async with httpx.AsyncClient(timeout=15) as client:
+                resp = await client.post(
+                    f"{base}/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                    json={"model": model, "messages": [{"role": "user", "content": "hi"}], "max_tokens": 5}
+                )
+                if resp.status_code == 200:
+                    return {"success": True, "message": "连接成功 ✅"}
+                else:
+                    detail = ""
+                    try:
+                        detail = resp.json().get("error", {}).get("message", resp.text[:200])
+                    except Exception:
+                        detail = resp.text[:200]
+                    raise HTTPException(status_code=400, detail=f"连接失败: {detail}")
 
     except HTTPException:
         raise

@@ -71,6 +71,7 @@ class TestApiKeyRequest(BaseModel):
     provider: str
     model: str
     api_key: str = ""
+    api_base: Optional[str] = None
 
 
 @router.post("/register")
@@ -246,6 +247,7 @@ async def update_api_keys(
                 "provider": provider,
                 "model": model,
                 "api_key": real_key,
+                "api_base": item.get("api_base", ""),
                 "enabled": item.get("enabled", True)
             })
         current["__v2__"] = save_list

@@ -256,6 +256,15 @@ const PROVIDERS = {
       { value: 'z-ai/glm5', label: 'GLM-5' },
       { value: 'z-ai/glm4.7', label: 'GLM-4.7' },
     ]
+  },
+  custom_openai: {
+    name: '自定义 OpenAI 兼容',
+    icon: '🧩',
+    desc: '接入任意 OpenAI 兼容格式的 API，如自建模型、第三方服务',
+    keyHint: '输入任意 OpenAI 兼容格式的 API Key，如 sk-...',
+    models: [],
+    isCustom: true,
+    defaultApiBase: 'https://api.openai.com/v1'
   }
 }
 
@@ -271,6 +280,7 @@ const dialogForm = ref({
   provider: '',
   model: '',
   api_key: '',
+  api_base: '',
   enabled: true
 })
 
@@ -288,15 +298,19 @@ function getModelLabel(provider, model) {
 
 function onProviderChange() {
   dialogForm.value.model = ''
+  dialogForm.value.api_base = ''
   const models = PROVIDERS[dialogForm.value.provider]?.models || []
   if (models.length > 0) {
     dialogForm.value.model = models[0].value
+  }
+  if (dialogForm.value.provider === 'custom_openai') {
+    dialogForm.value.api_base = 'https://api.openai.com/v1'
   }
 }
 
 function openAddDialog() {
   editIndex.value = -1
-  dialogForm.value = { provider: '', model: '', api_key: '', enabled: true }
+  dialogForm.value = { provider: '', model: '', api_key: '', api_base: '', enabled: true }
   dialogVisible.value = true
 }
 
@@ -306,6 +320,7 @@ function openEditDialog(item, index) {
     provider: item.provider,
     model: item.model,
     api_key: '',
+    api_base: item.api_base || '',
     enabled: item.enabled
   }
   dialogVisible.value = true
@@ -331,6 +346,7 @@ async function handleDialogSave() {
       ...old,
       provider: dialogForm.value.provider,
       model: dialogForm.value.model,
+      api_base: dialogForm.value.api_base || '',
       enabled: dialogForm.value.enabled,
       api_key: dialogForm.value.api_key || old.api_key,
       api_key_masked: dialogForm.value.api_key ? maskKey(dialogForm.value.api_key) : old.api_key_masked,
@@ -342,6 +358,7 @@ async function handleDialogSave() {
       id: Date.now().toString(),
       provider: dialogForm.value.provider,
       model: dialogForm.value.model,
+      api_base: dialogForm.value.api_base || '',
       api_key: dialogForm.value.api_key,
       api_key_masked: maskKey(dialogForm.value.api_key),
       enabled: dialogForm.value.enabled,
@@ -363,16 +380,14 @@ async function handleTest(item) {
     MessagePlugin.warning('请先启用该Key')
     return
   }
-  if (!item.api_key) {
-    MessagePlugin.warning('该Key未显示，请先点击编辑按钮重新输入API Key后再测试')
-    return
-  }
+  // 前端不拦截：api_key 为空时后端会从数据库读取真实 key
   item._testStatus = 'testing'
   try {
     await tenantApi.testApiKey({
       provider: item.provider,
       model: item.model,
-      api_key: item.api_key
+      api_key: item.api_key || '',
+      api_base: item.api_base || undefined
     })
     item._testStatus = 'ok'
     MessagePlugin.success('连接测试成功 ✅')
@@ -392,6 +407,7 @@ async function handleSaveAll() {
         provider: k.provider,
         model: k.model,
         api_key: k.api_key || '',
+        api_base: k.api_base || '',
         enabled: k.enabled
       }))
     })

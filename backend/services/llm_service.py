@@ -343,7 +343,7 @@ async def _call_nvidia(model: str, api_key: str, messages: list, system_prompt: 
 
 # ─── 厂商路由调度 ───────────────────────────────────────────
 
-async def _dispatch_call(model: str, api_key: str, messages: list, system_prompt: str) -> str:
+async def _dispatch_call(model: str, api_key: str, messages: list, system_prompt: str, api_base: str = "") -> str:
     """根据模型名自动路由到对应的调用函数"""
     provider = _detect_provider(model)
     logger.info("模型路由: model=%s -> provider=%s", model, provider)
@@ -356,8 +356,8 @@ async def _dispatch_call(model: str, api_key: str, messages: list, system_prompt
         return await _call_nvidia(model, api_key, messages, system_prompt)
     else:
         # OpenAI 及所有兼容厂商
-        api_base = _get_api_base(model, provider)
-        return await _call_openai_compatible(api_base, model, api_key, messages, system_prompt)
+        base = api_base or _get_api_base(model, provider)
+        return await _call_openai_compatible(base, model, api_key, messages, system_prompt)
 
 
 # ─── 公开接口 ───────────────────────────────────────────────
@@ -369,6 +369,7 @@ async def call_llm(
     context: str = "",
     system_prompt: Optional[str] = None,
     lang_instruction: str = "",
+    api_base: str = "",   # 自定义厂家的 API Base URL
 ) -> str:
     """调用大模型接口，支持轮询多个 API Key
 
@@ -414,11 +415,16 @@ async def call_llm(
     errors = []
 
     # 第一轮：尝试与 preferred_model 匹配的 Key
-    for m, key in api_keys:
+    for item in api_keys:
+        if len(item) >= 3:
+            m, key, kb = item[0], item[1], item[2]
+        else:
+            m, key, kb = item[0], item[1], ""
         if m == model or m.startswith(model) or model.startswith(m.split('-')[0] if '-' in m else m):
             try:
                 start = time.time()
-                result = await _dispatch_call(m, key, messages, effective_system_prompt)
+                effective_api_base = kb or api_base
+                result = await _dispatch_call(m, key, messages, effective_system_prompt, api_base=effective_api_base)
                 elapsed = time.time() - start
                 logger.info("LLM调用成功: model=%s, 耗时=%.1fs, 回复长度=%d", m, elapsed, len(result))
                 return result
@@ -430,12 +436,17 @@ async def call_llm(
                 errors.append(f"{m}: {e}")
 
     # 第二轮：尝试所有剩余的 Key
-    for m, key in api_keys:
+    for item in api_keys:
+        if len(item) >= 3:
+            m, key, kb = item[0], item[1], item[2]
+        else:
+            m, key, kb = item[0], item[1], ""
         if m == model or m.startswith(model) or model.startswith(m.split('-')[0] if '-' in m else m):
             continue  # 已经试过了
         try:
             start = time.time()
-            result = await _dispatch_call(m, key, messages, effective_system_prompt)
+            effective_api_base = kb or api_base
+            result = await _dispatch_call(m, key, messages, effective_system_prompt, api_base=effective_api_base)
             elapsed = time.time() - start
             logger.info("LLM调用成功(备用Key): model=%s, 耗时=%.1fs, 回复长度=%d", m, elapsed, len(result))
             return result
@@ -516,7 +527,8 @@ def _get_api_key_from_v2_list(custom_keys: dict, model: str) -> Optional[str]:
 def get_tenant_llm_config(tenant: Tenant, db: Session) -> tuple[str, list]:
     """获取商户的模型和API Key配置，返回 (model, api_keys_list)
 
-    api_keys_list 是 [(model_name, api_key), ...] 格式的列表，用于轮询
+    api_keys_list 是 [(model_name, api_key, api_base), ...] 格式的列表，用于轮询
+    api_base 为空字符串时表示使用默认endpoint
     """
     preferred_model = tenant.preferred_model or "glm"
     api_keys_list = []
@@ -527,26 +539,40 @@ def get_tenant_llm_config(tenant: Tenant, db: Session) -> tuple[str, list]:
     v2_list = custom_keys.get("__v2__", [])
     for item in v2_list:
         if item.get("enabled") and item.get("api_key"):
-            api_keys_list.append((item.get("model"), item.get("api_key")))
+            api_keys_list.append((
+                item.get("model"),
+                item.get("api_key"),
+                item.get("api_base", "")
+            ))
 
     # 新格式没有，尝试旧格式
     if not api_keys_list:
         for model, key in custom_keys.items():
             if model != "__v2__" and key:
-                api_keys_list.append((model, key))
+                api_keys_list.append((model, key, ""))
 
     # 商户选择使用系统Key，或自定义Key不存在
     if tenant.use_system_api_key or not api_keys_list:
         system_keys = get_system_api_keys(db)
+        # 构建 model -> api_base 映射
+        v2_config = db.query(SystemConfig).filter(SystemConfig.key == "api_keys_v2").first()
+        api_base_map = {}
+        if v2_config and v2_config.value:
+            try:
+                for k in json.loads(v2_config.value):
+                    api_base_map[k.get("model", "")] = k.get("api_base", "")
+            except Exception:
+                pass
         for model, key in system_keys.items():
-            api_keys_list.append((model, key))
+            api_base = api_base_map.get(model, "")
+            api_keys_list.append((model, key, api_base))
 
     # 去重，优先使用自定义Key
     seen = set()
     unique_list = []
-    for model, key in api_keys_list:
+    for model, key, api_base in api_keys_list:
         if key and key not in seen:
             seen.add(key)
-            unique_list.append((model, key))
+            unique_list.append((model, key, api_base))
 
     return preferred_model, unique_list
