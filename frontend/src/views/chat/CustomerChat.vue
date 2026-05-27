@@ -20,7 +20,7 @@
         <div class="company-info">
           <div class="company-avatar">
             <img v-if="avatarUrl" :src="avatarUrl" class="avatar-img" />
-            <template v-else>{{ companyName?.[0] || '客' }}</template>
+            <template v-else>{{ (t('companyFallback') || '?')[0] }}</template>
           </div>
           <div>
             <div class="company-name">{{ companyName }}</div>

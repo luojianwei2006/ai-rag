@@ -16,7 +16,7 @@
       <div class="monitor-container">
         <!-- 左侧：会话列表 -->
         <div class="session-panel">
-          <div class="panel-title">会话列表 ({{ sessions.length }})</div>
+          <div class="panel-title">{{ t('session_list') }} ({{ sessions.length }})</div>
           <div class="session-list">
             <div
               v-for="s of sessions"
@@ -83,14 +83,14 @@
           </div>
 
           <div class="message-list" ref="messageContainer">
-            <div v-for="m in messages" :key="m.id" class="message-item" :class="m.role">
+            <div v-for="m of messages" :key="m.id" class="message-item" :class="m.role">
               <div class="msg-role">{{ roleLabel(m.role) }}</div>
               <img v-if="m.msg_type === 'image'" :src="imgUrl(m.content)" class="msg-image" @click="previewImage(imgUrl(m.content))" />
               <div v-else class="msg-content">{{ m.content }}</div>
               <div class="msg-time">{{ formatTime(m.created_at) }}</div>
             </div>
             <div v-if="messages.length === 0" class="no-messages">
-              暂无消息
+              {{ t('no_message') }}
             </div>
           </div>
 
@@ -106,7 +106,7 @@
               theme="primary"
               @click="sendMessage"
               :disabled="!newMessage.trim() || !selectedSession.taken_over"
-            >              >
+            >
                 {{ t('send_btn') }}
               </t-button>
           </div>
