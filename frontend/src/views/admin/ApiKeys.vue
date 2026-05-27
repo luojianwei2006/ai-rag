@@ -168,6 +168,7 @@ const PROVIDERS = {
     icon: '🤖',
     keyHint: '格式：以 eyJ 或字母数字混合开头，前往 https://open.bigmodel.cn 获取',
     models: [
+      { value: 'glm-5', label: 'GLM-5（旗舰新版）' },
       { value: 'glm-4-flash', label: 'GLM-4-Flash（推荐，速度快）' },
       { value: 'glm-4', label: 'GLM-4（旗舰版）' },
       { value: 'glm-4-air', label: 'GLM-4-Air（轻量版）' },
