@@ -3,8 +3,7 @@
     <!-- 左侧会话列表 -->
     <div class="session-list">
       <div class="list-header">
-        <span>会话列表</span>
-        <t-tag theme="primary" size="small">{{ onlineSessions.length }} 在线</t-tag>
+        <t-tag theme="primary" size="small">{{ onlineSessions.length }} {{ t('online') }}</t-tag>
       </div>
         <div
           v-for="s of sessions"
@@ -13,20 +12,20 @@
           :class="{ active: selectedSession?.session_id === s.session_id, online: s.online, human: s.is_human_service, taken: s.taken_over }"
           @click="selectSession(s)"
         >
-          <div class="session-avatar">{{ (s.customer_name && s.customer_name !== '访客' ? s.customer_name : (s.uid || '访'))[0] }}</div>
+          <div class="session-avatar">{{ (s.customer_name && s.customer_name !== t('guest') ? s.customer_name : (s.uid || t('guest')[0])) }}</div>
           <div class="session-info">
             <div class="session-name">
               <template v-if="s.uid">
                 <span class="session-uid">{{ s.uid }}</span>
-                <span v-if="s.customer_name && s.customer_name !== '访客'" class="session-nickname">{{ s.customer_name }}</span>
+                <span v-if="s.customer_name && s.customer_name !== t('guest')" class="session-nickname">{{ s.customer_name }}</span>
               </template>
               <template v-else>
-                {{ s.customer_name || '访客' }}
+                {{ s.customer_name || t('guest') }}
               </template>
-              <t-tag v-if="s.is_human_service" size="small" theme="warning" style="margin-left:4px">人工</t-tag>
-              <t-tag v-if="s.taken_over" size="small" theme="danger" style="margin-left:4px">已接管</t-tag>
+              <t-tag v-if="s.is_human_service" size="small" theme="warning" style="margin-left:4px">{{ t('human_tag') }}</t-tag>
+              <t-tag v-if="s.taken_over" size="small" theme="danger" style="margin-left:4px">{{ t('taken_tag') }}</t-tag>
             </div>
-            <div class="session-msg">{{ s.last_message || '暂无消息' }}</div>
+            <div class="session-msg">{{ s.last_message || t('no_message') }}</div>
           </div>
           <div class="session-actions">
             <t-tooltip content="复制 uid">
@@ -37,20 +36,20 @@
           </div>
           <div class="session-status" :class="s.online ? 'online' : 'offline'"></div>
         </div>
-      <div v-if="sessions.length === 0" class="no-sessions">暂无会话</div>
+      <div v-if="sessions.length === 0" class="no-sessions">{{ t('no_session') }}</div>
     </div>
 
     <!-- 右侧聊天内容 -->
     <div class="chat-panel">
-      <div v-if="!selectedSession" class="no-selected">
-        <div style="font-size:48px">💬</div>
-        <div>选择一个会话查看聊天内容</div>
-      </div>
+        <div v-if="!selectedSession" class="no-selected">
+          <div style="font-size:48px">💬</div>
+          <div>{{ t('select_session') }}</div>
+        </div>
       <template v-else>
         <div class="chat-header">
-          <span>{{ selectedSession.customer_name || '访客' }}</span>
+          <span>{{ selectedSession.customer_name || t('guest') }}</span>
           <t-tag :theme="selectedSession.online ? 'success' : 'default'" size="small">
-            {{ selectedSession.online ? '在线' : '离线' }}
+            {{ selectedSession.online ? t('online') : t('offline') }}
           </t-tag>
         </div>
 
@@ -81,7 +80,7 @@
             @click="sendHumanReply"
             style="margin-top:8px"
           >
-            发送人工回复
+            {{ t('send_button') }}
           </t-button>
         </div>
         <div v-else-if="selectedSession.taken_over" class="reply-area taken-notice">
@@ -90,9 +89,8 @@
       </template>
     </div>
   </div>
-</template>
+  </script>
 
-<script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
 import { chatApi } from '@/api'
@@ -116,6 +114,13 @@ const i18nMessages = {
     no_session: '暂无会话',
     no_message: '暂无消息',
     select_session: '选择一个会话查看聊天内容',
+    guest: '访客',
+    no_uid: '该会话没有 uid',
+    uid_copied: 'uid 已复制',
+    copy_failed: '复制失败，请手动复制',
+    taken_warning: '该会话已被嵌入监控端接管，请在嵌入监控页面处理',
+    new_session: '新用户开始咨询',
+    human_request: '请求人工服务',
   },
   en: {
     taken_notice: '⚠️ This session has been taken over by the embed monitor, cannot reply here',
@@ -134,6 +139,13 @@ const i18nMessages = {
     no_session: 'No sessions',
     no_message: 'No messages',
     select_session: 'Select a session to view messages',
+    guest: 'Guest',
+    no_uid: 'This session has no uid',
+    uid_copied: 'uid copied',
+    copy_failed: 'Copy failed, please copy manually',
+    taken_warning: 'This session has been taken over by the embed monitor, please handle it on the embed monitor page',
+    new_session: 'New user started consultation',
+    human_request: 'requested human service',
   },
 }
 
@@ -208,18 +220,19 @@ function previewImage(url) {
 }
 function formatTime(t) {
   if (!t) return ''
-  return new Date(t).toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  const locale = lang === 'en' ? 'en-US' : 'zh-CN'
+  return new Date(t).toLocaleString(locale, { hour: '2-digit', minute: '2-digit' })
 }
 function copySessionLink(session) {
   const uid = session.uid || ''
   if (!uid) {
-    MessagePlugin.warning('该会话没有 uid')
+    MessagePlugin.warning(t('no_uid'))
     return
   }
   navigator.clipboard.writeText(uid).then(() => {
-    MessagePlugin.success('uid 已复制')
+    MessagePlugin.success(t('uid_copied'))
   }).catch(() => {
-    MessagePlugin.error('复制失败，请手动复制')
+    MessagePlugin.error(t('copy_failed'))
   })
 }
 
@@ -245,7 +258,7 @@ async function loadSessions() {
 async function selectSession(session) {
   // 如果会话已被嵌入监控端接管，阻止进入并提示
   if (session.taken_over) {
-    MessagePlugin.warning('该会话已被嵌入监控端接管，请在嵌入监控页面处理')
+    MessagePlugin.warning(t('taken_warning'))
     return
   }
 
@@ -315,7 +328,7 @@ function connectWebSocket() {
       if (data.type === 'new_session') {
         console.log('[ChatMonitor WS] ➕ 新会话:', data.customer_name, 'uid=', data.uid)
         loadSessions()
-        MessagePlugin.info(`新用户开始咨询`)
+        MessagePlugin.info(t('new_session'))
       } else if (data.type === 'message' || data.type === 'human_requested') {
         const matchKey = data.uid || data.session_id
         console.log('[ChatMonitor WS] 📨 消息/请求 matchKey=', matchKey?.substring(0,8), 'selected.uid=', selectedSession.value?.uid, 'selected.sid=', selectedSession.value?.session_id?.substring(0,8))
@@ -345,7 +358,7 @@ function connectWebSocket() {
             selectedSession.value = updated
           }
           if (data.type === 'human_requested') {
-            MessagePlugin.warning(`会话 ${matchKey?.substring(0, 8)} 请求人工服务`)
+            MessagePlugin.warning(`${matchKey?.substring(0, 8)} ${t('human_request')}`)
           }
         } else {
           // 列表中还没有这个会话，重新加载

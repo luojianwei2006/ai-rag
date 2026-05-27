@@ -2,7 +2,7 @@
   <div class="embed-monitor">
     <!-- 加载状态 -->
     <div v-if="loading" class="loading-overlay">
-      <t-loading text="正在连接..." size="medium" />
+      <t-loading :text="t('loading')" size="medium" />
     </div>
 
     <!-- 错误状态 -->
@@ -19,7 +19,7 @@
           <div class="panel-title">会话列表 ({{ sessions.length }})</div>
           <div class="session-list">
             <div
-              v-for="s in sessions"
+              v-for="s of sessions"
               :key="s.session_id"
               class="session-item"
               :class="{
@@ -33,11 +33,11 @@
               <div class="session-info">
                 <div class="session-name">
                   <span v-if="s.uid" class="session-uid">{{ s.uid }}</span>
-                  <span v-else>{{ s.customer_name || '访客' }}</span>
-                  <t-tag v-if="s.is_human_service" size="small" theme="warning">人工</t-tag>
-                  <t-tag v-if="s.taken_over" size="small" theme="danger">已接管</t-tag>
+                  <span v-else>{{ s.customer_name || t('guest') }}</span>
+                  <t-tag v-if="s.is_human_service" size="small" theme="warning">{{ t('human_tag') }}</t-tag>
+                  <t-tag v-if="s.taken_over" size="small" theme="danger">{{ t('taken_tag') }}</t-tag>
                 </div>
-                <div class="session-msg">{{ s.last_message || '暂无消息' }}</div>
+                <div class="session-msg">{{ s.last_message || t('no_message') }}</div>
               </div>
               <div class="session-meta">
                 <div class="session-time" v-if="s.last_message_time">
@@ -47,7 +47,7 @@
               </div>
             </div>
             <div v-if="sessions.length === 0" class="no-sessions">
-              暂无会话
+              {{ t('no_session') }}
             </div>
           </div>
         </div>
@@ -56,12 +56,12 @@
         <div v-if="selectedSession" class="message-panel">
           <div class="panel-header">
             <span class="panel-title">
-              {{ selectedSession.customer_name || '访客' }}
+              {{ selectedSession.customer_name || t('guest') }}
               <span v-if="selectedSession.uid" class="uid-tag">({{ selectedSession.uid }})</span>
             </span>
             <div class="header-actions">
               <t-tag :theme="selectedSession.online ? 'success' : 'default'" size="small">
-                {{ selectedSession.online ? '在线' : '离线' }}
+                {{ selectedSession.online ? t('online') : t('offline') }}
               </t-tag>
               <t-button
                 v-if="!selectedSession.taken_over"
@@ -69,7 +69,7 @@
                 theme="primary"
                 @click="takeoverSession"
               >
-                接管会话
+                {{ t('takeover_btn') }}
               </t-button>
               <t-button
                 v-else
@@ -77,7 +77,7 @@
                 theme="default"
                 @click="releaseSession"
               >
-                释放会话
+                {{ t('release_btn') }}
               </t-button>
             </div>
           </div>
@@ -98,7 +98,7 @@
           <div class="message-input">
             <t-input
               v-model="newMessage"
-              placeholder="输入回复消息..."
+              :placeholder="t('placeholder')"
               @keyup.enter="sendMessage"
               :disabled="!selectedSession.taken_over"
             />
@@ -106,9 +106,9 @@
               theme="primary"
               @click="sendMessage"
               :disabled="!newMessage.trim() || !selectedSession.taken_over"
-            >
-              发送
-            </t-button>
+            >              >
+                {{ t('send_btn') }}
+              </t-button>
           </div>
         </div>
 
@@ -116,7 +116,7 @@
         <div v-else class="message-panel empty-panel">
           <div class="empty-hint">
             <t-icon name="chat" size="48px" />
-            <div>请选择左侧会话</div>
+            <div>{{ t('select_session') }}</div>
           </div>
         </div>
       </div>
@@ -136,6 +136,29 @@ const i18nMessages = {
     takeover_fail: '接管失败',
     release_fail: '释放失败',
     send_fail: '发送失败',
+    loading: '正在连接...',
+    session_list: '会话列表',
+    no_message: '暂无消息',
+    no_session: '暂无会话',
+    guest: '访客',
+    human_tag: '人工',
+    taken_tag: '已接管',
+    online: '在线',
+    offline: '离线',
+    takeover_btn: '接管会话',
+    release_btn: '释放会话',
+    placeholder: '输入回复消息...',
+    send_btn: '发送',
+    select_session: '请选择左侧会话',
+    role_customer: '客户',
+    role_ai: 'AI',
+    role_human: '人工',
+    role_system: '系统',
+    load_fail: '加载会话失败',
+    api_key_missing: '缺少 api_key 参数',
+    ws_fail: 'WebSocket 连接失败',
+    new_session: '新用户开始咨询',
+    human_request: '有用户请求人工服务',
   },
   en: {
     takeover_success: 'Session taken over',
@@ -143,6 +166,29 @@ const i18nMessages = {
     takeover_fail: 'Takeover failed',
     release_fail: 'Release failed',
     send_fail: 'Send failed',
+    loading: 'Connecting...',
+    session_list: 'Sessions',
+    no_message: 'No messages',
+    no_session: 'No sessions',
+    guest: 'Guest',
+    human_tag: 'Human',
+    taken_tag: 'Taken',
+    online: 'Online',
+    offline: 'Offline',
+    takeover_btn: 'Take Over',
+    release_btn: 'Release',
+    placeholder: 'Type your message...',
+    send_btn: 'Send',
+    select_session: 'Select a session',
+    role_customer: 'Customer',
+    role_ai: 'AI',
+    role_human: 'Human',
+    role_system: 'System',
+    load_fail: 'Failed to load sessions',
+    api_key_missing: 'Missing api_key parameter',
+    ws_fail: 'WebSocket connection failed',
+    new_session: 'New user started consultation',
+    human_request: 'User requested human service',
   },
 }
 const route = useRoute()
@@ -162,14 +208,20 @@ const onlineCount = computed(() => sessions.value.filter(s => s.online).length)
 const humanCount = computed(() => sessions.value.filter(s => s.is_human_service).length)
 
 function getAvatar(session) {
-  const name = session.customer_name && session.customer_name !== '访客'
+  const name = session.customer_name && session.customer_name !== t('guest')
     ? session.customer_name
-    : (session.uid || '访')
+    : (session.uid || t('guest'))[0]
   return name[0]
 }
 
 function roleLabel(role) {
-  return { customer: '客户', ai: 'AI', human_agent: '人工', system: '系统' }[role] || role
+  const map = {
+    customer: t('role_customer'),
+    ai: t('role_ai'),
+    human_agent: t('role_human'),
+    system: t('role_system'),
+  }
+  return map[role] || role
 }
 function imgUrl(path) {
   const base = import.meta.env.DEV ? 'http://localhost:8000' : location.origin
@@ -184,10 +236,11 @@ function formatTime(t) {
   const d = new Date(t)
   const now = new Date()
   const isToday = d.toDateString() === now.toDateString()
+  const locale = lang === 'en' ? 'en-US' : 'zh-CN'
   if (isToday) {
-    return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+    return d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
   }
-  return d.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+  return d.toLocaleString(locale, { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
 }
 
 async function loadSessions() {
@@ -196,13 +249,13 @@ async function loadSessions() {
     const res = await fetch(`/api/embed/info?api_key=${apiKey}`)
     if (!res.ok) {
       const data = await res.json()
-      throw new Error(data.detail || '加载失败')
+      throw new Error(data.detail || t('load_fail'))
     }
     const data = await res.json()
     sessions.value = data.sessions || []
   } catch (e) {
-    console.error('[EmbedMonitor] 加载会话失败:', e)
-    error.value = e.message || '加载会话失败'
+    console.error('[EmbedMonitor] Failed to load sessions:', e)
+    error.value = e.message || t('load_fail')
   }
 }
 
@@ -239,7 +292,7 @@ async function takeoverSession() {
       MessagePlugin.success(t('takeover_success'))
     }
   } catch (e) {
-    MessagePlugin.error('接管失败')
+    MessagePlugin.error(t('takeover_fail'))
   }
 }
 
@@ -255,7 +308,7 @@ async function releaseSession() {
       MessagePlugin.success(t('release_success'))
     }
   } catch (e) {
-    MessagePlugin.error('释放失败')
+    MessagePlugin.error(t('release_fail'))
   }
 }
 
@@ -291,7 +344,7 @@ async function sendMessage() {
       MessagePlugin.error(data.detail || t('send_fail'))
     }
   } catch (e) {
-    MessagePlugin.error('发送失败')
+    MessagePlugin.error(t('send_fail'))
     console.error('[EmbedMonitor] 发送消息失败:', e)
   }
 }
@@ -338,7 +391,7 @@ function connectWebSocket() {
 
   ws.onerror = (e) => {
     console.error('[EmbedMonitor] WebSocket 错误:', e)
-    error.value = 'WebSocket 连接失败'
+    error.value = t('ws_fail')
     loading.value = false
   }
 
@@ -361,7 +414,7 @@ function handleWebSocketMessage(data) {
 
     case 'new_session':
       loadSessions()
-      MessagePlugin.info('新用户开始咨询')
+      MessagePlugin.info(t('new_session'))
       break
 
     case 'message':
@@ -387,7 +440,7 @@ function handleWebSocketMessage(data) {
 
     case 'human_requested':
       updateSessionStatus(data.session_id, { is_human_service: true })
-      MessagePlugin.warning('有用户请求人工服务')
+      MessagePlugin.warning(t('human_request'))
       break
 
     case 'session_closed':
@@ -433,7 +486,7 @@ function updateSessionStatus(sessionId, updates) {
 onMounted(() => {
   const apiKey = route.query.api_key
   if (!apiKey) {
-    error.value = '缺少 api_key 参数'
+    error.value = t('api_key_missing')
     loading.value = false
     return
   }
