@@ -129,7 +129,26 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { MessagePlugin } from 'tdesign-vue-next'
 
+const i18nMessages = {
+  zh: {
+    takeover_success: '已接管会话',
+    release_success: '已释放会话',
+    takeover_fail: '接管失败',
+    release_fail: '释放失败',
+    send_fail: '发送失败',
+  },
+  en: {
+    takeover_success: 'Session taken over',
+    release_success: 'Session released',
+    takeover_fail: 'Takeover failed',
+    release_fail: 'Release failed',
+    send_fail: 'Send failed',
+  },
+}
 const route = useRoute()
+const lang = route.query.lang || 'zh'
+const t = (key) => i18nMessages[lang]?.[key] || i18nMessages['zh'][key]
+
 const sessions = ref([])
 const selectedSession = ref(null)
 const messages = ref([])
@@ -217,7 +236,7 @@ async function takeoverSession() {
     if (res.ok) {
       selectedSession.value.taken_over = true
       selectedSession.value.is_human_service = true
-      MessagePlugin.success('已接管会话')
+      MessagePlugin.success(t('takeover_success'))
     }
   } catch (e) {
     MessagePlugin.error('接管失败')
@@ -233,7 +252,7 @@ async function releaseSession() {
     })
     if (res.ok) {
       selectedSession.value.taken_over = false
-      MessagePlugin.success('已释放会话')
+      MessagePlugin.success(t('release_success'))
     }
   } catch (e) {
     MessagePlugin.error('释放失败')
@@ -269,7 +288,7 @@ async function sendMessage() {
       scrollToBottom()
     } else {
       const data = await res.json()
-      MessagePlugin.error(data.detail || '发送失败')
+      MessagePlugin.error(data.detail || t('send_fail'))
     }
   } catch (e) {
     MessagePlugin.error('发送失败')

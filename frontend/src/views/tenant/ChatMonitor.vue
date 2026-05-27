@@ -85,7 +85,7 @@
           </t-button>
         </div>
         <div v-else-if="selectedSession.taken_over" class="reply-area taken-notice">
-          ⚠️ 该会话已被嵌入监控端接管，无法在此回复
+          {{ t('taken_notice') }}
         </div>
       </template>
     </div>
@@ -98,7 +98,49 @@ import { MessagePlugin } from 'tdesign-vue-next'
 import { chatApi } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 
+const i18nMessages = {
+  zh: {
+    taken_notice: '⚠️ 该会话已被嵌入监控端接管，无法在此回复',
+    reply_placeholder: '输入人工回复内容，Enter 发送...',
+    reply_placeholder_feishu: '输入人工回复内容（飞书用户）...',
+    reply_placeholder_wecom: '输入人工回复内容（企业微信用户）...',
+    role_customer: '客户',
+    role_ai: 'AI助手',
+    role_human: '人工客服',
+    role_system: '系统',
+    send_button: '发送人工回复',
+    taken_tag: '已接管',
+    human_tag: '人工',
+    online: '在线',
+    offline: '离线',
+    no_session: '暂无会话',
+    no_message: '暂无消息',
+    select_session: '选择一个会话查看聊天内容',
+  },
+  en: {
+    taken_notice: '⚠️ This session has been taken over by the embed monitor, cannot reply here',
+    reply_placeholder: 'Type your reply, press Enter to send...',
+    reply_placeholder_feishu: 'Type your reply (Feishu user)...',
+    reply_placeholder_wecom: 'Type your reply (WeCom user)...',
+    role_customer: 'Customer',
+    role_ai: 'AI Assistant',
+    role_human: 'Human Agent',
+    role_system: 'System',
+    send_button: 'Send Reply',
+    taken_tag: 'Taken Over',
+    human_tag: 'Human',
+    online: 'Online',
+    offline: 'Offline',
+    no_session: 'No sessions',
+    no_message: 'No messages',
+    select_session: 'Select a session to view messages',
+  },
+}
+
 const auth = useAuthStore()
+const lang = auth.user?.chat_language || 'zh'
+const t = (key) => i18nMessages[lang]?.[key] || i18nMessages['zh'][key]
+
 const sessions = ref([])
 const selectedSession = ref(null)
 const messages = ref([])
@@ -132,12 +174,12 @@ const isThirdPartySession = computed(() => {
 // 回复框占位符
 const replyPlaceholder = computed(() => {
   if (isFeishuSession.value) {
-    return '输入人工回复内容（飞书用户）...'
+    return t('reply_placeholder_feishu')
   }
   if (isWeComSession.value) {
-    return '输入人工回复内容（企业微信用户）...'
+    return t('reply_placeholder_wecom')
   }
-  return '输入人工回复内容，Enter 发送...'
+  return t('reply_placeholder')
 })
 
 // 是否可以发送回复
@@ -149,7 +191,13 @@ const canSendReply = computed(() => {
 })
 
 function roleLabel(role) {
-  return { customer: '客户', ai: 'AI助手', human_agent: '人工客服', system: '系统' }[role] || role
+  const map = {
+    customer: t('role_customer'),
+    ai: t('role_ai'),
+    human_agent: t('role_human'),
+    system: t('role_system'),
+  }
+  return map[role] || role
 }
 function imgUrl(path) {
   const base = import.meta.env.DEV ? 'http://localhost:8000' : location.origin

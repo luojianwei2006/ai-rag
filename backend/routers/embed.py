@@ -13,6 +13,22 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel
 
+# 嵌入监控多语言文案
+EMBED_I18N = {
+    "zh": {
+        "taken_over_sys": "人工客服已接管会话",
+        "taken_over_notify": "人工客服已接管，将为您服务",
+        "released_sys": "人工客服已释放会话",
+        "released_notify": "人工客服已结束对话",
+    },
+    "en": {
+        "taken_over_sys": "Human agent has taken over the session",
+        "taken_over_notify": "Human agent has taken over, will serve you",
+        "released_sys": "Human agent has released the session",
+        "released_notify": "Human agent has ended the conversation",
+    },
+}
+
 router = APIRouter(tags=["嵌入监控"])
 
 class SendMessageRequest(BaseModel):
@@ -215,12 +231,16 @@ async def takeover_session(
     
     session.taken_over = True
     session.is_human_service = True
-
+    
+    # 多语言文案
+    lang = tenant.chat_language or "zh"
+    i18n = EMBED_I18N.get(lang, EMBED_I18N["zh"])
+    
     # 保存系统消息
     takeover_msg = ChatMessage(
         session_id=session_id,
         role="system",
-        content="人工客服已接管会话"
+        content=i18n["taken_over_sys"]
     )
     db.add(takeover_msg)
     db.commit()
@@ -230,7 +250,7 @@ async def takeover_session(
     await chat_manager.send_to_customer(session_id, {
         "type": "message",
         "role": "system",
-        "content": "人工客服已接管，将为您服务",
+        "content": i18n["taken_over_notify"],
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
@@ -240,7 +260,7 @@ async def takeover_session(
         "type": "taken_over",
         "session_id": session_id,
         "role": "system",
-        "content": "人工客服已接管会话",
+        "content": i18n["taken_over_sys"],
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
@@ -264,12 +284,16 @@ async def release_session(
         raise HTTPException(status_code=404, detail="会话不存在")
     
     session.taken_over = False
-
+    
+    # 多语言文案
+    lang = tenant.chat_language or "zh"
+    i18n = EMBED_I18N.get(lang, EMBED_I18N["zh"])
+    
     # 保存系统消息
     release_msg = ChatMessage(
         session_id=session_id,
         role="system",
-        content="人工客服已释放会话"
+        content=i18n["released_sys"]
     )
     db.add(release_msg)
     db.commit()
@@ -279,7 +303,7 @@ async def release_session(
     await chat_manager.send_to_customer(session_id, {
         "type": "message",
         "role": "system",
-        "content": "人工客服已结束对话",
+        "content": i18n["released_notify"],
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
@@ -289,7 +313,7 @@ async def release_session(
         "type": "released",
         "session_id": session_id,
         "role": "system",
-        "content": "人工客服已释放会话",
+        "content": i18n["released_sys"],
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
