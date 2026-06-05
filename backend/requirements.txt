@@ -1,11 +1,9 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-alembic
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
-fastapi-mail
 python-dotenv
 pydantic-settings
 email-validator
@@ -14,21 +12,18 @@ email-validator
 python-docx
 openpyxl
 
-# RAG & LLM
-langchain
-langchain-community
-langchain-openai
-langchain-google-genai
-zhipuai>=2.1.0
+# RAG（向量数据库）
 chromadb
-sentence-transformers
+
+# LLM（按需安装，httpx 直连即可）
+zhipuai
+httpx
 
 # WebSocket
 websockets
 
 # 工具
 aiofiles
-httpx
 
 # 网页爬虫
 beautifulsoup4
@@ -37,8 +32,5 @@ lxml
 # 图片处理
 Pillow
 
-# 小红书自动发布（Playwright 浏览器自动化）
-playwright
-
-# MySQL 驱动（如果需要）
-PyMySQL>=1.2.0
+# 小红书自动发布（可选，不用可删）
+# playwright
