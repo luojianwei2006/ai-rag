@@ -87,10 +87,11 @@
           {{ t('taken_notice') }}
         </div>
       </template>
+        </div>
     </div>
-  </div>
-  </script>
+  </template>
 
+  <script>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
 import { chatApi } from '@/api'
