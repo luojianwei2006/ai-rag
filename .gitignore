@@ -12,6 +12,9 @@ venv/
 
 # Build
 frontend/dist/
+backend/dist/
+backend/build/
+*.spec
 
 # Database
 *.db
@@ -22,6 +25,7 @@ uploads/
 chroma_db/
 backend/uploads/
 backend/chroma_db/
+backend/xhs_screenshots/
 data/
 
 # IDE
@@ -36,3 +40,4 @@ Thumbs.db
 *.log
 backend/server.log
 frontend/frontend.log
+backend/debug_*.py

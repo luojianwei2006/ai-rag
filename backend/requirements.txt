@@ -8,7 +8,7 @@ python-multipart
 fastapi-mail
 python-dotenv
 pydantic-settings
-pydantic[email]
+email-validator
 
 # 文档解析
 python-docx
@@ -39,4 +39,6 @@ Pillow
 
 # 小红书自动发布（Playwright 浏览器自动化）
 playwright
-PyMySQL==1.2.0
+
+# MySQL 驱动（如果需要）
+PyMySQL>=1.2.0

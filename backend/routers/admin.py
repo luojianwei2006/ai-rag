@@ -261,7 +261,7 @@ async def test_api_key(
                     detail = resp.json().get("error", {}).get("message", resp.text[:200])
                     raise HTTPException(status_code=400, detail=f"连接失败: {detail}")
 
-        if provider == "glm":
+        elif provider == "glm":
             async with httpx.AsyncClient(timeout=15) as client:
                 resp = await client.post(
                     "https://open.bigmodel.cn/api/paas/v4/chat/completions",

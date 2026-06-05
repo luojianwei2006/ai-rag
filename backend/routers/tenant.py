@@ -358,6 +358,19 @@ async def test_tenant_api_key(
                 detail = resp.json().get("error", {}).get("message", resp.text[:100])
                 raise HTTPException(status_code=400, detail=f"连接失败: {detail}")
 
+        elif req.provider == "custom_openai":
+            base = req.api_base or "https://api.openai.com/v1"
+            async with httpx.AsyncClient(timeout=15) as client:
+                resp = await client.post(
+                    f"{base}/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                    json={"model": req.model, "messages": [{"role": "user", "content": "hi"}], "max_tokens": 5}
+                )
+                if resp.status_code == 200:
+                    return {"success": True, "message": f"Custom OpenAI compatible API 连接成功 ({req.model})"}
+                detail = resp.json().get("error", {}).get("message", resp.text[:100])
+                raise HTTPException(status_code=400, detail=f"连接失败: {detail}")
+
         else:
             raise HTTPException(status_code=400, detail=f"不支持的厂家: {req.provider}")
 
