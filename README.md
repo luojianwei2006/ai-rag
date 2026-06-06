@@ -19,10 +19,10 @@ bash start.sh
 
 ## 技术栈
 
-- **后端**: Python 3.10+ / FastAPI / SQLAlchemy / ChromaDB
+- **后端**: Python 3.9+ / FastAPI / SQLAlchemy / ChromaDB
 - **前端**: Vue 3 / TDesign / Vite
-- **RAG**: ChromaDB 向量数据库 + LangChain
-- **大模型**: 智谱GLM / OpenAI ChatGPT / Google Gemini
+- **RAG**: ChromaDB 向量数据库
+- **大模型**: 智谱GLM / OpenAI ChatGPT / Google Gemini / 自定义 OpenAI 兼容
 - **实时通信**: WebSocket
 
 ## 目录结构
@@ -90,40 +90,10 @@ http://localhost:5173/chat/{chat_token}
 
 | 要求 | 版本 |
 |------|------|
-| Python | >= 3.10 |
-| Node.js | >= 16 |
-| sqlite3 | >= 3.35.0（**ChromaDB 强制要求**） |
+| Python | >= 3.9 |
+| Node.js | >= 16（仅本地构建前端，服务器不需要） |
 
-> **⚠️ sqlite3 版本问题**：ChromaDB 要求 sqlite3 >= 3.35.0，部分系统自带的 sqlite3 版本过低。
-> 检查方法：`python3 -c "import sqlite3; print(sqlite3.sqlite_version)"`
-> 如果版本低于 3.35.0，需要编译安装新版 sqlite3：
-
-```bash
-# CentOS / Ubuntu 通用编译安装 sqlite3 3.45.0
-cd /tmp
-wget https://www.sqlite.org/2024/sqlite-autoconf-3450000.tar.gz
-tar xzf sqlite-autoconf-3450000.tar.gz
-cd sqlite-autoconf-3450000
-./configure --prefix=/usr/local/sqlite3 --enable-fts5
-make -j$(nproc) && make install
-
-# 设置环境变量
-export LD_LIBRARY_PATH=/usr/local/sqlite3/lib:$LD_LIBRARY_PATH
-export CFLAGS="-I/usr/local/sqlite3/include"
-export LDFLAGS="-L/usr/local/sqlite3/lib"
-
-# 持久化（重启后生效）
-echo 'export LD_LIBRARY_PATH=/usr/local/sqlite3/lib:$LD_LIBRARY_PATH' >> /etc/profile.d/sqlite3.sh
-echo 'export CFLAGS="-I/usr/local/sqlite3/include"' >> /etc/profile.d/sqlite3.sh
-echo 'export LDFLAGS="-L/usr/local/sqlite3/lib"' >> /etc/profile.d/sqlite3.sh
-
-# 验证
-python3 -c "import sqlite3; print(sqlite3.sqlite_version)"
-
-# 重要：安装新版 sqlite3 后，需要重建虚拟环境
-rm -rf backend/.venv
-cd backend && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
-```
+> **⚠️ ChromaDB 需要 sqlite3 >= 3.35.0**，已通过 `pysqlite3-binary` 自动兼容，无需手动升级。
 
 ## 环境变量配置（可选）
 
@@ -139,88 +109,92 @@ FRONTEND_URL=http://localhost:5173
 
 ---
 
-## 打包与部署
+## 部署方式
 
-### 一、本地开发
+| 方式 | 适用场景 |
+|------|----------|
+| **宝塔面板** ⭐ | 有宝塔面板的服务器（Amazon Linux 2 / CentOS） |
+| **Docker** | 任意支持 Docker 的服务器 |
+| **手动部署** | 裸机部署（Nginx + Uvicorn） |
 
+---
+
+## 宝塔面板部署（推荐）
+
+### 环境说明
+
+- **服务器**: Amazon Linux 2 / CentOS 7+
+- **面板**: 宝塔面板（需安装 Python项目管理器）
+- **前端**: 本地 `npm run build` → 上传 dist 到网站根目录
+- **后端**: 宝塔 Python项目管理器 托管
+
+### 第一步：安装宝塔 Python 项目管理器
+
+1. 宝塔面板 → 软件商店 → 搜索「Python项目管理器」→ 安装
+2. 安装后在「版本管理」中安装 Python 3.9+
+
+### 第二步：部署后端
+
+1. **拉取代码到服务器**
 ```bash
-cd customer-service-platform
-
-# 一键启动（前后端开发模式）
-./startup.sh
-
-# 关闭所有服务
-./shutdown.sh
+cd /www/git
+git clone https://github.com/luojianwei2006/ai-rag.git
+cd ai-rag
 ```
 
-### 二、前端打包
+2. **宝塔创建项目**
+   - 打开 Python项目管理器 → 添加项目
+   - 填写：
 
+| 字段 | 值 |
+|------|-----|
+| 项目路径 | `/www/git/ai-rag/backend` |
+| Python版本 | 3.9+ |
+| 框架 | `python` |
+| 启动方式 | `自定义` |
+| 自定义启动方式 | `<虚拟环境路径>/bin/python3.9 -m uvicorn main:app --host 0.0.0.0 --port 8000` |
+| 端口 | `8000` |
+| 是否安装依赖 | ✅ 勾选 |
+
+> 虚拟环境路径在项目创建后自动生成，类似 `/www/git/ai-rag/backend/xxxx_venv/`
+
+3. **手动安装缺失包（如有需要）**
 ```bash
-cd frontend
-npm install
-npm run build
-# 打包产物输出到 frontend/dist/
+cd /www/git/ai-rag/backend
+<虚拟环境路径>/bin/pip install pysqlite3-binary
 ```
 
-### 三、生产部署（Nginx + Uvicorn）
-
-#### 1. 打包前端
+### 第三步：部署前端
 
 ```bash
+# 在本地 Mac/PC 执行
 cd customer-service-platform/frontend
-npm install
+npm install --legacy-peer-deps
 npm run build
+
+# 上传到服务器网站根目录
+scp -r dist/* root@你的服务器IP:/www/wwwroot/kefu.zenithgames.com/
 ```
 
-#### 2. 部署前端静态文件
+### 第四步：配置 Nginx（宝塔面板内）
 
-```bash
-cp -r dist /var/www/customer-service
-```
-
-#### 3. 启动后端
-
-```bash
-cd customer-service-platform/backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# 生产启动（使用 systemd 推荐见下方）
-nohup uvicorn main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
-```
-
-#### 4. Nginx 配置
-
-在 `/etc/nginx/conf.d/customer-service.conf` 中添加：
+宝塔 → 网站 → 你的站点 → 配置文件，在 `server {}` 块中添加（放在 `#SSL-END` 之后，`#ERROR-PAGE-START` 之前）：
 
 ```nginx
-server {
-    listen 80;
-    server_name your-domain.com;  # 替换为实际域名或服务器 IP
-
-    root /var/www/customer-service;
-    index index.html;
-
-    client_max_body_size 100m;
-
-    # 前端路由（SPA）
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # 后端 API 反向代理
-    location /api {
+    # 后端 API 代理
+    location /api/ {
         proxy_pass http://127.0.0.1:8000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
         proxy_connect_timeout 60s;
         proxy_read_timeout 300s;
+        proxy_buffering off;
     }
 
-    # WebSocket 代理（客服聊天）
-    location /ws {
+    # WebSocket 代理
+    location /ws/ {
         proxy_pass http://127.0.0.1:8000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -230,172 +204,85 @@ server {
         proxy_read_timeout 3600s;
     }
 
-    # Gzip 压缩
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
-    gzip_min_length 1024;
-
-    # 上传文件直接访问
-    location /uploads {
-        alias /var/www/customer-service-backend/uploads;
-        expires 7d;
+    # 静态文件（头像等上传资源）
+    location /static/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_cache_valid 200 1d;
+        add_header Cache-Control "public, max-age=86400";
     }
 
-    access_log /var/log/nginx/customer-service.log;
-    error_log /var/log/nginx/customer-service.error.log;
-}
+    # 前端 SPA
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
 ```
 
-#### 5. 重载 Nginx
+保存后会自动重载 Nginx。
 
-```bash
-nginx -t          # 检查配置
-nginx -s reload   # 重载配置
-```
+### 踩坑记录
 
-#### 6. 配置 systemd 服务（推荐）
-
-```bash
-cat > /etc/systemd/system/customer-service.service << 'EOF'
-[Unit]
-Description=AI Customer Service Platform Backend
-After=network.target
-
-[Service]
-Type=simple
-User=root
-WorkingDirectory=/path/to/customer-service-platform/backend
-Environment="PATH=/path/to/customer-service-platform/backend/.venv/bin:/usr/local/bin:/usr/bin"
-ExecStart=/path/to/customer-service-platform/backend/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000 --workers 2
-Restart=always
-RestartSec=5
-StandardOutput=append:/path/to/customer-service-platform/backend/server.log
-StandardError=append:/path/to/customer-service-platform/backend/server.log
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-systemctl daemon-reload
-systemctl enable customer-service
-systemctl start customer-service
-```
-
-> 将 `/path/to/customer-service-platform` 替换为实际路径。
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| `??=` 语法报错 | 服务器 Node.js 太老 | 本地构建 dist 上传，不在服务器跑 npm |
+| Python SSL 不可用 | Python 3.14.2 缺 SSL | 用宝塔 Python 项目管理器安装的 Python 3.9 |
+| `langchain-community` 装不上 | Python 版本太低 | 升级 Python ≥ 3.9 |
+| 磁盘撑满 | langchain/sentence-transformers 吃空间 | 精简 requirements.txt，节省 3GB+ |
+| `sqlite3 >= 3.35` 报错 | Amazon Linux 2 sqlite 3.7 太旧 | `pysqlite3-binary` 替换 |
+| gunicorn 报错 `missing 'send'` | FastAPI 是 ASGI | gunicorn 配置 `worker_class = 'uvicorn.workers.UvicornWorker'` |
 
 ---
 
-### 四、后端打包成单个可执行文件（PyInstaller）
+## 手动部署
 
-如果不想安装 Python 环境，可以用 **PyInstaller** 把后端打包成**单个可执行文件**，直接运行。
-
-#### 1. 安装 PyInstaller
+### 前端
 
 ```bash
-cd customer-service-platform/backend
+cd frontend
+npm install && npm run build
+cp -r dist/* /var/www/html/
+```
+
+### 后端
+
+```bash
+cd backend
+python3 -m venv .venv
 source .venv/bin/activate
-pip install pyinstaller
+pip install -r requirements.txt
+python3 -m uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-#### 2. 打包（生成单个文件）
+### Nginx 配置
 
-```bash
-# --onefile：打包成单个可执行文件
-# --name：输出文件名
-# --hidden-import：隐藏导入（FastAPI/SQLAlchemy 需要）
-pyinstaller --onefile --name customer-service-api \
-  --hidden-import sqlalchemy \
-  --hidden-import chromadb \
-  --hidden-import playwright \
-  main.py
-```
-
-打包完成后，可执行文件在 `dist/customer-service-api`。
-
-#### 3. 运行打包后的文件
-
-```bash
-# 直接运行，不需要 Python 环境
-cd customer-service-platform/backend
-./dist/customer-service-api --host 0.0.0.0 --port 8000
-```
-
-#### 4. 注意事项
-
-| 问题 | 说明 |
-|------|------|
-| **跨平台** | macOS 打包的文件**不能**在 Linux 上运行，需要在目标系统上打包 |
-| **前端 `dist/`** | PyInstaller 只打包后端，前端需要单独部署或用 Nginx 代理 |
-| **`.env` 配置文件** | 需要手动复制到可执行文件同级目录 |
-| **Playwright 浏览器** | 如果用到 XHS 发布功能，需要额外打包浏览器二进制文件 |
-| **SQLite** | ChromaDB 需要 sqlite3 >= 3.35.0，注意目标系统版本 |
-
-#### 5. 简化版打包脚本（推荐）
-
-创建 `backend/build.sh`：
-
-```bash
-#!/bin/bash
-set -e
-
-echo "开始打包后端..."
-
-cd "$(dirname "$0")"
-
-# 激活虚拟环境
-source .venv/bin/activate
-
-# 安装打包依赖
-pip install pyinstaller -q
-
-# 清理旧产物
-rm -rf build/ dist/ *.spec
-
-# 打包
-pyinstaller --onefile --name customer-service-api \
-  --hidden-import sqlalchemy \
-  --hidden-import chromadb \
-  --hidden-import playwright \
-  --add-data ".venv/lib/python*/site-packages/chromadb:chromadb" \
-  main.py
-
-echo "✅ 打包完成！可执行文件：dist/customer-service-api"
-echo "运行方式：./dist/customer-service-api --host 0.0.0.0 --port 8000"
-```
-
-使用：
-```bash
-chmod +x backend/build.sh
-./backend/build.sh
-```
+参考上方宝塔部署的 Nginx 配置块。
 
 ---
 
-### 五、部署验证
-
-| 检查项 | 命令 / 地址 |
-|--------|------------|
-| 后端服务 | `curl http://localhost:8000/docs` |
-| 前端页面 | 浏览器访问 `http://your-domain.com` |
-| API 文档 | `http://your-domain.com/api/docs` |
-| WebSocket | 客户聊天页面连接测试 |
-
-### 六、常用运维命令
+## 开发命令
 
 ```bash
-# 查看后端日志
-tail -f backend/server.log
+# 本地启动
+./startup.sh
 
-# systemctl 管理
-systemctl status customer-service
-systemctl restart customer-service
-systemctl stop customer-service
+# 本地构建前端
+cd frontend && npm install --legacy-peer-deps && npm run build
 
-# 手动管理（无 systemd）
-kill $(pgrep -f "uvicorn.*main:app") && cd backend && nohup uvicorn main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
+# 一键关闭
+./shutdown.sh
+```
 
-# 更新部署（拉取最新代码后）
-cd frontend && npm run build && cp -r dist/* /var/www/customer-service/
+## 常用运维
+
+```bash
+# 宝塔 → 重启项目（图形界面操作）
+# 或命令行
+ps aux | grep uvicorn
+kill <PID>
+
+# 更新部署
+cd frontend && npm run build && scp -r dist/* root@服务器IP:/www/wwwroot/kefu.zenithgames.com/
+cd /www/git/ai-rag && git pull  # 服务器上拉取后端最新代码
 ```
 
 ---
