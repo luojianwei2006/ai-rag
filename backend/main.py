@@ -1,3 +1,11 @@
+# 替换系统 sqlite3 为新版本（Amazon Linux 2 兼容）
+import sys
+try:
+    __import__('pysqlite3')
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    pass
+
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request

@@ -34,3 +34,6 @@ Pillow
 
 # 小红书自动发布（可选，不用可删）
 # playwright
+
+# Amazon Linux 2 兼容（替换系统 sqlite3）
+pysqlite3-binary>=0.5.0
