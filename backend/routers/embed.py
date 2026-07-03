@@ -141,6 +141,7 @@ async def get_embed_messages(
         message_list.append({
             "id": m.id,
             "role": m.role,
+            "msg_type": m.msg_type or "text",
             "content": m.content,
             "created_at": m.created_at.isoformat() if m.created_at else None,
         })
