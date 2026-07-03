@@ -329,16 +329,8 @@ async function sendMessage() {
     })
 
     if (res.ok) {
-      // 添加到本地消息列表
-      messages.value.push({
-        id: Date.now(),
-        role: 'human_agent',
-        content: newMessage.value,
-        created_at: new Date().toISOString()
-      })
+      // 清空输入框，消息会通过 WebSocket 广播回来
       newMessage.value = ''
-      await nextTick()
-      scrollToBottom()
     } else {
       const data = await res.json()
       MessagePlugin.error(data.detail || t('send_fail'))
