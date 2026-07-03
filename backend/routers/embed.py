@@ -188,27 +188,19 @@ async def send_embed_message(
 
     db.commit()
 
-    # 通知客户聊天端（通过 chat.py 的 WebSocket）
-    from routers.chat import manager as chat_manager
+    # 客户通过轮询获取消息，无需推送
+
+    # 通知嵌入监控端
     try:
-        await chat_manager.send_to_customer(request.session_id, {
+        await embed_manager.broadcast(tenant.embed_api_key, {
             "type": "message",
+            "session_id": request.session_id,
             "role": "human_agent",
             "content": request.content,
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
-    except Exception as e:
-        print(f"[Embed] 发送消息给客户失败: {e}")
-
-    # 同时通知管理后台和嵌入监控端
-    from routers.chat import broadcast_to_all
-    await broadcast_to_all(tenant, {
-        "type": "message",
-        "session_id": request.session_id,
-        "role": "human_agent",
-        "content": request.content,
-        "timestamp": datetime.now(timezone.utc).isoformat()
-    })
+    except Exception:
+        pass
 
     return {"success": True, "message": "消息已发送"}
 
@@ -245,24 +237,19 @@ async def takeover_session(
     db.add(takeover_msg)
     db.commit()
 
-    # 通知客户聊天端
-    from routers.chat import manager as chat_manager
-    await chat_manager.send_to_customer(session_id, {
-        "type": "message",
-        "role": "system",
-        "content": i18n["taken_over_notify"],
-        "timestamp": datetime.now(timezone.utc).isoformat()
-    })
+    # 客户通过轮询获取消息，无需推送
 
-    # 同时通知管理后台和嵌入监控端
-    from routers.chat import broadcast_to_all
-    await broadcast_to_all(tenant, {
-        "type": "taken_over",
-        "session_id": session_id,
-        "role": "system",
-        "content": i18n["taken_over_sys"],
-        "timestamp": datetime.now(timezone.utc).isoformat()
-    })
+    # 通知嵌入监控端
+    try:
+        await embed_manager.broadcast(tenant.embed_api_key, {
+            "type": "taken_over",
+            "session_id": session_id,
+            "role": "system",
+            "content": i18n["taken_over_sys"],
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception:
+        pass
 
     return {"success": True, "message": "已接管会话"}
 
@@ -298,24 +285,19 @@ async def release_session(
     db.add(release_msg)
     db.commit()
 
-    # 通知客户聊天端
-    from routers.chat import manager as chat_manager
-    await chat_manager.send_to_customer(session_id, {
-        "type": "message",
-        "role": "system",
-        "content": i18n["released_notify"],
-        "timestamp": datetime.now(timezone.utc).isoformat()
-    })
+    # 客户通过轮询获取消息，无需推送
 
-    # 同时通知管理后台和嵌入监控端
-    from routers.chat import broadcast_to_all
-    await broadcast_to_all(tenant, {
-        "type": "released",
-        "session_id": session_id,
-        "role": "system",
-        "content": i18n["released_sys"],
-        "timestamp": datetime.now(timezone.utc).isoformat()
-    })
+    # 通知嵌入监控端
+    try:
+        await embed_manager.broadcast(tenant.embed_api_key, {
+            "type": "released",
+            "session_id": session_id,
+            "role": "system",
+            "content": i18n["released_sys"],
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception:
+        pass
 
     return {"success": True, "message": "已释放会话"}
 
