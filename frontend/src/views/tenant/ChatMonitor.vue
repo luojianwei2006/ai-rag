@@ -161,6 +161,7 @@ const replyContent = ref('')
 const replying = ref(false)
 const messageContainer = ref(null)
 let refreshTimer = null
+let lastPollMsgId = 0  // 上次轮询时最后一条消息的 id（增量加载）
 
 const onlineSessions = computed(() => sessions.value.filter(s => s.online))
 
@@ -256,15 +257,18 @@ async function loadSessions() {
 }
 
 async function selectSession(session) {
-  // 如果会话已被嵌入监控端接管，阻止进入并提示
   if (session.taken_over) {
     MessagePlugin.warning(t('taken_warning'))
     return
   }
-
   selectedSession.value = session
+  lastPollMsgId = 0  // 切换会话时重置
   try {
     messages.value = await chatApi.getMessages(session.session_id)
+    // 记录最后一条消息 id
+    if (messages.value.length > 0) {
+      lastPollMsgId = messages.value[messages.value.length - 1].id || 0
+    }
     await nextTick()
     messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
   } catch (e) {}
@@ -299,13 +303,10 @@ async function sendHumanReply() {
   }
 }
 
-// 轮询会话列表和当前选中会话的新消息
+// 轮询会话列表和当前选中会话的新消息（每 3 秒）
 async function pollUpdates() {
   try {
-    // 保存当前会话列表中已有的 session_id，用于对比新增
-    const oldIds = new Set(sessions.value.map(s => s.session_id))
-
-    // 刷新会话列表
+    // 刷新会话列表（轻量，只读 session 元数据）
     const data = await chatApi.getSessions()
     const arr = Array.isArray(data) ? data : []
     sessions.value = arr
@@ -313,17 +314,29 @@ async function pollUpdates() {
     // 同步 selectedSession
     if (selectedSession.value) {
       const found = arr.find(s => s.session_id === selectedSession.value.session_id)
-      if (found) {
-        selectedSession.value = found
-      }
+      if (found) selectedSession.value = found
     }
 
-    // 如果当前正在查看某个会话，也刷新消息
+    // 如果当前正在查看某个会话，只加载新消息（不重新加载全部）
     if (selectedSession.value?.session_id) {
       const msgs = await chatApi.getMessages(selectedSession.value.session_id)
-      messages.value = msgs
-      await nextTick()
-      messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
+      // 只追加 lastPollMsgId 之后的新消息
+      if (msgs.length > 0) {
+        const newMsgs = lastPollMsgId > 0
+          ? msgs.filter(m => m.id > lastPollMsgId)
+          : msgs
+        if (newMsgs.length > 0) {
+          messages.value = [...messages.value, ...newMsgs]
+          lastPollMsgId = newMsgs[newMsgs.length - 1].id
+          // 判断用户是否在底部，是的话才自动滚动
+          const el = messageContainer.value
+          const isAtBottom = el && (el.scrollHeight - el.scrollTop - el.clientHeight) < 60
+          if (isAtBottom || messages.value.length <= msgs.length) {
+            await nextTick()
+            el?.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+          }
+        }
+      }
     }
   } catch (e) {
     console.error('[ChatMonitor] 轮询错误:', e)
