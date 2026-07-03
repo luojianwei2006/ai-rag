@@ -203,6 +203,8 @@ const error = ref('')
 const messageContainer = ref(null)
 const newMessage = ref('')
 let ws = null
+let pollTimer = null
+let embedLastMsgId = 0  // 轮询用：已加载的最后一条消息id
 
 const onlineCount = computed(() => sessions.value.filter(s => s.online).length)
 const humanCount = computed(() => sessions.value.filter(s => s.is_human_service).length)
@@ -261,6 +263,7 @@ async function loadSessions() {
 
 function selectSession(session) {
   selectedSession.value = session
+  embedLastMsgId = 0  // 切换会话时重置
   loadMessages(session.session_id)
 }
 
@@ -271,6 +274,9 @@ async function loadMessages(sessionId) {
     if (res.ok) {
       const data = await res.json()
       messages.value = data.messages || []
+      if (messages.value.length > 0) {
+        embedLastMsgId = messages.value[messages.value.length - 1].id || 0
+      }
       await nextTick()
       scrollToBottom()
     }
@@ -338,6 +344,36 @@ async function sendMessage() {
   } catch (e) {
     MessagePlugin.error(t('send_fail'))
     console.error('[EmbedMonitor] 发送消息失败:', e)
+  }
+}
+
+// 轮询新消息（3秒一次，WebSocket 的兜底方案）
+async function pollMessages() {
+  if (!selectedSession.value?.session_id) return
+  try {
+    const apiKey = route.query.api_key
+    const res = await fetch(`/api/embed/messages?api_key=${apiKey}&session_id=${selectedSession.value.session_id}`)
+    if (res.ok) {
+      const data = await res.json()
+      const allMsgs = data.messages || []
+      // 只追加新消息
+      const newMsgs = embedLastMsgId > 0
+        ? allMsgs.filter(m => m.id > embedLastMsgId)
+        : allMsgs
+      if (newMsgs.length > 0) {
+        messages.value = [...messages.value, ...newMsgs]
+        embedLastMsgId = newMsgs[newMsgs.length - 1].id
+        // 判断是否在底部，是才自动滚动
+        const el = messageContainer.value
+        const isAtBottom = el && (el.scrollHeight - el.scrollTop - el.clientHeight) < 60
+        if (isAtBottom) {
+          await nextTick()
+          scrollToBottom()
+        }
+      }
+    }
+  } catch (e) {
+    // 轮询失败静默忽略
   }
 }
 
@@ -424,6 +460,7 @@ function handleWebSocketMessage(data) {
         }
         console.log('[EmbedMonitor] 推送消息到界面:', newMsg)
         messages.value = [...messages.value, newMsg]
+        embedLastMsgId = Math.max(embedLastMsgId, newMsg.id || Date.now())
         nextTick(() => {
           scrollToBottom()
         })
@@ -491,13 +528,14 @@ onMounted(() => {
     console.error('[EmbedMonitor] 加载失败:', err)
     connectWebSocket()
   })
+
+  // 每3秒轮询兜底（WebSocket 断开时也能兜底）
+  pollTimer = setInterval(pollMessages, 3000)
 })
 
 onUnmounted(() => {
-  if (ws) {
-    ws.close()
-    ws = null
-  }
+  if (ws) { ws.close(); ws = null }
+  if (pollTimer) clearInterval(pollTimer)
 })
 </script>
 
