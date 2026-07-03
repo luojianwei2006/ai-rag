@@ -533,8 +533,9 @@ onMounted(() => {
 
   // 每3秒轮询兜底（WebSocket 断开时也能兜底）
   pollTimer = setInterval(() => {
-    console.log('[EmbedMonitor 轮询] tick, selectedSession=', selectedSession.value?.session_id?.substring(0,8))
-    pollMessages()
+    console.log('[EmbedMonitor 轮询] tick')
+    loadSessions()       // 刷新会话列表（新对话实时出现）
+    pollMessages()       // 刷新选中会话的消息
   }, 3000)
 })
 
