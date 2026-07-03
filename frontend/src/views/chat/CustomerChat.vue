@@ -211,15 +211,15 @@ function resolveParams() {
 // ─── 启动会话 ───
 async function startSession() {
   try {
-    loading.value = true
-    const params = resolveParams()
-
-    // 先获取客服信息（语言等）
+    // 先获取客服信息确定语言（此时不显示加载，避免中文露出）
     const infoRes = await axios.get(`/api/public/chat/${chatToken}/info`)
     companyName.value = infoRes.data.company_name || t('companyFallback')
     avatarUrl.value = infoRes.data.avatar_url ? `${location.origin}${infoRes.data.avatar_url}` : ''
     currentLang.value = infoRes.data.language || 'zh'
-    loading.value = false
+
+    // 语言确定后，再显示加载状态
+    loading.value = true
+    const params = resolveParams()
 
     // 启动/复用会话
     const startBody = { uid: params.uid, nickname: params.nickname }
@@ -227,6 +227,7 @@ async function startSession() {
     const res = await axios.post(`/api/public/chat/${chatToken}/start`, startBody)
     sessionId = res.data.session_id
     aiEnabled = res.data.ai_enabled !== false
+    loading.value = false
 
     // 保存到 localStorage
     localStorage.setItem(`chat_session_${chatToken}`, JSON.stringify({ uid: params.uid, nickname: params.nickname }))
