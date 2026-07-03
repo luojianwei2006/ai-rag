@@ -160,7 +160,6 @@ const messages = ref([])
 const replyContent = ref('')
 const replying = ref(false)
 const messageContainer = ref(null)
-let ws = null
 let refreshTimer = null
 
 const onlineSessions = computed(() => sessions.value.filter(s => s.online))
@@ -300,161 +299,44 @@ async function sendHumanReply() {
   }
 }
 
-function connectWebSocket() {
-  const token = localStorage.getItem('token')
-  if (!token) {
-    console.error('[ChatMonitor] 缺少 token，无法建立 WebSocket 连接')
-    return
-  }
-  // 开发环境使用后端端口 8000，生产环境使用当前 host
-  const isDev = import.meta.env.DEV
-  const host = isDev ? 'localhost:8000' : location.host
-  const wsUrl = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${host}/ws/monitor/${token}`
-  console.log('[ChatMonitor] 连接 WebSocket:', wsUrl)
-  ws = new WebSocket(wsUrl)
+// 轮询会话列表和当前选中会话的新消息
+async function pollUpdates() {
+  try {
+    // 保存当前会话列表中已有的 session_id，用于对比新增
+    const oldIds = new Set(sessions.value.map(s => s.session_id))
 
-  ws.onopen = () => {
-    console.log('[ChatMonitor] WebSocket 已连接 ✅')
-  }
+    // 刷新会话列表
+    const data = await chatApi.getSessions()
+    const arr = Array.isArray(data) ? data : []
+    sessions.value = arr
 
-  ws.onmessage = (e) => {
-    // 处理心跳包
-    if (e.data === 'ping' || e.data === 'pong') {
-      return
-    }
-    try {
-      const data = JSON.parse(e.data)
-      console.log('[ChatMonitor WS] 收到消息 type=', data.type, 'session_id=', data.session_id?.substring(0,8), 'role=', data.role, 'content=', data.content?.substring(0,30))
-
-      if (data.type === 'new_session') {
-        console.log('[ChatMonitor WS] ➕ 新会话:', data.customer_name, 'uid=', data.uid)
-        loadSessions()
-        MessagePlugin.info(t('new_session'))
-      } else if (data.type === 'message' || data.type === 'human_requested') {
-        const matchKey = data.uid || data.session_id
-        console.log('[ChatMonitor WS] 📨 消息/请求 matchKey=', matchKey?.substring(0,8), 'selected.uid=', selectedSession.value?.uid, 'selected.sid=', selectedSession.value?.session_id?.substring(0,8))
-        // 更新会话列表（使用新对象触发响应式更新）
-        // 优先用 uid 匹配（客户刷新后 session_id 会变，uid 不变）
-        const idx = data.uid
-          ? sessions.value.findIndex(s => s.uid === data.uid)
-          : sessions.value.findIndex(s => s.session_id === data.session_id)
-        if (idx >= 0) {
-          const updated = {
-            ...sessions.value[idx],
-            last_message: data.content?.substring(0, 50)
-          }
-          if (data.type === 'human_requested') {
-            updated.is_human_service = true
-          }
-          sessions.value[idx] = updated
-          // 移到列表顶部
-          sessions.value.splice(idx, 1)
-          sessions.value.unshift(updated)
-          // 同步更新 selectedSession 引用（避免引用丢失导致消息不刷新）
-          const isSelected = data.uid
-            ? selectedSession.value?.uid === data.uid
-            : selectedSession.value?.session_id === data.session_id
-          if (isSelected) {
-            console.log('[ChatMonitor WS] 🔄 同步 selectedSession 引用')
-            selectedSession.value = updated
-          }
-          if (data.type === 'human_requested') {
-            MessagePlugin.warning(`${matchKey?.substring(0, 8)} ${t('human_request')}`)
-          }
-        } else {
-          // 列表中还没有这个会话，重新加载
-          console.log('[ChatMonitor WS] ⚠️ 会话不在列表中，重新加载')
-          loadSessions()
-        }
-        // 如果当前查看的会话有新消息（优先 uid 匹配）
-        const isCurrentSession = data.uid
-          ? selectedSession.value?.uid === data.uid
-          : selectedSession.value?.session_id === data.session_id
-        if (isCurrentSession) {
-          if (data.role && data.content) {
-            const newMsg = {
-              id: Date.now(),
-              role: data.role,
-              msg_type: data.msg_type || 'text',
-              content: data.content,
-              created_at: data.timestamp
-            }
-            console.log('[ChatMonitor WS] ✅ 推送消息到界面:', newMsg.role, newMsg.content?.substring(0, 50))
-            messages.value.push(newMsg)
-            nextTick(() => {
-              messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
-            })
-          } else {
-            console.log('[ChatMonitor WS] ⚠️ 消息缺少 role 或 content，不推送')
-          }
-        } else {
-          console.log('[ChatMonitor WS] ⏭️ skip: selected.uid=', selectedSession.value?.uid, 'selected.sid=', selectedSession.value?.session_id?.substring(0,8), 'received.uid=', data.uid, 'received.sid=', data.session_id?.substring(0,8))
-        }
-      } else if (data.type === 'session_closed') {
-        console.log('[ChatMonitor WS] 🔴 会话关闭:', data.uid || data.session_id?.substring(0,8))
-        const idx = data.uid
-          ? sessions.value.findIndex(s => s.uid === data.uid)
-          : sessions.value.findIndex(s => s.session_id === data.session_id)
-        if (idx >= 0) {
-          sessions.value[idx] = { ...sessions.value[idx], online: false }
-        }
-      } else if (data.type === 'session_online') {
-        console.log('[ChatMonitor WS] 🟢 会话上线:', data.uid || data.session_id?.substring(0,8))
-        const idx = data.uid
-          ? sessions.value.findIndex(s => s.uid === data.uid)
-          : sessions.value.findIndex(s => s.session_id === data.session_id)
-        if (idx >= 0) {
-          sessions.value[idx] = { ...sessions.value[idx], online: true }
-        }
-      } else if (data.type === 'taken_over' || data.type === 'released') {
-        console.log('[ChatMonitor WS] 🔐 托管状态变化:', data.type, data.uid || data.session_id?.substring(0,8))
-        const idx = data.uid
-          ? sessions.value.findIndex(s => s.uid === data.uid)
-          : sessions.value.findIndex(s => s.session_id === data.session_id)
-        if (idx >= 0) {
-          sessions.value[idx] = {
-            ...sessions.value[idx],
-            taken_over: data.type === 'taken_over',
-            is_human_service: data.type === 'taken_over' ? true : sessions.value[idx].is_human_service
-          }
-        }
-      } else if (data.type === 'init') {
-        // WebSocket 连接成功后的初始数据推送
-        console.log('[ChatMonitor WS] ✅ init 收到初始会话列表，共', data.sessions?.length, '条')
-        if (Array.isArray(data.sessions)) {
-          sessions.value = data.sessions
-          // 同步 selectedSession 引用
-          if (selectedSession.value) {
-            const found = data.sessions.find(s => s.session_id === selectedSession.value.session_id)
-            if (found) selectedSession.value = found
-          }
-        }
-      } else {
-        console.log('[ChatMonitor WS] ❓ 未知消息类型:', data.type)
+    // 同步 selectedSession
+    if (selectedSession.value) {
+      const found = arr.find(s => s.session_id === selectedSession.value.session_id)
+      if (found) {
+        selectedSession.value = found
       }
-    } catch (err) {
-      console.error('[ChatMonitor] 消息解析失败:', err, e.data?.substring(0, 200))
     }
-  }
 
-  ws.onerror = (e) => {
-    console.error('[ChatMonitor] WebSocket 错误:', e)
-  }
-
-  ws.onclose = (e) => {
-    console.log('[ChatMonitor] WebSocket 已断开:', e.code, e.reason, '3秒后重连...')
-    setTimeout(connectWebSocket, 3000)
+    // 如果当前正在查看某个会话，也刷新消息
+    if (selectedSession.value?.session_id) {
+      const msgs = await chatApi.getMessages(selectedSession.value.session_id)
+      messages.value = msgs
+      await nextTick()
+      messageContainer.value?.scrollTo({ top: messageContainer.value.scrollHeight, behavior: 'smooth' })
+    }
+  } catch (e) {
+    console.error('[ChatMonitor] 轮询错误:', e)
   }
 }
 
 onMounted(() => {
   loadSessions()
-  connectWebSocket()
-  refreshTimer = setInterval(loadSessions, 10000)
+  // 每 3 秒轮询更新
+  refreshTimer = setInterval(pollUpdates, 3000)
 })
 
 onUnmounted(() => {
-  ws?.close()
   clearInterval(refreshTimer)
 })
 </script>

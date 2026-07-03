@@ -109,7 +109,7 @@ const route = useRoute()
 const chatToken = route.params.chatToken
 const chatUid = route.query.uid || ''
 const chatNickname = route.query.nickname || ''
-const chatParam = route.query.p || ''  // 加密参数 p
+const chatParam = route.query.p || ''
 
 // ─── 多语言翻译字典 ───
 const i18nMessages = {
@@ -125,7 +125,7 @@ const i18nMessages = {
     quickTransferHumanBtn: '👤 转人工',
     quickGreeting: '你好，我需要咨询一下',
     quickTransferHuman: '我需要人工客服',
-    reconnecting: '连接已断开，正在重连...',
+    reconnecting: '正在重新连接...',
     userAvatar: '我',
     companyFallback: '在线客服',
     uploadBtn: '🖼️ 发截图',
@@ -145,7 +145,7 @@ const i18nMessages = {
     quickTransferHumanBtn: '👤 Human Agent',
     quickGreeting: 'Hi, I need some help',
     quickTransferHuman: 'I need to speak to a human agent',
-    reconnecting: 'Connection lost, reconnecting...',
+    reconnecting: 'Reconnecting...',
     userAvatar: 'Me',
     companyFallback: 'Customer Service',
     uploadBtn: '🖼️ Send Screenshot',
@@ -163,16 +163,18 @@ const messages = ref([])
 const inputText = ref('')
 const isTyping = ref(false)
 const isHuman = ref(false)
-const connected = ref(false)
 const messagesArea = ref(null)
 const inputRef = ref(null)
 const currentLang = ref('zh')
-const pendingImage = ref('')       // 本地预览 base64
-const pendingImageUrl = ref('')    // 服务器返回的 URL（发送用）
-const uploading = ref(false)       // 上传中
-const uploadError = ref(false)     // 上传失败
-let lastFile = null                // 最近一次上传的文件（用于重试）
-let ws = null
+const pendingImage = ref('')
+const pendingImageUrl = ref('')
+const uploading = ref(false)
+const uploadError = ref(false)
+let lastFile = null
+let sessionId = ''
+let pollTimer = null
+let lastMsgId = 0
+let aiEnabled = true
 
 function t(key) {
   return i18nMessages[currentLang.value]?.[key] || i18nMessages.zh[key] || key
@@ -189,16 +191,97 @@ function addMessage(role, content, msgType = 'text') {
   })
 }
 
-function handleSend() {
+// ─── 解析加密参数 ───
+function resolveParams() {
+  // 尝试从 localStorage 恢复 sessionId（用于连接重启后加载历史）
+  const saved = localStorage.getItem(`chat_session_${chatToken}`)
+  if (saved) {
+    try {
+      const d = JSON.parse(saved)
+      if (d.uid) return { uid: d.uid, nickname: d.nickname || '访客' }
+    } catch(e) {}
+  }
+  if (chatParam) {
+    // 加密参数无法在前端解密，直接传 p 给后端
+    return { uid: '', nickname: '', p: chatParam }
+  }
+  return { uid: chatUid || 'guest_' + Date.now(), nickname: chatNickname || '访客', p: '' }
+}
+
+// ─── 启动会话 ───
+async function startSession() {
+  try {
+    loading.value = true
+    const params = resolveParams()
+
+    // 先获取客服信息（语言等）
+    const infoRes = await axios.get(`/api/public/chat/${chatToken}/info`)
+    companyName.value = infoRes.data.company_name || t('companyFallback')
+    avatarUrl.value = infoRes.data.avatar_url ? `${location.origin}${infoRes.data.avatar_url}` : ''
+    currentLang.value = infoRes.data.language || 'zh'
+    loading.value = false
+
+    // 启动/复用会话
+    const startBody = { uid: params.uid, nickname: params.nickname }
+    if (params.p) startBody.p = params.p
+    const res = await axios.post(`/api/public/chat/${chatToken}/start`, startBody)
+    sessionId = res.data.session_id
+    aiEnabled = res.data.ai_enabled !== false
+
+    // 保存到 localStorage
+    localStorage.setItem(`chat_session_${chatToken}`, JSON.stringify({ uid: params.uid, nickname: params.nickname }))
+
+    // 加载历史消息
+    if (res.data.history && res.data.history.length > 0) {
+      for (const m of res.data.history) {
+        addMessage(m.role, m.content, m.msg_type)
+        if (m.id) lastMsgId = Math.max(lastMsgId, m.id)
+        if (m.role === 'human_agent') isHuman.value = true
+      }
+    }
+
+    // 启动轮询
+    startPolling()
+  } catch (e) {
+    error.value = t('invalidLink')
+    loading.value = false
+  }
+}
+
+// ─── 轮询新消息 ───
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer)
+  pollTimer = setInterval(async () => {
+    if (!sessionId) return
+    try {
+      const res = await axios.get(`/api/public/chat/${chatToken}/poll`, {
+        params: { session_id: sessionId, after_id: lastMsgId }
+      })
+      for (const m of res.data) {
+        // 避免重复（通过 id 去重）
+        if (m.id && m.id <= lastMsgId) continue
+        addMessage(m.role, m.content, m.msg_type)
+        if (m.id) lastMsgId = Math.max(lastMsgId, m.id)
+        if (m.role === 'human_agent') isHuman.value = true
+      }
+      isTyping.value = false
+    } catch (e) {
+      // 轮询失败静默忽略
+    }
+  }, 2000)  // 每 2 秒轮询
+}
+
+// ─── 发送消息 ───
+async function handleSend() {
   const hasText = inputText.value.trim()
   const hasImage = !!pendingImage.value && !!pendingImageUrl.value && !uploading.value && !uploadError.value
 
-  if (!connected.value || (!hasText && !hasImage)) return
+  if (!sessionId || (!hasText && !hasImage)) return
 
   if (hasImage) {
     const imgUrl = pendingImageUrl.value
     addMessage('customer', imgUrl, 'image')
-    ws.send(JSON.stringify({ content: imgUrl, msg_type: 'image' }))
+    await sendToServer(imgUrl, 'image')
     clearPendingImage()
     if (!hasText) return
   }
@@ -206,8 +289,32 @@ function handleSend() {
   const text = inputText.value.trim()
   inputText.value = ''
   addMessage('customer', text)
-  ws.send(JSON.stringify({ content: text, msg_type: 'text' }))
   isTyping.value = true
+  await sendToServer(text, 'text')
+}
+
+async function sendToServer(content, msgType) {
+  try {
+    const res = await axios.post(`/api/public/chat/${chatToken}/send`, {
+      session_id: sessionId,
+      content: content,
+      msg_type: msgType
+    })
+    isTyping.value = false
+
+    // 处理 AI 回复
+    const reply = res.data.reply
+    if (reply) {
+      addMessage(reply.role, reply.content, reply.msg_type || 'text')
+      if (reply.role === 'human_agent') isHuman.value = true
+    }
+    if (res.data.is_human) {
+      isHuman.value = true
+    }
+  } catch (e) {
+    isTyping.value = false
+    addMessage('system', '发送失败，请重试')
+  }
 }
 
 function sendQuick(text) {
@@ -215,62 +322,12 @@ function sendQuick(text) {
   handleSend()
 }
 
-function connectWs() {
-  const isDev = import.meta.env.DEV
-  const host = isDev ? 'localhost:8000' : location.host
-  let wsUrl = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${host}/ws/chat/${chatToken}`
-  // 附加查询参数：优先使用加密参数 p，兼容明文 uid/nickname
-  const qs = []
-  if (chatParam) {
-    qs.push(`p=${encodeURIComponent(chatParam)}`)
-  } else {
-    if (chatUid) qs.push(`uid=${encodeURIComponent(chatUid)}`)
-    if (chatNickname) qs.push(`nickname=${encodeURIComponent(chatNickname)}`)
-  }
-  if (qs.length) wsUrl += `?${qs.join('&')}`
-  ws = new WebSocket(wsUrl)
-
-  ws.onopen = () => {
-    connected.value = true
-  }
-
-  ws.onmessage = (e) => {
-    if (e.data === 'ping' || e.data === 'pong') {
-      return
-    }
-    console.log('[CustomerChat WS] 收到消息:', e.data.substring(0, 200))
-    const data = JSON.parse(e.data)
-    isTyping.value = false
-
-    if (data.type === 'message') {
-      if (data.role === 'ai' || data.role === 'human_agent' || data.role === 'system') {
-        console.log(`[CustomerChat WS] ✅ 显示消息 role=${data.role} content=`, (data.content || '').substring(0, 50))
-        addMessage(data.role, data.content, data.msg_type || 'text')
-        if (data.role === 'human_agent') isHuman.value = true
-      } else {
-        console.log(`[CustomerChat WS] ⚠️ 未知 role="${data.role}"，未显示`)
-      }
-    } else {
-      console.log(`[CustomerChat WS] 非 message 类型: type=${data.type}`)
-    }
-  }
-
-  ws.onclose = () => {
-    connected.value = false
-    addMessage('system', t('reconnecting'))
-    setTimeout(connectWs, 3000)
-  }
-
-  ws.onerror = () => {
-    connected.value = false
-  }
-}
-
+// ─── 图片上传 ───
 async function handleImageUpload(e) {
   const file = e.target.files?.[0]
   if (!file) return
-  await fileToBase64(file)   // 本地预览
-  uploadImage(file)          // 上传服务器拿到 URL
+  await fileToBase64(file)
+  uploadImage(file)
   e.target.value = ''
 }
 
@@ -296,10 +353,7 @@ function fileToBase64(file) {
       return
     }
     const reader = new FileReader()
-    reader.onload = () => {
-      pendingImage.value = reader.result
-      resolve()
-    }
+    reader.onload = () => { pendingImage.value = reader.result; resolve() }
     reader.onerror = reject
     reader.readAsDataURL(file)
   })
@@ -344,22 +398,12 @@ function previewImage(url) {
   window.open(url, '_blank')
 }
 
-onMounted(async () => {
-  try {
-    const res = await axios.get(`/api/public/chat/${chatToken}/info`)
-    companyName.value = res.data.company_name || t('companyFallback')
-    avatarUrl.value = res.data.avatar_url ? `${location.origin}${res.data.avatar_url}` : ''
-    currentLang.value = res.data.language || 'zh'
-    loading.value = false
-    connectWs()
-  } catch (e) {
-    error.value = t('invalidLink')
-    loading.value = false
-  }
+onMounted(() => {
+  startSession()
 })
 
 onUnmounted(() => {
-  ws?.close()
+  if (pollTimer) clearInterval(pollTimer)
 })
 </script>
 
