@@ -204,7 +204,7 @@ const messageContainer = ref(null)
 const newMessage = ref('')
 let ws = null
 let pollTimer = null
-let embedLastMsgId = 0  // 轮询用：已加载的最后一条消息id
+const shownMsgIds = new Set()  // 已显示的消息id集合（用于轮询去重）
 
 const onlineCount = computed(() => sessions.value.filter(s => s.online).length)
 const humanCount = computed(() => sessions.value.filter(s => s.is_human_service).length)
@@ -263,7 +263,7 @@ async function loadSessions() {
 
 function selectSession(session) {
   selectedSession.value = session
-  embedLastMsgId = 0  // 切换会话时重置
+  shownMsgIds.clear()  // 切换会话时重置
   loadMessages(session.session_id)
 }
 
@@ -274,9 +274,11 @@ async function loadMessages(sessionId) {
     if (res.ok) {
       const data = await res.json()
       messages.value = data.messages || []
-      if (messages.value.length > 0) {
-        embedLastMsgId = messages.value[messages.value.length - 1].id || 0
+      // 记录已显示的消息 id
+      for (const m of messages.value) {
+        if (m.id) shownMsgIds.add(m.id)
       }
+      console.log('[EmbedMonitor] 加载消息', messages.value.length, '条，ids:', [...shownMsgIds])
       await nextTick()
       scrollToBottom()
     }
@@ -356,14 +358,14 @@ async function pollMessages() {
     if (res.ok) {
       const data = await res.json()
       const allMsgs = data.messages || []
-      // 只追加新消息
-      const newMsgs = embedLastMsgId > 0
-        ? allMsgs.filter(m => m.id > embedLastMsgId)
-        : allMsgs
+      // 过滤掉已显示的消息（用 Set 去重，兼容 WS 的 Date.now() id）
+      const newMsgs = allMsgs.filter(m => m.id && !shownMsgIds.has(m.id))
       if (newMsgs.length > 0) {
-        messages.value = [...messages.value, ...newMsgs]
-        embedLastMsgId = newMsgs[newMsgs.length - 1].id
-        // 判断是否在底部，是才自动滚动
+        console.log('[EmbedMonitor 轮询] 发现', newMsgs.length, '条新消息')
+        for (const m of newMsgs) {
+          shownMsgIds.add(m.id)
+          messages.value.push(m)
+        }
         const el = messageContainer.value
         const isAtBottom = el && (el.scrollHeight - el.scrollTop - el.clientHeight) < 60
         if (isAtBottom) {
@@ -373,7 +375,7 @@ async function pollMessages() {
       }
     }
   } catch (e) {
-    // 轮询失败静默忽略
+    console.error('[EmbedMonitor 轮询] 失败:', e)
   }
 }
 
@@ -459,8 +461,8 @@ function handleWebSocketMessage(data) {
           created_at: data.timestamp
         }
         console.log('[EmbedMonitor] 推送消息到界面:', newMsg)
-        messages.value = [...messages.value, newMsg]
-        embedLastMsgId = Math.max(embedLastMsgId, newMsg.id || Date.now())
+        messages.value.push(newMsg)
+        if (newMsg.id) shownMsgIds.add(newMsg.id)
         nextTick(() => {
           scrollToBottom()
         })
@@ -530,7 +532,10 @@ onMounted(() => {
   })
 
   // 每3秒轮询兜底（WebSocket 断开时也能兜底）
-  pollTimer = setInterval(pollMessages, 3000)
+  pollTimer = setInterval(() => {
+    console.log('[EmbedMonitor 轮询] tick, selectedSession=', selectedSession.value?.session_id?.substring(0,8))
+    pollMessages()
+  }, 3000)
 })
 
 onUnmounted(() => {
