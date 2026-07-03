@@ -23,7 +23,7 @@ bash start.sh
 - **前端**: Vue 3 / TDesign / Vite
 - **RAG**: ChromaDB 向量数据库
 - **大模型**: 智谱GLM / OpenAI ChatGPT / Google Gemini / 自定义 OpenAI 兼容
-- **实时通信**: WebSocket
+- **实时通信**: REST 轮询（3秒间隔，替代 WebSocket）
 
 ## 目录结构
 
@@ -38,7 +38,7 @@ customer-service-platform/
 │   │   ├── admin.py         # 管理员接口
 │   │   ├── tenant.py        # 商户接口
 │   │   ├── knowledge.py     # 知识库接口
-│   │   └── chat.py          # 聊天接口（含WebSocket）
+│   │   └── chat.py          # 聊天接口（REST 轮询，消息全存数据库）
 │   ├── services/
 │   │   ├── rag_service.py   # RAG核心
 │   │   ├── llm_service.py   # 大模型调用
@@ -63,10 +63,11 @@ customer-service-platform/
 
 | 页面 | 地址 |
 |------|------|
-| 管理员后台 | http://localhost:5173/admin/login |
-| 商户登录 | http://localhost:5173/login |
-| 商户注册 | http://localhost:5173/register |
-| API 文档 | http://localhost:8000/docs |
+| 管理员后台 | `http://你的域名/admin/login` |
+| 商户登录 | `http://你的域名/login` |
+| 商户注册 | `http://你的域名/register` |
+| 嵌入监控 | `http://你的域名/embed/monitor?api_key=xxx` |
+| API 文档 | `http://你的域名/docs` |
 
 ## 默认账号
 
@@ -76,10 +77,17 @@ customer-service-platform/
 ## 客服链接格式
 
 ```
-http://localhost:5173/chat/{chat_token}
+http://你的域名/chat/{chat_token}?p={加密参数}
 ```
 
 每个商户注册后自动生成唯一的 `chat_token`，在商户后台的左侧菜单底部可复制完整链接。
+
+## 架构说明
+
+- **聊天通信**: REST API + 数据库轮询（每 2-3 秒），不再依赖 WebSocket
+- **消息存储**: 客户/AI/人工回复全部实时存入数据库，刷新/重连不丢消息
+- **会话复用**: 相同 uid 自动复用会话，客户重新进入可接上历史对话
+- **嵌入监控**: WebSocket（实时推送）+ 轮询（3秒兜底）双通道保障
 
 ## 人工客服触发词
 
