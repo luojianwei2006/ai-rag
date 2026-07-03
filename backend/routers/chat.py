@@ -264,6 +264,7 @@ async def upload_chat_image(chat_token: str, file: UploadFile = File(...), db: S
 class StartSessionRequest(BaseModel):
     uid: str = ""
     nickname: str = ""
+    p: str = ""  # 加密参数 p，解密后取得 uid 和 nickname
 
 class SendMessageRequest(BaseModel):
     session_id: str
@@ -288,9 +289,22 @@ async def start_chat_session(
     lang = tenant.chat_language or "zh"
     i18n = CHAT_I18N.get(lang, CHAT_I18N["zh"])
 
-    # 解析加密参数 p（从请求体中传）
+    # 解析 uid 和 nickname：优先解密 p 参数
     uid = req.uid
     nickname = req.nickname or "访客"
+    if req.p:
+        try:
+            decrypt_key = tenant.embed_api_key or None
+            decrypted = decrypt_chat_params(req.p, key=decrypt_key)
+            uid = decrypted.get("uid") or uid
+            nickname = decrypted.get("nickname") or nickname
+        except Exception:
+            try:
+                decrypted = decrypt_chat_params(req.p, key=None)
+                uid = decrypted.get("uid") or uid
+                nickname = decrypted.get("nickname") or nickname
+            except Exception:
+                pass
 
     # 如果有 uid，复用最近的 active 会话
     session_id = None
