@@ -60,6 +60,7 @@ class UpdateApiKeyRequest(BaseModel):
 class UpdateSettingsRequest(BaseModel):
     chat_language: Optional[str] = None  # zh, en
     ai_enabled: Optional[bool] = None
+    dingtalk_webhook: Optional[str] = None  # 钉钉机器人 Webhook URL
 
 
 class RegenerateEmbedKeyRequest(BaseModel):
@@ -187,7 +188,8 @@ async def get_profile(tenant: Tenant = Depends(get_current_tenant), db: Session 
             "chat_language": tenant.chat_language or "zh",
             "ai_enabled": tenant.ai_enabled if tenant.ai_enabled is not None else True,
             "avatar_url": tenant.avatar_url,
-            "embed_api_key": tenant.embed_api_key or ""
+            "embed_api_key": tenant.embed_api_key or "",
+            "dingtalk_webhook": tenant.dingtalk_webhook or ""
         }
 
     return {
@@ -204,7 +206,8 @@ async def get_profile(tenant: Tenant = Depends(get_current_tenant), db: Session 
         "chat_language": tenant.chat_language or "zh",
         "ai_enabled": tenant.ai_enabled if tenant.ai_enabled is not None else True,
         "avatar_url": tenant.avatar_url,
-        "embed_api_key": tenant.embed_api_key or ""
+        "embed_api_key": tenant.embed_api_key or "",
+        "dingtalk_webhook": tenant.dingtalk_webhook or ""
     }
 
 
@@ -393,8 +396,15 @@ async def update_settings(
         tenant.chat_language = req.chat_language
     if req.ai_enabled is not None:
         tenant.ai_enabled = req.ai_enabled
+    if req.dingtalk_webhook is not None:
+        tenant.dingtalk_webhook = req.dingtalk_webhook.strip() if req.dingtalk_webhook.strip() else None
     db.commit()
-    return {"message": "设置已更新", "chat_language": tenant.chat_language, "ai_enabled": tenant.ai_enabled}
+    return {
+        "message": "设置已更新",
+        "chat_language": tenant.chat_language,
+        "ai_enabled": tenant.ai_enabled,
+        "dingtalk_webhook": tenant.dingtalk_webhook or ""
+    }
 
 
 @router.get("/embed-key")

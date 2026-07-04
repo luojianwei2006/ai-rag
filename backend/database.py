@@ -17,3 +17,15 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def run_migrations():
+    """运行数据库迁移，确保新增列存在"""
+    from sqlalchemy import text, inspect
+    insp = inspect(engine)
+    cols = [c["name"] for c in insp.get_columns("tenants")]
+    if "dingtalk_webhook" not in cols:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE tenants ADD COLUMN dingtalk_webhook VARCHAR(500)"))
+            conn.commit()
+        print("✅ 数据库迁移: 已添加 tenants.dingtalk_webhook 列")

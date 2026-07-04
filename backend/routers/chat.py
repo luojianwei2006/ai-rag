@@ -2,6 +2,7 @@ import json
 import os
 import uuid
 import secrets
+import asyncio
 from datetime import datetime
 from typing import Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
@@ -375,6 +376,24 @@ async def start_chat_session(
         )
         db.add(session)
         db.commit()
+
+        # 异步发送钉钉通知（不阻塞主流程）
+        if tenant.dingtalk_webhook:
+            try:
+                from services.dingtalk_service import send_dingtalk_notification
+                time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                markdown_text = (
+                    f"## 🔔 新的客服咨询\n\n"
+                    f"**客户昵称**：{nickname}\n"
+                    f"**咨询时间**：{time_str}\n"
+                    f"**会话ID**：{session_id}\n\n"
+                    f"[查看详情](https://kefu.zenithgames.com/tenant/monitor)"
+                )
+                asyncio.create_task(
+                    send_dingtalk_notification(tenant.dingtalk_webhook, "新的客服咨询", markdown_text)
+                )
+            except Exception as e:
+                print(f"[DingTalk] 创建通知任务失败: {e}")
 
         # 首次创建：发送欢迎消息
         if tenant.ai_enabled:

@@ -71,6 +71,9 @@ class Tenant(Base):
     wecom_token = Column(String(255), nullable=True)
     wecom_encoding_aes_key = Column(String(255), nullable=True)
     
+    # 钉钉机器人配置
+    dingtalk_webhook = Column(String(500), nullable=True)   # 钉钉机器人 Webhook URL
+
     # 积分余额
     points_balance = Column(Integer, default=0)
 

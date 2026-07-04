@@ -85,6 +85,29 @@
         </div>
       </div>
 
+      <!-- 钉钉机器人通知 -->
+      <div class="setting-section">
+        <h3 class="section-title">钉钉机器人通知</h3>
+        <p class="section-desc">配置后，新客户咨询时将自动推送通知到钉钉群</p>
+        <div class="setting-row">
+          <div class="setting-label">
+            <span class="label-text">Webhook URL</span>
+            <span class="label-hint">在钉钉群设置中添加自定义机器人获取 Webhook 地址</span>
+          </div>
+          <div class="webhook-input-row">
+            <t-input
+              v-model="dingtalkWebhook"
+              placeholder="https://oapi.dingtalk.com/robot/send?access_token=xxx"
+              style="width: 420px"
+              clearable
+            />
+            <t-button theme="primary" size="small" :loading="savingDingtalk" @click="handleDingtalkSave">
+              保存
+            </t-button>
+          </div>
+        </div>
+      </div>
+
       <!-- 嵌入监控 API Key -->
       <div class="setting-section">
         <h3 class="section-title">嵌入监控 API Key</h3>
@@ -199,6 +222,8 @@ const companyName = ref('')
 const deleting = ref(false)
 const fileInput = ref(null)
 const aiEnabled = ref(true)
+const dingtalkWebhook = ref('')
+const savingDingtalk = ref(false)
 const embedApiKey = ref('')
 const showKey = ref(false)
 const chatToken = ref('')
@@ -489,6 +514,7 @@ onMounted(async () => {
       }
       companyName.value = profile.company_name || ''
       embedApiKey.value = profile.embed_api_key || ''
+      dingtalkWebhook.value = profile.dingtalk_webhook || ''
       chatToken.value = profile.chat_token || ''
     }
   } catch (e) {
@@ -549,6 +575,20 @@ async function handleAiToggle(val) {
     MessagePlugin.success(val ? 'AI 客服已启用' : 'AI 客服已关闭')
   } catch (e) {
     MessagePlugin.error('设置保存失败')
+  }
+}
+
+async function handleDingtalkSave() {
+  savingDingtalk.value = true
+  try {
+    const url = dingtalkWebhook.value.trim()
+    await tenantApi.updateSettings({ dingtalk_webhook: url })
+    dingtalkWebhook.value = url
+    MessagePlugin.success(url ? '钉钉通知配置已保存' : '钉钉通知已关闭')
+  } catch (e) {
+    MessagePlugin.error('保存失败')
+  } finally {
+    savingDingtalk.value = false
   }
 }
 </script>
@@ -778,5 +818,11 @@ async function handleAiToggle(val) {
   font-size: 12px;
   color: #999;
   margin-top: 8px;
+}
+
+.webhook-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 </style>

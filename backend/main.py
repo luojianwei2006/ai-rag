@@ -12,7 +12,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
-from database import engine, Base
+from database import engine, Base, run_migrations
 from models.models import Admin, SystemConfig
 from utils.security import get_password_hash
 from config import settings
@@ -27,6 +27,9 @@ async def lifespan(app: FastAPI):
     """启动时初始化数据库"""
     # 创建表
     Base.metadata.create_all(bind=engine)
+
+    # 运行数据库迁移
+    run_migrations()
 
     # 创建上传目录
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
