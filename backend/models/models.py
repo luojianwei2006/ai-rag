@@ -96,6 +96,7 @@ class Tenant(Base):
     xhs_accounts = relationship("XhsAccount", back_populates="tenant", cascade="all, delete-orphan")
     xhs_materials = relationship("XhsMaterial", back_populates="tenant", cascade="all, delete-orphan")
     xhs_tasks = relationship("XhsTask", back_populates="tenant", cascade="all, delete-orphan")
+    faq_categories = relationship("FaqCategory", cascade="all, delete-orphan")
 
 
 class KnowledgeBase(Base):
@@ -155,6 +156,40 @@ class ChatMessage(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     session = relationship("ChatSession", back_populates="messages")
+
+
+# ==================== FAQ（常见问题）模型 ====================
+
+class FaqCategory(Base):
+    """FAQ 分类"""
+    __tablename__ = "faq_categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
+    name_zh = Column(String(100), nullable=False)
+    name_en = Column(String(100), nullable=True)
+    sort_order = Column(Integer, default=0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    items = relationship("FaqItem", back_populates="category", cascade="all, delete-orphan",
+                         order_by="FaqItem.sort_order")
+
+
+class FaqItem(Base):
+    """FAQ 问题与回答"""
+    __tablename__ = "faq_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("faq_categories.id"), nullable=False)
+    question_zh = Column(String(500), nullable=False)
+    question_en = Column(String(500), nullable=True)
+    answer_zh = Column(Text, nullable=False)
+    answer_en = Column(Text, nullable=True)
+    sort_order = Column(Integer, default=0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    category = relationship("FaqCategory", back_populates="items")
 
 
 # ==================== 小红书相关模型 ====================

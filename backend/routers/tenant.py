@@ -7,7 +7,7 @@ from PIL import Image
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from database import get_db
-from models.models import Tenant
+from models.models import Tenant, FaqCategory, FaqItem
 from utils.security import (
     verify_password, get_password_hash,
     create_access_token, get_current_tenant
@@ -515,3 +515,165 @@ async def delete_avatar(
         db.commit()
 
     return {"message": "头像已删除"}
+
+
+# ==================== FAQ 管理 ====================
+
+class FaqCategoryRequest(BaseModel):
+    id: Optional[int] = None
+    name_zh: str
+    name_en: Optional[str] = ""
+    sort_order: int = 0
+
+class FaqItemRequest(BaseModel):
+    id: Optional[int] = None
+    category_id: int
+    question_zh: str
+    question_en: Optional[str] = ""
+    answer_zh: str
+    answer_en: Optional[str] = ""
+    sort_order: int = 0
+
+class FaqReorderRequest(BaseModel):
+    ids: list  # 新的排序列表 [id1, id2, ...]
+
+@router.get("/faq")
+async def get_faq(
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """获取FAQ（含分类和问题）"""
+    categories = db.query(FaqCategory).filter(
+        FaqCategory.tenant_id == tenant.id
+    ).order_by(FaqCategory.sort_order).all()
+
+    result = []
+    for cat in categories:
+        items = db.query(FaqItem).filter(
+            FaqItem.category_id == cat.id,
+            FaqItem.tenant_id == tenant.id
+        ).order_by(FaqItem.sort_order).all()
+
+        result.append({
+            "id": cat.id,
+            "name_zh": cat.name_zh,
+            "name_en": cat.name_en or cat.name_zh,
+            "sort_order": cat.sort_order,
+            "items": [{
+                "id": it.id,
+                "category_id": it.category_id,
+                "question_zh": it.question_zh,
+                "question_en": it.question_en or it.question_zh,
+                "answer_zh": it.answer_zh,
+                "answer_en": it.answer_en or it.answer_zh,
+                "sort_order": it.sort_order,
+            } for it in items]
+        })
+    return result
+
+
+@router.post("/faq/category")
+async def save_faq_category(
+    req: FaqCategoryRequest,
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """保存分类（id有值则更新，无则新建）"""
+    if req.id:
+        cat = db.query(FaqCategory).filter(
+            FaqCategory.id == req.id, FaqCategory.tenant_id == tenant.id
+        ).first()
+        if not cat:
+            raise HTTPException(status_code=404, detail="分类不存在")
+    else:
+        cat = FaqCategory(tenant_id=tenant.id)
+
+    cat.name_zh = req.name_zh
+    cat.name_en = req.name_en or ""
+    cat.sort_order = req.sort_order
+
+    if not req.id:
+        db.add(cat)
+    db.commit()
+    db.refresh(cat)
+    return {"id": cat.id, "message": "保存成功"}
+
+
+@router.delete("/faq/category/{cat_id}")
+async def delete_faq_category(
+    cat_id: int,
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """删除分类（同时删除分类下的所有问题）"""
+    cat = db.query(FaqCategory).filter(
+        FaqCategory.id == cat_id, FaqCategory.tenant_id == tenant.id
+    ).first()
+    if not cat:
+        raise HTTPException(status_code=404, detail="分类不存在")
+    db.delete(cat)
+    db.commit()
+    return {"message": "已删除"}
+
+
+@router.post("/faq/item")
+async def save_faq_item(
+    req: FaqItemRequest,
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """保存问题（id有值则更新，无则新建）"""
+    if req.id:
+        item = db.query(FaqItem).filter(
+            FaqItem.id == req.id, FaqItem.tenant_id == tenant.id
+        ).first()
+        if not item:
+            raise HTTPException(status_code=404, detail="问题不存在")
+    else:
+        item = FaqItem(tenant_id=tenant.id)
+
+    item.category_id = req.category_id
+    item.question_zh = req.question_zh
+    item.question_en = req.question_en or ""
+    item.answer_zh = req.answer_zh
+    item.answer_en = req.answer_en or ""
+    item.sort_order = req.sort_order
+
+    if not req.id:
+        db.add(item)
+    db.commit()
+    db.refresh(item)
+    return {"id": item.id, "message": "保存成功"}
+
+
+@router.delete("/faq/item/{item_id}")
+async def delete_faq_item(
+    item_id: int,
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """删除问题"""
+    item = db.query(FaqItem).filter(
+        FaqItem.id == item_id, FaqItem.tenant_id == tenant.id
+    ).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="问题不存在")
+    db.delete(item)
+    db.commit()
+    return {"message": "已删除"}
+
+
+@router.put("/faq/reorder")
+async def reorder_faq(
+    req: FaqReorderRequest,
+    tenant: Tenant = Depends(get_current_tenant),
+    db: Session = Depends(get_db)
+):
+    """批量重排"""
+    for idx, item_id in enumerate(req.ids):
+        db.query(FaqItem).filter(
+            FaqItem.id == item_id, FaqItem.tenant_id == tenant.id
+        ).update({"sort_order": idx})
+    db.commit()
+    return {"message": "排序已更新"}
+

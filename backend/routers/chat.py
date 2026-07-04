@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database import get_db, SessionLocal
-from models.models import Tenant, KnowledgeBase, ChatSession, ChatMessage
+from models.models import Tenant, KnowledgeBase, ChatSession, ChatMessage, FaqCategory, FaqItem
 from utils.security import get_current_tenant, decode_token
 from utils.crypto import encrypt_chat_params, decrypt_chat_params
 from services.rag_service import query_knowledge_base
@@ -257,6 +257,42 @@ async def upload_chat_image(chat_token: str, file: UploadFile = File(...), db: S
         f.write(content)
 
     return {"url": f"/static/chat_images/{tenant.id}/{filename}"}
+
+
+# ─────── 公开 FAQ 接口 ───────
+
+@router.get("/api/public/chat/{chat_token}/faq")
+async def get_public_faq(chat_token: str, db: Session = Depends(get_db)):
+    """获取商户 FAQ（客户端使用）"""
+    tenant = db.query(Tenant).filter(Tenant.chat_token == chat_token).first()
+    if not tenant or not tenant.is_active:
+        raise HTTPException(status_code=404, detail="客服服务不可用")
+
+    categories = db.query(FaqCategory).filter(
+        FaqCategory.tenant_id == tenant.id
+    ).order_by(FaqCategory.sort_order).all()
+
+    lang = tenant.chat_language or "zh"
+    result = []
+    for cat in categories:
+        items = db.query(FaqItem).filter(
+            FaqItem.category_id == cat.id,
+            FaqItem.tenant_id == tenant.id
+        ).order_by(FaqItem.sort_order).all()
+
+        result.append({
+            "id": cat.id,
+            "name": cat.name_en if lang == "en" and cat.name_en else cat.name_zh,
+            "items": [{
+                "id": it.id,
+                "question": it.question_en if lang == "en" and it.question_en else it.question_zh,
+                "answer": it.answer_en if lang == "en" and it.answer_en else it.answer_zh,
+            } for it in items]
+        })
+    return {
+        "has_faq": len(result) > 0,
+        "categories": result
+    }
 
 
 # ─────── 客户端会话 & 消息接口（替代 WebSocket）───────

@@ -13,6 +13,46 @@
       <p>{{ error }}</p>
     </div>
 
+    <!-- FAQ 模式（有 FAQ 且未开始聊天时显示） -->
+    <div v-else-if="showFaq" class="faq-wrapper">
+      <div class="chat-top">
+        <div class="company-info">
+          <div class="company-avatar">
+            <img v-if="avatarUrl" :src="avatarUrl" class="avatar-img" />
+            <template v-else>{{ (t('companyFallback') || '?')[0] }}</template>
+          </div>
+          <div>
+            <div class="company-name">{{ companyName }}</div>
+            <div class="company-status">
+              <span class="status-dot"></span>
+              {{ t('statusAI') }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="faq-content">
+        <div class="faq-title">{{ t('faqTitle') }}</div>
+        <div v-for="cat of faqCategories" :key="cat.id" class="faq-category">
+          <div class="faq-cat-name">{{ cat.name }}</div>
+          <div v-for="item of cat.items" :key="item.id" class="faq-item" @click="toggleFaqItem(item)">
+            <div class="faq-question">
+              <span class="faq-q-icon">Q</span>
+              {{ item.question }}
+              <span class="faq-arrow">{{ item._open ? '▾' : '▸' }}</span>
+            </div>
+            <div v-if="item._open" class="faq-answer">
+              <span class="faq-a-icon">A</span>
+              {{ item.answer }}
+            </div>
+          </div>
+        </div>
+        <div v-if="faqCategories.length === 0" class="faq-empty">{{ t('faqEmpty') }}</div>
+      </div>
+      <div class="faq-footer">
+        <button class="faq-start-btn" @click="startChat">{{ t('contactBtn') }}</button>
+      </div>
+    </div>
+
     <!-- 聊天界面 -->
     <div v-else class="chat-wrapper">
       <!-- 顶栏 -->
@@ -132,6 +172,9 @@ const i18nMessages = {
     uploadingText: '上传中...',
     uploadFail: '上传失败',
     retryBtn: '重试',
+    faqTitle: '常见问题',
+    faqEmpty: '暂无常见问题',
+    contactBtn: '💬 联系客服',
   },
   en: {
     loading: 'Connecting to customer service...',
@@ -152,6 +195,9 @@ const i18nMessages = {
     uploadingText: 'Uploading...',
     uploadFail: 'Upload Failed',
     retryBtn: 'Retry',
+    faqTitle: 'FAQ',
+    faqEmpty: 'No FAQ available',
+    contactBtn: '💬 Contact Customer Service',
   }
 }
 
@@ -175,6 +221,8 @@ let sessionId = ''
 let pollTimer = null
 let lastMsgId = 0
 let aiEnabled = true
+const showFaq = ref(false)
+const faqCategories = ref([])
 
 function t(key) {
   return i18nMessages[currentLang.value]?.[key] || i18nMessages.zh[key] || key
@@ -217,36 +265,66 @@ async function startSession() {
     avatarUrl.value = infoRes.data.avatar_url ? `${location.origin}${infoRes.data.avatar_url}` : ''
     currentLang.value = infoRes.data.language || 'zh'
 
-    // 语言确定后，再显示加载状态
-    loading.value = true
-    const params = resolveParams()
-
-    // 启动/复用会话
-    const startBody = { uid: params.uid, nickname: params.nickname }
-    if (params.p) startBody.p = params.p
-    const res = await axios.post(`/api/public/chat/${chatToken}/start`, startBody)
-    sessionId = res.data.session_id
-    aiEnabled = res.data.ai_enabled !== false
-    loading.value = false
-
-    // 保存到 localStorage
-    localStorage.setItem(`chat_session_${chatToken}`, JSON.stringify({ uid: params.uid, nickname: params.nickname }))
-
-    // 加载历史消息
-    if (res.data.history && res.data.history.length > 0) {
-      for (const m of res.data.history) {
-        addMessage(m.role, m.content, m.msg_type)
-        if (m.id) lastMsgId = Math.max(lastMsgId, m.id)
-        if (m.role === 'human_agent') isHuman.value = true
+    // 获取 FAQ 数据
+    try {
+      const faqRes = await axios.get(`/api/public/chat/${chatToken}/faq`)
+      if (faqRes.data.has_faq) {
+        faqCategories.value = faqRes.data.categories || []
+        showFaq.value = true
+        loading.value = false
+        return  // 有 FAQ，停在 FAQ 页面，等待用户点击"联系客服"
       }
+    } catch (e) {
+      // FAQ 获取失败，直接进入聊天
     }
-
-    // 启动轮询
-    startPolling()
+    // 无 FAQ，直接启动聊天
+    await initChat()
   } catch (e) {
     error.value = t('invalidLink')
     loading.value = false
   }
+}
+
+// FAQ 页面的"联系客服"按钮
+async function startChat() {
+  showFaq.value = false
+  loading.value = true
+  try {
+    await initChat()
+  } catch (e) {
+    error.value = t('invalidLink')
+    loading.value = false
+  }
+}
+
+// 初始化聊天会话
+async function initChat() {
+  loading.value = true
+  const params = resolveParams()
+
+  const startBody = { uid: params.uid, nickname: params.nickname }
+  if (params.p) startBody.p = params.p
+  const res = await axios.post(`/api/public/chat/${chatToken}/start`, startBody)
+  sessionId = res.data.session_id
+  aiEnabled = res.data.ai_enabled !== false
+  loading.value = false
+
+  localStorage.setItem(`chat_session_${chatToken}`, JSON.stringify({ uid: params.uid, nickname: params.nickname }))
+
+  // 加载历史消息
+  if (res.data.history && res.data.history.length > 0) {
+    for (const m of res.data.history) {
+      addMessage(m.role, m.content, m.msg_type)
+      if (m.id) lastMsgId = Math.max(lastMsgId, m.id)
+      if (m.role === 'human_agent') isHuman.value = true
+    }
+  }
+
+  startPolling()
+}
+
+function toggleFaqItem(item) {
+  item._open = !item._open
 }
 
 // ─── 轮询新消息 ───
@@ -533,4 +611,26 @@ textarea:focus { border-color: #667eea; }
 
 /* 上传按钮 */
 .upload-btn { cursor: pointer; }
+
+/* FAQ 页面 */
+.faq-wrapper { display: flex; flex-direction: column; height: 100%; max-width: 600px; margin: 0 auto; width: 100%; background: #f0f2f5; }
+.faq-content { flex: 1; overflow-y: auto; padding: 20px; }
+.faq-title { font-size: 20px; font-weight: 700; color: #333; margin-bottom: 20px; text-align: center; }
+.faq-category { margin-bottom: 16px; }
+.faq-cat-name { font-size: 14px; font-weight: 600; color: #667eea; margin-bottom: 8px; padding-left: 4px; }
+.faq-item { background: white; border-radius: 12px; margin-bottom: 8px; padding: 14px 16px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s; }
+.faq-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.faq-question { font-size: 14px; color: #333; display: flex; align-items: flex-start; gap: 6px; line-height: 1.5; }
+.faq-q-icon { color: #667eea; font-weight: 700; flex-shrink: 0; font-size: 13px; }
+.faq-arrow { margin-left: auto; color: #aaa; flex-shrink: 0; font-size: 12px; }
+.faq-answer { font-size: 13px; color: #555; padding: 10px 0 0 20px; line-height: 1.6; display: flex; align-items: flex-start; gap: 6px; border-top: 1px solid #f0f0f0; margin-top: 8px; }
+.faq-a-icon { color: #52c41a; font-weight: 700; flex-shrink: 0; font-size: 13px; }
+.faq-empty { text-align: center; color: #aaa; padding: 40px 0; }
+.faq-footer { padding: 16px 20px; background: white; border-top: 1px solid #f0f0f0; }
+.faq-start-btn {
+  width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.2s; letter-spacing: 1px;
+}
+.faq-start-btn:hover { opacity: 0.9; }
 </style>
