@@ -80,7 +80,14 @@ export const tenantApi = {
   testWeComConnection: (data) => api.post('/wecom/test', data),
   // 嵌入监控 API Key
   getEmbedKey: () => api.get('/tenant/embed-key'),
-  regenerateEmbedKey: () => api.post('/tenant/embed-key/regenerate')
+  regenerateEmbedKey: () => api.post('/tenant/embed-key/regenerate'),
+  // FAQ 管理
+  getFaq: () => api.get('/tenant/faq'),
+  saveFaqCategory: (data) => api.post('/tenant/faq/category', data),
+  deleteFaqCategory: (id) => api.delete(`/tenant/faq/category/${id}`),
+  saveFaqItem: (data) => api.post('/tenant/faq/item', data),
+  deleteFaqItem: (id) => api.delete(`/tenant/faq/item/${id}`),
+  reorderFaqItems: (data) => api.put('/tenant/faq/reorder', data)
 }
 
 // 知识库接口

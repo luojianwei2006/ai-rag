@@ -33,6 +33,10 @@
           <template #icon><t-icon name="lock-on" /></template>
           修改密码
         </t-menu-item>
+        <t-menu-item value="/tenant/faq">
+          <template #icon><t-icon name="help-circle" /></template>
+          常见问题FAQ
+        </t-menu-item>
         <t-menu-item value="/tenant/integrations">
           <template #icon><t-icon name="link" /></template>
           第三方接入
