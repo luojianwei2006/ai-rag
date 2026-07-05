@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import uuid
 import secrets
 import asyncio
@@ -423,6 +424,7 @@ async def send_chat_message(
     db: Session = Depends(get_db)
 ):
     """发送消息并获取 AI 回复（REST 接口，替代 WebSocket）"""
+    print(f"[DingTalk] ====== send 端点被调用 ======", flush=True)
     tenant = db.query(Tenant).filter(Tenant.chat_token == chat_token).first()
     if not tenant or not tenant.is_active:
         raise HTTPException(status_code=404, detail="客服服务不可用")
@@ -533,14 +535,14 @@ async def send_chat_message(
     db.commit()
 
     # 5. 钉钉通知：仅首次客户消息时发送
-    print(f"[DingTalk] 检查通知条件: webhook={'已配置' if tenant.dingtalk_webhook else '未配置'}, is_human={session.is_human_service}, session_id={session_id[:8]}")
+    print(f"[DingTalk] 检查通知条件: webhook={'已配置' if tenant.dingtalk_webhook else '未配置'}, is_human={session.is_human_service}, session_id={session_id[:8]}", flush=True)
     if tenant.dingtalk_webhook and not session.is_human_service:
         # 检查是否是该会话的第一条客户消息
         customer_msg_count = db.query(ChatMessage).filter(
             ChatMessage.session_id == session_id,
             ChatMessage.role == "customer"
         ).count()
-        print(f"[DingTalk] 客户消息数: {customer_msg_count}, 内容: {content[:30]}")
+        print(f"[DingTalk] 客户消息数: {customer_msg_count}, 内容: {content[:30]}", flush=True)
         if customer_msg_count == 1:
             try:
                 from services.dingtalk_service import send_dingtalk_notification
@@ -549,11 +551,11 @@ async def send_chat_message(
                 uid = session.uid or "未识别"
                 nickname = session.customer_name or "访客"
                 embed_key = tenant.embed_api_key
-                print(f"[DingTalk] 通知参数: merchant={merchant_name}, uid={uid}, nickname={nickname}, embed_key={'已设置' if embed_key else '未设置'}")
+                print(f"[DingTalk] 通知参数: merchant={merchant_name}, uid={uid}, nickname={nickname}, embed_key={'已设置' if embed_key else '未设置'}", flush=True)
                 # 格式：[商户名]新的客服消息 客户ID，昵称，消息内容 + 监控链接
                 monitor_link = f"https://kefu.zenithgames.com/embed/monitor?api_key={embed_key}" if embed_key else "https://kefu.zenithgames.com/tenant/monitor"
                 text = f"[{merchant_name}]新的客服消息 客户{uid}，{nickname}，{content}\n查看会话：{monitor_link}"
-                print(f"[DingTalk] 通知内容: {text}")
+                print(f"[DingTalk] 通知内容: {text}", flush=True)
                 async def _notify():
                     ok = await send_dingtalk_notification(
                         tenant.dingtalk_webhook,
@@ -562,15 +564,15 @@ async def send_chat_message(
                         tenant.dingtalk_secret,
                         msgtype="text"
                     )
-                    print(f"[DingTalk] 通知结果: {'成功' if ok else '失败'}")
+                    print(f"[DingTalk] 通知结果: {'成功' if ok else '失败'}", flush=True)
                 asyncio.create_task(_notify())
-                print(f"[DingTalk] 通知任务已提交")
+                print(f"[DingTalk] 通知任务已提交", flush=True)
             except Exception as e:
-                print(f"[DingTalk] 通知发送失败: {e}")
+                print(f"[DingTalk] 通知发送失败: {e}", flush=True)
         else:
-            print(f"[DingTalk] 跳过通知: customer_msg_count={customer_msg_count} != 1")
+            print(f"[DingTalk] 跳过通知: customer_msg_count={customer_msg_count} != 1", flush=True)
     else:
-        print(f"[DingTalk] 跳过通知: 条件不满足")
+        print(f"[DingTalk] 跳过通知: 条件不满足", flush=True)
 
     return {
         "reply": {"role": "ai", "content": reply, "msg_type": "text"},
