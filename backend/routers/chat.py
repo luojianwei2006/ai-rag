@@ -565,7 +565,7 @@ async def send_chat_message(
                 uid = session.uid or "未识别"
                 nickname = session.customer_name or "访客"
                 # 格式：[商户名]新的客服消息 客户ID，昵称，消息内容
-                text = f"[{merchant_name}]新的客服消息 客户{uid}，{nickname}，{content}"
+                text = f"[{merchant_name}]新的客服消息 客户{uid}，{nickname}，{content}\n查看会话：https://kefu.zenithgames.com/tenant/monitor"
                 asyncio.create_task(
                     send_dingtalk_notification(
                         tenant.dingtalk_webhook,
