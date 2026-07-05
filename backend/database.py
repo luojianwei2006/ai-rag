@@ -34,3 +34,10 @@ def run_migrations():
             conn.execute(text("ALTER TABLE tenants ADD COLUMN dingtalk_secret VARCHAR(200)"))
             conn.commit()
         print("✅ 数据库迁移: 已添加 tenants.dingtalk_secret 列")
+    # chat_sessions 表迁移
+    session_cols = [c["name"] for c in insp.get_columns("chat_sessions")]
+    if "last_dingtalk_notify" not in session_cols:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE chat_sessions ADD COLUMN last_dingtalk_notify DATETIME"))
+            conn.commit()
+        print("✅ 数据库迁移: 已添加 chat_sessions.last_dingtalk_notify 列")

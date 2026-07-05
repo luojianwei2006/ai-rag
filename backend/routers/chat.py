@@ -3,7 +3,7 @@ import os
 import uuid
 import secrets
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from pydantic import BaseModel
@@ -549,6 +549,38 @@ async def send_chat_message(
     ai_msg = ChatMessage(session_id=session_id, role="ai", content=reply)
     db.add(ai_msg)
     db.commit()
+
+    # 5. 钉钉限流通知：30分钟内同一会话只通知一次
+    if tenant.dingtalk_webhook and not session.is_human_service:
+        now = datetime.now()
+        should_notify = (
+            session.last_dingtalk_notify is None
+            or (now - session.last_dingtalk_notify) > timedelta(minutes=30)
+        )
+        if should_notify:
+            try:
+                session.last_dingtalk_notify = now
+                db.commit()
+
+                from services.dingtalk_service import send_dingtalk_notification
+
+                customer_name = session.customer_name or "访客"
+                time_str = now.strftime("%Y-%m-%d %H:%M:%S")
+                msg_preview = content[:20] + ("..." if len(content) > 20 else "")
+                markdown_text = (
+                    f"## 💬 新的客服消息\n\n"
+                    f"**客户**：{customer_name}\n"
+                    f"**消息**：{msg_preview}\n"
+                    f"**时间**：{time_str}\n\n"
+                    f"[查看详情](https://kefu.zenithgames.com/tenant/monitor)"
+                )
+                asyncio.create_task(
+                    send_dingtalk_notification(
+                        tenant.dingtalk_webhook, "新的客服消息", markdown_text, tenant.dingtalk_secret
+                    )
+                )
+            except Exception as e:
+                print(f"[DingTalk] 限流通知失败: {e}")
 
     return {
         "reply": {"role": "ai", "content": reply, "msg_type": "text"},

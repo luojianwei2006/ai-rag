@@ -138,6 +138,7 @@ class ChatSession(Base):
     customer_ip = Column(String(50), nullable=True)
     status = Column(String(20), default="active")  # active, human, closed
     is_human_service = Column(Boolean, default=False)
+    last_dingtalk_notify = Column(DateTime(timezone=True), nullable=True)  # 最后一次钉钉通知时间
     online = Column(Boolean, default=False)  # 用户是否在线
     taken_over = Column(Boolean, default=False)  # 是否被嵌入监控端接管
     last_active = Column(DateTime(timezone=True), nullable=True)  # 最后活跃时间
