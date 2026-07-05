@@ -390,7 +390,7 @@ async def start_chat_session(
                     f"[查看详情](https://kefu.zenithgames.com/tenant/monitor)"
                 )
                 asyncio.create_task(
-                    send_dingtalk_notification(tenant.dingtalk_webhook, "新的客服咨询", markdown_text)
+                    send_dingtalk_notification(tenant.dingtalk_webhook, "新的客服咨询", markdown_text, tenant.dingtalk_secret)
                 )
             except Exception as e:
                 print(f"[DingTalk] 创建通知任务失败: {e}")

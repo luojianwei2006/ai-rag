@@ -106,6 +106,21 @@
             </t-button>
           </div>
         </div>
+        <div class="setting-row">
+          <div class="setting-label">
+            <span class="label-text">加签密钥 (Secret)</span>
+            <span class="label-hint">选填，如钉钉机器人开启了加签，请填入密钥</span>
+          </div>
+          <div class="webhook-input-row">
+            <t-input
+              v-model="dingtalkSecret"
+              type="password"
+              placeholder="SECxxxxxxxxxxxxxxxxxxxxxx"
+              style="width: 420px"
+              clearable
+            />
+          </div>
+        </div>
       </div>
 
       <!-- 嵌入监控 API Key -->
@@ -223,6 +238,7 @@ const deleting = ref(false)
 const fileInput = ref(null)
 const aiEnabled = ref(true)
 const dingtalkWebhook = ref('')
+const dingtalkSecret = ref('')
 const savingDingtalk = ref(false)
 const embedApiKey = ref('')
 const showKey = ref(false)
@@ -515,6 +531,7 @@ onMounted(async () => {
       companyName.value = profile.company_name || ''
       embedApiKey.value = profile.embed_api_key || ''
       dingtalkWebhook.value = profile.dingtalk_webhook || ''
+      dingtalkSecret.value = profile.dingtalk_secret || ''
       chatToken.value = profile.chat_token || ''
     }
   } catch (e) {
@@ -582,8 +599,10 @@ async function handleDingtalkSave() {
   savingDingtalk.value = true
   try {
     const url = dingtalkWebhook.value.trim()
-    await tenantApi.updateSettings({ dingtalk_webhook: url })
+    const secret = dingtalkSecret.value.trim()
+    await tenantApi.updateSettings({ dingtalk_webhook: url, dingtalk_secret: secret })
     dingtalkWebhook.value = url
+    dingtalkSecret.value = secret
     MessagePlugin.success(url ? '钉钉通知配置已保存' : '钉钉通知已关闭')
   } catch (e) {
     MessagePlugin.error('保存失败')

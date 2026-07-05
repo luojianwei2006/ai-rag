@@ -73,6 +73,7 @@ class Tenant(Base):
     
     # 钉钉机器人配置
     dingtalk_webhook = Column(String(500), nullable=True)   # 钉钉机器人 Webhook URL
+    dingtalk_secret = Column(String(200), nullable=True)    # 钉钉机器人加签密钥
 
     # 积分余额
     points_balance = Column(Integer, default=0)

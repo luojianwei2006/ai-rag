@@ -29,3 +29,8 @@ def run_migrations():
             conn.execute(text("ALTER TABLE tenants ADD COLUMN dingtalk_webhook VARCHAR(500)"))
             conn.commit()
         print("✅ 数据库迁移: 已添加 tenants.dingtalk_webhook 列")
+    if "dingtalk_secret" not in cols:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE tenants ADD COLUMN dingtalk_secret VARCHAR(200)"))
+            conn.commit()
+        print("✅ 数据库迁移: 已添加 tenants.dingtalk_secret 列")
