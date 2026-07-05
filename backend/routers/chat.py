@@ -471,7 +471,13 @@ async def send_chat_message(
                 embed_key = tenant.embed_api_key
                 print(f"[DingTalk] 通知参数: merchant={merchant_name}, uid={uid}, nickname={nickname}, embed_key={'已设置' if embed_key else '未设置'}", flush=True)
                 monitor_link = f"https://kefu.zenithgames.com/embed/monitor?api_key={embed_key}" if embed_key else "https://kefu.zenithgames.com/tenant/monitor"
-                text = f"[{merchant_name}]新的客服消息 客户{uid}，{nickname}，{content}\n查看会话：{monitor_link}"
+                text = (
+                    f"🔔 【{merchant_name}】新的客服咨询\n\n"
+                    f"客户UID：{uid}\n"
+                    f"客户昵称：{nickname}\n"
+                    f"消息内容：{content}\n\n"
+                    f"👉 点击查看：{monitor_link}"
+                )
                 print(f"[DingTalk] 通知内容: {text}", flush=True)
                 async def _notify():
                     ok = await send_dingtalk_notification(tenant.dingtalk_webhook, "新的客服消息", text, tenant.dingtalk_secret, msgtype="text")
