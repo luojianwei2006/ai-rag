@@ -550,37 +550,32 @@ async def send_chat_message(
     db.add(ai_msg)
     db.commit()
 
-    # 5. 钉钉限流通知：30分钟内同一会话只通知一次
+    # 5. 钉钉通知：仅首次客户消息时发送
     if tenant.dingtalk_webhook and not session.is_human_service:
-        now = datetime.now()
-        should_notify = (
-            session.last_dingtalk_notify is None
-            or (now - session.last_dingtalk_notify) > timedelta(minutes=30)
-        )
-        if should_notify:
+        # 检查是否是该会话的第一条客户消息
+        customer_msg_count = db.query(ChatMessage).filter(
+            ChatMessage.session_id == session_id,
+            ChatMessage.role == "customer"
+        ).count()
+        if customer_msg_count == 1:
             try:
-                session.last_dingtalk_notify = now
-                db.commit()
-
                 from services.dingtalk_service import send_dingtalk_notification
 
-                customer_name = session.customer_name or "访客"
-                time_str = now.strftime("%Y-%m-%d %H:%M:%S")
-                msg_preview = content[:20] + ("..." if len(content) > 20 else "")
-                markdown_text = (
-                    f"## 💬 新的客服消息\n\n"
-                    f"**客户**：{customer_name}\n"
-                    f"**消息**：{msg_preview}\n"
-                    f"**时间**：{time_str}\n\n"
-                    f"[查看详情](https://kefu.zenithgames.com/tenant/monitor)"
-                )
+                merchant_name = tenant.company_name or "商户"
+                uid = session.uid or "未识别"
+                nickname = session.customer_name or "访客"
+                # 格式：[商户名]新的客服消息 客户ID，昵称，消息内容
+                text = f"[{merchant_name}]新的客服消息 客户{uid}，{nickname}，{content}"
                 asyncio.create_task(
                     send_dingtalk_notification(
-                        tenant.dingtalk_webhook, "新的客服消息", markdown_text, tenant.dingtalk_secret
+                        tenant.dingtalk_webhook,
+                        "新的客服消息",
+                        text,
+                        tenant.dingtalk_secret
                     )
                 )
             except Exception as e:
-                print(f"[DingTalk] 限流通知失败: {e}")
+                print(f"[DingTalk] 通知发送失败: {e}")
 
     return {
         "reply": {"role": "ai", "content": reply, "msg_type": "text"},
