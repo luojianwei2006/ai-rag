@@ -6,9 +6,9 @@
 
 | 角色 | 功能 |
 |------|------|
-| **管理员** | 登录/改密、API Key配置（GLM/OpenAI/Gemini）、SMTP邮件配置、商户管理 |
-| **商户** | 注册/登录/改密、知识库上传管理、问答测试、自定义API Key、实时客服监控、历史记录查看 |
-| **客户** | 专属链接聊天、AI智能问答、一键转人工客服 |
+| **管理员** | 登录/改密、API Key配置（GLM/OpenAI/Gemini/自定义兼容）、SMTP邮件配置、商户管理 |
+| **商户** | 注册/登录/改密、知识库上传管理、FAQ常见问题配置、自定义API Key、实时客服监控、历史记录查看、钉钉通知配置 |
+| **客户** | 专属链接聊天、FAQ自助查询、AI智能问答、一键转人工客服 |
 
 ## 快速启动
 
@@ -40,9 +40,10 @@ customer-service-platform/
 │   │   ├── knowledge.py     # 知识库接口
 │   │   └── chat.py          # 聊天接口（REST 轮询，消息全存数据库）
 │   ├── services/
-│   │   ├── rag_service.py   # RAG核心
-│   │   ├── llm_service.py   # 大模型调用
-│   │   └── email_service.py # 邮件服务
+│   │   ├── rag_service.py      # RAG核心
+│   │   ├── llm_service.py      # 大模型调用
+│   │   ├── dingtalk_service.py # 钉钉机器人通知
+│   │   └── email_service.py    # 邮件服务
 │   └── utils/
 │       ├── doc_parser.py    # 文档解析
 │       └── security.py      # 认证安全
@@ -88,6 +89,8 @@ http://你的域名/chat/{chat_token}?p={加密参数}
 - **消息存储**: 客户/AI/人工回复全部实时存入数据库，刷新/重连不丢消息
 - **会话复用**: 相同 uid 自动复用会话，客户重新进入可接上历史对话
 - **嵌入监控**: WebSocket（实时推送）+ 轮询（3秒兜底）双通道保障
+- **钉钉通知**: 商户配置 Webhook + 加签密钥，首次客户消息自动推送（含嵌入监控链接）
+- **FAQ 管理**: 商户可配置分类/问题/答案，客户聊天前先展示 FAQ，点击「联系客服」后进入聊天
 
 ## 人工客服触发词
 
@@ -431,6 +434,7 @@ docker build -t customer-service-frontend:v1.0.0 ./frontend
 | 进入容器 | `docker exec -it <容器名> /bin/bash` |
 | 查看状态 | `docker compose ps` 或 `docker ps \| grep customer-service` |
 
+**Q: 如何修改端口？**
 A: 使用 `docker run -p 其他端口:80` 修改映射端口。
 
 **Q: 如何备份数据？**
