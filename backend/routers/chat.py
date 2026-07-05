@@ -554,14 +554,16 @@ async def send_chat_message(
                 monitor_link = f"https://kefu.zenithgames.com/embed/monitor?api_key={embed_key}" if embed_key else "https://kefu.zenithgames.com/tenant/monitor"
                 text = f"[{merchant_name}]新的客服消息 客户{uid}，{nickname}，{content}\n查看会话：{monitor_link}"
                 print(f"[DingTalk] 通知内容: {text}")
-                asyncio.create_task(
-                    send_dingtalk_notification(
+                async def _notify():
+                    ok = await send_dingtalk_notification(
                         tenant.dingtalk_webhook,
                         "新的客服消息",
                         text,
-                        tenant.dingtalk_secret
+                        tenant.dingtalk_secret,
+                        msgtype="text"
                     )
-                )
+                    print(f"[DingTalk] 通知结果: {'成功' if ok else '失败'}")
+                asyncio.create_task(_notify())
                 print(f"[DingTalk] 通知任务已提交")
             except Exception as e:
                 print(f"[DingTalk] 通知发送失败: {e}")
