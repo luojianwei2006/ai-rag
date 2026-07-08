@@ -453,15 +453,20 @@ async def send_chat_message(
     db.add(user_msg)
     db.commit()
 
-    # 1.5. 钉钉通知：仅首次客户消息时发送（放在这里避免被后续 return 跳过）
+    # 1.5. 钉钉通知：新会话首条或客户在新一轮开口时发送（放在这里避免被后续 return 跳过）
     print(f"[DingTalk] 检查通知条件: webhook={'已配置' if tenant.dingtalk_webhook else '未配置'}, is_human={session.is_human_service}, session_id={session_id[:8]}", flush=True)
     if tenant.dingtalk_webhook:
         customer_msg_count = db.query(ChatMessage).filter(
             ChatMessage.session_id == session_id,
             ChatMessage.role == "customer"
         ).count()
-        print(f"[DingTalk] 客户消息数: {customer_msg_count}, 内容: {content[:30]}", flush=True)
-        if customer_msg_count == 1:
+        prev_msg = db.query(ChatMessage).filter(
+            ChatMessage.session_id == session_id,
+            ChatMessage.id != user_msg.id
+        ).order_by(ChatMessage.created_at.desc()).first()
+        is_new_turn = (prev_msg is None) or (prev_msg.role != "customer")
+        print(f"[DingTalk] 客户消息数: {customer_msg_count}, 上一条角色: {prev_msg.role if prev_msg else '无'}, 新轮次: {is_new_turn}", flush=True)
+        if is_new_turn:
             try:
                 from services.dingtalk_service import send_dingtalk_notification
 
@@ -487,7 +492,7 @@ async def send_chat_message(
             except Exception as e:
                 print(f"[DingTalk] 通知异常: {e}", flush=True)
         else:
-            print(f"[DingTalk] 跳过: customer_msg_count={customer_msg_count}", flush=True)
+            print(f"[DingTalk] 跳过: 连续客户消息(非新轮次), customer_msg_count={customer_msg_count}", flush=True)
 
     # 2. 检查是否请求人工
     is_human_request = any(kw in content for kw in HUMAN_KEYWORDS)
