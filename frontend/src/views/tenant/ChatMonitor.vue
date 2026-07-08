@@ -91,7 +91,7 @@
     </div>
   </template>
 
-  <script>
+  <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
 import { chatApi } from '@/api'
