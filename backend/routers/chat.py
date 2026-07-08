@@ -4,7 +4,7 @@ import sys
 import uuid
 import secrets
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from pydantic import BaseModel
@@ -52,6 +52,9 @@ HUMAN_KEYWORDS = [
     "人工", "人工客服", "转人工", "真人", "真人客服",
     "找人工", "要人工", "接人工", "帮我找人", "人工服务"
 ]
+
+# 钉钉推送节流：同一会话在该时间窗口内不重复推送
+DINGTALK_THROTTLE_MINUTES = 15
 
 # ─────── 在线状态 ───────
 _customer_online: Dict[str, float] = {}  # session_id -> last_poll_ts
@@ -467,30 +470,40 @@ async def send_chat_message(
         is_new_turn = (prev_msg is None) or (prev_msg.role != "customer")
         print(f"[DingTalk] 客户消息数: {customer_msg_count}, 上一条角色: {prev_msg.role if prev_msg else '无'}, 新轮次: {is_new_turn}", flush=True)
         if is_new_turn:
-            try:
-                from services.dingtalk_service import send_dingtalk_notification
+            now = datetime.now(timezone.utc)
+            last = session.last_dingtalk_notify
+            if last is not None and last.tzinfo is None:
+                last = last.replace(tzinfo=timezone.utc)
+            within_window = last is not None and (now - last) < timedelta(minutes=DINGTALK_THROTTLE_MINUTES)
+            if within_window:
+                print(f"[DingTalk] 跳过: {DINGTALK_THROTTLE_MINUTES}分钟内已推送 (last={last}), session_id={session_id[:8]}", flush=True)
+            else:
+                try:
+                    from services.dingtalk_service import send_dingtalk_notification
 
-                merchant_name = tenant.company_name or "商户"
-                uid = session.uid or "未识别"
-                nickname = session.customer_name or "访客"
-                embed_key = tenant.embed_api_key
-                print(f"[DingTalk] 通知参数: merchant={merchant_name}, uid={uid}, nickname={nickname}, embed_key={'已设置' if embed_key else '未设置'}", flush=True)
-                monitor_link = f"https://kefu.zenithgames.com/embed/monitor?api_key={embed_key}" if embed_key else "https://kefu.zenithgames.com/tenant/monitor"
-                text = (
-                    f"🔔 【{merchant_name}】新的客服咨询\n\n"
-                    f"客户UID：{uid}\n"
-                    f"客户昵称：{nickname}\n"
-                    f"消息内容：{content}\n\n"
-                    f"👉 点击查看：{monitor_link}"
-                )
-                print(f"[DingTalk] 通知内容: {text}", flush=True)
-                async def _notify():
-                    ok = await send_dingtalk_notification(tenant.dingtalk_webhook, "新的客服消息", text, tenant.dingtalk_secret, msgtype="text")
-                    print(f"[DingTalk] 通知结果: {'成功' if ok else '失败'}", flush=True)
-                asyncio.create_task(_notify())
-                print(f"[DingTalk] 通知任务已提交", flush=True)
-            except Exception as e:
-                print(f"[DingTalk] 通知异常: {e}", flush=True)
+                    merchant_name = tenant.company_name or "商户"
+                    uid = session.uid or "未识别"
+                    nickname = session.customer_name or "访客"
+                    embed_key = tenant.embed_api_key
+                    print(f"[DingTalk] 通知参数: merchant={merchant_name}, uid={uid}, nickname={nickname}, embed_key={'已设置' if embed_key else '未设置'}", flush=True)
+                    monitor_link = f"https://kefu.zenithgames.com/embed/monitor?api_key={embed_key}" if embed_key else "https://kefu.zenithgames.com/tenant/monitor"
+                    text = (
+                        f"🔔 【{merchant_name}】新的客服咨询\n\n"
+                        f"客户UID：{uid}\n"
+                        f"客户昵称：{nickname}\n"
+                        f"消息内容：{content}\n\n"
+                        f"👉 点击查看：{monitor_link}"
+                    )
+                    print(f"[DingTalk] 通知内容: {text}", flush=True)
+                    session.last_dingtalk_notify = now
+                    db.commit()
+                    async def _notify():
+                        ok = await send_dingtalk_notification(tenant.dingtalk_webhook, "新的客服消息", text, tenant.dingtalk_secret, msgtype="text")
+                        print(f"[DingTalk] 通知结果: {'成功' if ok else '失败'}", flush=True)
+                    asyncio.create_task(_notify())
+                    print(f"[DingTalk] 通知任务已提交", flush=True)
+                except Exception as e:
+                    print(f"[DingTalk] 通知异常: {e}", flush=True)
         else:
             print(f"[DingTalk] 跳过: 连续客户消息(非新轮次), customer_msg_count={customer_msg_count}", flush=True)
 
